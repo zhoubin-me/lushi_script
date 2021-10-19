@@ -44,26 +44,26 @@ def find_icon_location(lushi, icon):
 
     
 class Images:
-    yongbing = 'yongbing.png'
-    travel = 'travel.png'
-    air_element = 'air.png'
-    team_list = 'team_list.png'
-    team_lock = 'team_lock.png'
+    yongbing = 'imgs/yongbing.png'
+    travel = 'imgs/travel.png'
+    air_element = 'imgs/air.png'
+    team_list = 'imgs/team_list.png'
+    team_lock = 'imgs/team_lock.png'
 
-    member_ready = 'member_ready.png'
+    member_ready = 'imgs/member_ready.png'
 
-    not_ready = 'not_ready.png'
-    skill_select = 'skill_select.png'
-    battle_ready2 = 'battle_ready2.png'
-    surprise = 'surprise2.png'
-    start_point = 'start_point.png'
+    not_ready = 'imgs/not_ready.png'
+    skill_select = 'imgs/skill_select.png'
+    battle_ready2 = 'imgs/battle_ready2.png'
+    surprise = 'imgs/surprise2.png'
+    start_point = 'imgs/start_point.png'
 
-    treasure_list = 'treasure_list.png'
-    visitor_list = 'visitor_list.png'
-    final_reward = 'final_reward.png'
+    treasure_list = 'imgs/treasure_list.png'
+    visitor_list = 'imgs/visitor_list.png'
+    final_reward = 'imgs/final_reward.png'
 
-    final_confirm = 'final_confirm.png'
-    boom = 'boom.png'
+    final_confirm = 'imgs/final_confirm.png'
+    boom = 'imgs/boom.png'
 
 
 
@@ -275,7 +275,7 @@ def find_relative_loc():
 
 def main():
     pyautogui.PAUSE = 0.8
-    if True:
+    if False:
         pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高")
         pyautogui.confirm(text="程序默认副本为上次战斗的副本，本程序目前只支持H1-2，请将默认副本设为H1-2")
         pyautogui.confirm(text="程序默认使用队伍为从左到右第三支队伍，且跳过英雄选择阶段，直接按准备就绪，所以请记下默认出场的英雄以及你想使用的技能，从左到右依次记下")
