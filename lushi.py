@@ -3,7 +3,6 @@ import cv2
 import time
 from PIL import ImageGrab, Image
 import numpy as np
-import inspect
 
 import win32api
 from winguiauto import findTopWindow
