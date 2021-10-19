@@ -64,6 +64,7 @@ class Images:
 
     final_confirm = 'imgs/final_confirm.png'
     boom = 'imgs/boom.png'
+    tld = 'imgs/tld.png'
 
 
 
@@ -186,10 +187,15 @@ class Agent:
                 
 
             if 'visitor_list' in states:
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = self.visitor_locs[visitor_id]
-                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
-                pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
+                if 'tld' in states:
+                    pyautogui.click(states['tld'][0])
+                    pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
+                else:
+                    visitor_id = np.random.randint(0, 3)
+                    visitor_loc = self.visitor_locs[visitor_id]
+                    pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                    pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
+                
                 continue
             
             if 'final_reward' in states:
