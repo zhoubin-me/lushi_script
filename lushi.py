@@ -68,7 +68,7 @@ class Images:
 
 
 class Agent:
-    def __init__(self, skill_list=None):
+    def __init__(self, skill_list=None, team_id=2):
         self.icons = Icons()
 
         if skill_list is None:
@@ -117,7 +117,8 @@ class Agent:
 
         self.select_travel_relative_loc = (1090, 674)
 
-        self.team3_loc = (800, 328)
+        self.team_locations = [(374, 324), (604, 330), (837, 324)]
+        self.team_loc = self.team_locations[team_id]
         self.start_team_loc = (1190, 797)
 
         self.start_point_relative_loc = (654, 707)
@@ -161,7 +162,7 @@ class Agent:
                 continue
             
             if 'team_list' in states:
-                pyautogui.click(rect[0] + self.team3_loc[0], rect[1] + self.team3_loc[1])
+                pyautogui.click(rect[0] + self.team_loc[0], rect[1] + self.team_loc[1])
                 if 'team_lock' in states:
                     pyautogui.click(states['team_lock'][0])
                 pyautogui.click(rect[0] + self.start_team_loc[0], rect[1] + self.start_team_loc[1])
@@ -209,16 +210,10 @@ class Agent:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
 
                 if side is None:
-                    if np.abs(surprise_loc[0] - self.start_point_relative_loc[0] - rect[0]) < 50:
-                        if np.random.rand() > 0.5:
-                            side = 'left'
-                        else:
-                            side = 'right'
-                    else:            
-                        if surprise_loc[0] <= self.start_point_relative_loc[0]+rect[0]:
-                            side = 'left'
-                        else:
-                            side = 'right'
+                    if surprise_loc[0] <= self.start_point_relative_loc[0]+rect[0]:
+                        side = 'left'
+                    else:
+                        side = 'right'
                 
                 if side is not None:
                     side_locs = self.locs[side]
@@ -279,18 +274,27 @@ def main():
         pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高")
         pyautogui.confirm(text="程序默认副本为上次战斗的副本，本程序目前只支持H1-2，请将默认副本设为H1-2")
         pyautogui.confirm(text="程序默认使用队伍为从左到右第三支队伍，且跳过英雄选择阶段，直接按准备就绪，所以请记下默认出场的英雄以及你想使用的技能，从左到右依次记下")
+        team_id = pyautogui.prompt(text="请输入第一排队伍序号，0为第一支队伍，1为第一支，2为第三支")
         skills = pyautogui.prompt(text="请输入默认出场英雄技能编号，用空格隔开: 0为第一技能，1为第二技能，2为第三技能, 如 1 1 0 代表第一英雄用第二技能，代表第二英雄用第二技能，代表第三英雄用第一技能")
         skill_target = pyautogui.prompt(text="请输入已选择的三个技能的属性，用空格隔开: -1无需指定目标，0指定地方中间目标，如 -1 0 0")
+        if len(skills) == 0:
+            skills = "0 0 0"
+        if len(skill_target) == 0:
+            skill_target = "1 1 1"
+        if len(team_id) == 0:
+            team_id = "1"
         
         skills = [int(s.strip()) for s in skills.strip().split(' ')]
         skill_target = [int(s.strip()) for s in skill_target.strip().split(' ')]
+        team_id = int(team_id)
         assert(len(skills) == 3)
         assert(len(skill_target) == 3)
+        assert(team_id in [0, 1, 2])
         skill_list = [(x, y) for x, y in zip(skills, skill_target)]
     else:
         skill_list = None
 
-    agent = Agent(skill_list=skill_list)
+    agent = Agent(skill_list=skill_list, team_id=team_id)
     agent.run()
             
 
