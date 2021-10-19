@@ -277,7 +277,7 @@ def find_relative_loc():
 def main():
     pyautogui.PAUSE = 0.8
     if True:
-        pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高")
+        pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文")
         pyautogui.confirm(text="程序默认副本为上次战斗的副本，本程序目前只支持H1-2，请将默认副本设为H1-2")
         pyautogui.confirm(text="程序默认使用队伍为从左到右第三支队伍，且跳过英雄选择阶段，直接按准备就绪，所以请记下默认出场的英雄以及你想使用的技能，从左到右依次记下")
         team_id = pyautogui.prompt(text="请输入第一排队伍序号，0为第一支队伍，1为第一支，2为第三支")
