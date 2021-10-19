@@ -58,6 +58,7 @@ class Images:
     start_point = 'imgs/start_point.png'
 
     treasure_list = 'imgs/treasure_list.png'
+    treasure_replace = 'imgs/treasure_replace.png'
     visitor_list = 'imgs/visitor_list.png'
     final_reward = 'imgs/final_reward.png'
 
@@ -175,7 +176,7 @@ class Agent:
                 continue
 
 
-            if 'treasure_list' in states:
+            if 'treasure_list' in states or 'treasure_replace' in states:
                 treasure_loc_id = np.random.randint(0, 3)
                 treasure_loc = self.treasure_locs[treasure_loc_id]
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
