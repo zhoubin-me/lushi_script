@@ -226,7 +226,6 @@ class Agent:
             
             if 'skill_select' in states or 'not_ready' in states:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
-
                 first_hero_loc = self.hero_relative_locs[0]
                 pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
 
