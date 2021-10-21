@@ -64,22 +64,14 @@ class Images:
 
     final_confirm = 'imgs/final_confirm.png'
     boom = 'imgs/boom.png'
-    tld = 'imgs/tld.png'
-
-
 
 class Agent:
-    def __init__(self, skill_list=None, team_id=2):
+    def __init__(self, team_id, heros_id, skills_id, targets_id):
         self.icons = Icons()
-
-        if skill_list is None:
-            self.skill_list = [
-                (1, -1), (0, 1), (0, 1)
-            ]
-        else:
-            if len(skill_list) == 3 and isinstance(skill_list[0], tuple):
-                self.skill_list = skill_list
-
+        self.team_id = team_id
+        self.heros_id = heros_id
+        self.skills_id = skills_id
+        self.targets_id = targets_id
 
         self.hero_relative_locs = [
             (677, 632),
@@ -104,6 +96,12 @@ class Agent:
             (544, 426), (790, 420), (1042, 416)
         ]
         self.visitor_choose_loc = (791, 688)
+
+        self.members_loc = [
+            (620, 878), (690, 880), (774, 879),
+            (811, 881), (880, 899), (954, 911)
+        ]
+        self.drag2loc = (1213, 564)
 
         self.locs = {
             'left': [(452, 464), (558, 461), (473, 465)],
@@ -139,14 +137,11 @@ class Agent:
         battle_count = 0
 
         while True:
-
-            time.sleep(1)
+            time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
             pyautogui.moveTo(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
             pyautogui.click()
-            # pyautogui.moveTo(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
-            # pyautogui.click()
-            print(states, side, start_point_loc, surprise_loc, battle_count)
+            print(states)
 
             if 'yongbing' in states:
                 pyautogui.click(states['yongbing'][0])
@@ -170,6 +165,11 @@ class Agent:
                 continue
 
             if 'member_ready' in states:
+                for idx in self.heros_id:
+                    loc = self.members_loc[idx]
+                    pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
+                    pyautogui.click(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
+                
                 pyautogui.click(states['member_ready'][0])
                 continue
 
@@ -187,15 +187,10 @@ class Agent:
                 
 
             if 'visitor_list' in states:
-                if 'tld' in states:
-                    pyautogui.click(states['tld'][0])
-                    pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
-                else:
-                    visitor_id = np.random.randint(0, 3)
-                    visitor_loc = self.visitor_locs[visitor_id]
-                    pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
-                    pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
-                
+                visitor_id = np.random.randint(0, 3)
+                visitor_loc = self.visitor_locs[visitor_id]
+                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
                 continue
             
             if 'final_reward' in states:
@@ -207,26 +202,24 @@ class Agent:
             if 'final_confirm' in states:
                 pyautogui.click(states['final_confirm'][0])
                 continue
-
+            
+            if 'start_game' in states:
+                pyautogui.click(states['start_game'][0])
+                continue
 
             if 'surprise' in states:
                 surprise_loc = states['surprise'][0]
-                if 'start_point' in states:
-                    pyautogui.click(surprise_loc)
-                pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
-
                 if side is None:
                     if surprise_loc[0] <= self.start_point_relative_loc[0]+rect[0]:
                         side = 'left'
                     else:
                         side = 'right'
-                
-                if side is not None:
+                else:
+                    pyautogui.click(surprise_loc)
                     side_locs = self.locs[side]
                     for loc in side_locs:
                         pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
                         pyautogui.click(clicks=2, interval=0.25)
-                        pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
                     side = None
                 continue
             
@@ -236,11 +229,12 @@ class Agent:
                     pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
                     continue
+                
+                if "skill_select" in states:
+                    first_hero_loc = self.hero_relative_locs[0]
+                    pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
 
-                first_hero_loc = self.hero_relative_locs[0]
-                pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
-
-                for skill_id, target_id in self.skill_list:
+                for skill_id, target_id in zip(self.skills_id, self.targets_id):
                     skill_loc = (rect[0] + self.skill_relative_locs[skill_id][0], rect[1] + self.skill_relative_locs[skill_id][1])
                     pyautogui.click(*skill_loc)
                     
@@ -276,34 +270,33 @@ def find_relative_loc():
 
 def main():
     pyautogui.PAUSE = 0.8
-    if True:
-        pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高")
-        pyautogui.confirm(text="程序默认副本为上次战斗的副本，本程序目前只支持H1-2，请将默认副本设为H1-2")
-        pyautogui.confirm(text="程序默认使用队伍为从左到右第三支队伍，且跳过英雄选择阶段，直接按准备就绪，所以请记下默认出场的英雄以及你想使用的技能，从左到右依次记下")
-        team_id = pyautogui.prompt(text="请输入第一排队伍序号，0为第一支队伍，1为第一支，2为第三支")
-        skills = pyautogui.prompt(text="请输入默认出场英雄技能编号，用空格隔开: 0为第一技能，1为第二技能，2为第三技能, 如 1 1 0 代表第一英雄用第二技能，代表第二英雄用第二技能，代表第三英雄用第一技能")
-        skill_target = pyautogui.prompt(text="请输入已选择的三个技能的属性，用空格隔开: -1无需指定目标，0指定地方中间目标，如 -1 0 0")
-        if len(skills) == 0:
-            skills = "0 0 0"
-        if len(skill_target) == 0:
-            skill_target = "1 1 1"
-        if len(team_id) == 0:
-            team_id = "1"
-        
-        skills = [int(s.strip()) for s in skills.strip().split(' ')]
-        skill_target = [int(s.strip()) for s in skill_target.strip().split(' ')]
-        team_id = int(team_id)
-        assert(len(skills) == 3)
-        assert(len(skill_target) == 3)
-        assert(team_id in [0, 1, 2])
-        skill_list = [(x, y) for x, y in zip(skills, skill_target)]
-    else:
-        skill_list = None
+    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死，否则脚本会出错")
+    team_id = pyautogui.prompt(text="请输入出场队伍从左到右的序号，0为第一支队伍，1为第一支，2为第三支，默认为第三支队伍")
+    heros_id = pyautogui.prompt(text="请输入要选择出场英雄的序号用空格隔开，0为1号位，1为2号位，以此类推。默认为1 4 5")
+    skills_id = pyautogui.prompt(text="请输入英雄技能序号，默认为1 0 0")
+    targets_id = pyautogui.prompt(text="请输入技能目标编号，-1为随机或AOE技能无目标，0为一号敌人，1为二号敌人，2为三号敌人，默认为-1 1 1")
 
-    agent = Agent(skill_list=skill_list, team_id=team_id)
+    if team_id == "":
+        team_id = "2"
+    if heros_id == "":
+        heros_id = "1 4 5"
+    if skills_id == "":
+        skills_id = "1 0 0"
+    if targets_id == "":
+        targets_id = "-1 0 0"
+
+    heros_id = [int(s.strip()) for s in heros_id.strip().split(' ')]
+    skills_id = [int(s.strip()) for s in skills_id.strip().split(' ')]
+    targets_id = [int(s.strip()) for s in targets_id.strip().split(' ')]
+    team_id = int(team_id)
+
+    assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
+    assert(team_id in [0, 1, 2])
+
+
+    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id)
     agent.run()
             
-
 
 if __name__ == '__main__':
     main()

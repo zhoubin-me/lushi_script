@@ -1,7 +1,10 @@
 # lushi_script
 
+### Update
+支持选择出场英雄了
+
 ## Introduction
-This script is to "SHUA" H1-2 map of Mercenaries mode of Hearthstone
+This script is to "SHUA" Mercenaries mode of Hearthstone
 
 ## Installation
 
