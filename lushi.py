@@ -230,7 +230,7 @@ class Agent:
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
                     continue
                 
-                if "skill_select" in states:
+                if "skill_select" not in states:
                     first_hero_loc = self.hero_relative_locs[0]
                     pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
 
