@@ -48,6 +48,7 @@ class Images:
     air_element = 'imgs/air.png'
     team_list = 'imgs/team_list.png'
     team_lock = 'imgs/team_lock.png'
+    start_point = 'imgs/start_point.png'
 
     member_ready = 'imgs/member_ready.png'
 
@@ -55,7 +56,6 @@ class Images:
     skill_select = 'imgs/skill_select.png'
     battle_ready2 = 'imgs/battle_ready2.png'
     surprise = 'imgs/surprise2.png'
-    start_point = 'imgs/start_point.png'
 
     treasure_list = 'imgs/treasure_list.png'
     treasure_replace = 'imgs/treasure_replace.png'
@@ -112,16 +112,13 @@ class Agent:
             (660, 314), (554, 687), (1010, 794), (1117, 405), (806, 525)
         ]
 
-        self.start_game_relative_loc = (1250, 732)
-
         self.select_travel_relative_loc = (1090, 674)
 
         self.team_locations = [(374, 324), (604, 330), (837, 324)]
         self.team_loc = self.team_locations[team_id]
         self.start_team_loc = (1190, 797)
-
-        self.start_point_relative_loc = (654, 707)
-
+        self.start_game_relative_loc = (1250, 732)
+        self.start_point = (2872, 1663)
 
         self.options_loc = (1579, 920)
         self.surrender_loc = (815, 363)
@@ -130,11 +127,9 @@ class Agent:
 
     
     def run(self):
-        surprise_loc = None
-        start_point_loc = None
-        start_game_loc = None
-        side = None
+        side = 'right'
         battle_count = 0
+        
 
         while True:
             time.sleep(np.random.rand()+0.5)
@@ -145,6 +140,10 @@ class Agent:
 
             if 'yongbing' in states:
                 pyautogui.click(states['yongbing'][0])
+                continue
+            
+            if 'start_point' in states:
+                start_point = states['start_point'][0]
                 continue
 
             if 'travel' in states:
@@ -165,6 +164,12 @@ class Agent:
                 continue
 
             if 'member_ready' in states:
+                if 'boom' in states:
+                    print("Surrendering")
+                    pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
+                    pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
+                    continue
+
                 for idx in self.heros_id:
                     loc = self.members_loc[idx]
                     pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
@@ -209,8 +214,8 @@ class Agent:
 
             if 'surprise' in states:
                 surprise_loc = states['surprise'][0]
-                if side is None:
-                    if surprise_loc[0] <= self.start_point_relative_loc[0]+rect[0]:
+                if 'start_point' in states:
+                    if surprise_loc[0] <= self.start_point[0]:
                         side = 'left'
                     else:
                         side = 'right'
@@ -220,16 +225,9 @@ class Agent:
                     for loc in side_locs:
                         pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
                         pyautogui.click(clicks=2, interval=0.25)
-                    side = None
                 continue
             
             if 'skill_select' in states or 'not_ready' in states:
-                if 'boom' in states:
-                    print("Surrendering")
-                    pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
-                    pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
-                    continue
-                
                 if "skill_select" not in states:
                     first_hero_loc = self.hero_relative_locs[0]
                     pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
