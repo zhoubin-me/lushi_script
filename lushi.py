@@ -127,7 +127,6 @@ class Agent:
 
     
     def run(self):
-        side = 'right'
         battle_count = 0
         
 
@@ -144,7 +143,6 @@ class Agent:
             
             if 'start_point' in states:
                 start_point = states['start_point'][0]
-                continue
 
             if 'travel' in states:
                 pyautogui.click(states['travel'][0])
@@ -214,25 +212,26 @@ class Agent:
 
             if 'surprise' in states:
                 surprise_loc = states['surprise'][0]
-                if 'start_point' in states:
-                    if surprise_loc[0] <= self.start_point[0]:
+                if 'start_point' not in states:
+                    if  surprise_loc[0] < self.start_point[0]:
                         side = 'left'
                     else:
                         side = 'right'
-                else:
-                    pyautogui.click(surprise_loc)
                     side_locs = self.locs[side]
                     for loc in side_locs:
                         pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
                         pyautogui.click(clicks=2, interval=0.25)
+                    pyautogui.click(surprise_loc)
                 continue
             
             if 'skill_select' in states or 'not_ready' in states:
-                if "skill_select" not in states:
-                    first_hero_loc = self.hero_relative_locs[0]
-                    pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
+                pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
 
-                for skill_id, target_id in zip(self.skills_id, self.targets_id):
+                first_hero_loc = self.hero_relative_locs[0]
+                pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
+
+                for idx, skill_id, target_id in zip([0, 1, 2], self.skills_id, self.targets_id):
+                    hero_loc = (rect[0] + self.hero_relative_locs[idx][0], rect[1] + self.hero_relative_locs[idx][1])
                     skill_loc = (rect[0] + self.skill_relative_locs[skill_id][0], rect[1] + self.skill_relative_locs[skill_id][1])
                     pyautogui.click(*skill_loc)
                     
