@@ -170,7 +170,7 @@ class Agent:
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
                     continue
                 
-                if self.hero_cnt <= 3:
+                if self.hero_cnt > 3:
                     first_x, last_x, y = self.members_loc
                     for i, idx in enumerate(self.heros_id):
                         assert(self.hero_cnt - i - 1 > 0)
