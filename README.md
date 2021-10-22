@@ -2,6 +2,7 @@
 
 ### Update
 支持选择出场英雄了
+支持配置文件了
 
 ## Introduction
 This script is to "SHUA" Mercenaries mode of Hearthstone
