@@ -63,7 +63,7 @@ class Agent:
         ]
 
         self.treasure_locs = [
-            (707, 488), (959, 462), (1204, 474)
+            (707, 376), (959, 376), (1204, 376)
         ]
         self.treasure_collect_loc = (968, 765)
 
@@ -129,20 +129,21 @@ class Agent:
                 continue
 
             if 'member_ready' in states:
-                if 'boom' in states:
+                if 'boom' in states or 'ice_berg2' in states:
                     print("Surrendering")
                     pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
                     continue
                 
-                first_x, last_x, y = self.members_loc
-                for i, idx in enumerate(self.heros_id):
-                    assert(self.hero_cnt - i - 1 > 0)
-                    dis = (last_x - first_x) // (self.hero_cnt - i - 1)
-                    loc = (first_x + dis * (idx - i), y)
-                    pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
-                    pyautogui.moveTo(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
-                    pyautogui.click()
+                if self.hero_cnt <= 3:
+                    first_x, last_x, y = self.members_loc
+                    for i, idx in enumerate(self.heros_id):
+                        assert(self.hero_cnt - i - 1 > 0)
+                        dis = (last_x - first_x) // (self.hero_cnt - i - 1)
+                        loc = (first_x + dis * (idx - i), y)
+                        pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
+                        pyautogui.moveTo(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
+                        pyautogui.click()
 
                 time.sleep(0.5)
                 pyautogui.click(states['member_ready'][0])
@@ -156,6 +157,11 @@ class Agent:
             if 'treasure_list' in states or 'treasure_replace' in states:
                 treasure_loc_id = np.random.randint(0, 3)
                 treasure_loc = self.treasure_locs[treasure_loc_id]
+                if 'ice_berg' in states:
+                    x_dis = np.abs(treasure_loc[0] + rect[0] - states['ice_berg'][0][0])
+                    if x_dis < 100:
+                        continue
+
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
                 pyautogui.click(rect[0] + self.treasure_collect_loc[0], rect[1] + self.treasure_collect_loc[1])
                 continue     

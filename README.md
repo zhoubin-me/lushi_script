@@ -3,6 +3,7 @@
 ### Update
 * 支持选择出场英雄了
 * 支持配置文件了
+* 修复了冰法出冰山导致的问题
 
 ## Introduction
 This script is to "SHUA" Mercenaries mode of Hearthstone
