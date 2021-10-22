@@ -10,8 +10,8 @@ This script is to "SHUA" Mercenaries mode of Hearthstone
 ## Installation
 
 Make sure you installed python>=3.6.
-To install python, we recommand [Anaconda](https://www.anaconda.com/products/individual#windows)
-Make sure you added python path into your $PATH system environment/variables
+To install python, we recommand [Anaconda](https://www.anaconda.com/products/individual#windows).
+Make sure you added python path into your ```$PATH``` system environment/variables
 
 Run the following in your commandline/terminal
 ```bash
