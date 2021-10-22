@@ -116,7 +116,7 @@ class Agent:
         self.team_loc = self.team_locations[team_id]
         self.start_team_loc = (1190, 797)
         self.start_game_relative_loc = (1250, 732)
-        self.start_point = (2872, 1663)
+        self.start_point_relative_loc = (646, 712)
 
         self.options_loc = (1579, 920)
         self.surrender_loc = (815, 363)
@@ -136,9 +136,6 @@ class Agent:
             if 'yongbing' in states:
                 pyautogui.click(states['yongbing'][0])
                 continue
-            
-            if 'start_point' in states:
-                start_point = states['start_point'][0]
 
             if 'travel' in states:
                 pyautogui.click(states['travel'][0])
@@ -213,7 +210,7 @@ class Agent:
             if 'surprise' in states:
                 surprise_loc = states['surprise'][0]
                 if 'start_point' not in states:
-                    if  surprise_loc[0] < self.start_point[0]:
+                    if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
                         side = 'left'
                     else:
                         side = 'right'
