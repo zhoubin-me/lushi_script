@@ -24,7 +24,6 @@ class Icons:
 
 def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
-    win32gui.SetWindowPos(hwnd, win32con.HWND_TOPMOST, 0,0,0,0, win32con.SWP_NOMOVE | win32con.SWP_NOSIZE)
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
@@ -274,28 +273,22 @@ def move2loc(x, y):
 
 def main():
     pyautogui.PAUSE = 0.8
-    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本会出错")
-    team_id = pyautogui.prompt(text="请输入出场队伍从左到右的序号和队伍英雄数量且用空格隔开，0为第一支队伍，1为第一支，2为第三支，默认为2 6")
-    heros_id = pyautogui.prompt(text="请输入要选择出场英雄的序号用空格隔开，0为1号位，1为2号位，以此类推。默认为1 4 5")
-    skills_id = pyautogui.prompt(text="请输入英雄技能序号，默认为1 0 0")
-    targets_id = pyautogui.prompt(text="请输入技能目标编号，-1为随机或AOE技能无目标，0为一号敌人，1为二号敌人，2为三号敌人，默认为-1 1 1")
+    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本会出错；请参考config.txt修改配置文件")
+    with open('config.txt', 'r', encoding='utf-8') as f:
+        lines = f.readlines()
+    
+    assert(len(lines) == 4)
 
-    if team_id == "":
-        team_id = "2 6"
-    if heros_id == "":
-        heros_id = "1 4 5"
-    if skills_id == "":
-        skills_id = "1 0 0"
-    if targets_id == "":
-        targets_id = "-1 0 0"
+    team_id, heros_id, skills_id, targets_id = lines
 
-    heros_id = [int(s.strip()) for s in heros_id.strip().split(' ')]
-    skills_id = [int(s.strip()) for s in skills_id.strip().split(' ')]
-    targets_id = [int(s.strip()) for s in targets_id.strip().split(' ')]
-    team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ')]
+
+    heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
+    skills_id = [int(s.strip()) for s in skills_id.strip().split(' ') if not s.startswith('#')]
+    targets_id = [int(s.strip()) for s in targets_id.strip().split(' ') if not s.startswith('#')]
+    team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
 
     assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
-    assert(team_id in [0, 1, 2])
+    assert(team_id in [0, 1, 2] and hero_cnt <= 6)
 
 
     agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt)
