@@ -66,12 +66,13 @@ class Images:
     boom = 'imgs/boom.png'
 
 class Agent:
-    def __init__(self, team_id, heros_id, skills_id, targets_id):
+    def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt):
         self.icons = Icons()
         self.team_id = team_id
         self.heros_id = heros_id
         self.skills_id = skills_id
         self.targets_id = targets_id
+        self.hero_cnt = hero_cnt
 
         self.hero_relative_locs = [
             (677, 632),
@@ -97,10 +98,8 @@ class Agent:
         ]
         self.visitor_choose_loc = (791, 688)
 
-        self.members_loc = [
-            (620, 878), (690, 880), (774, 879),
-            (811, 881), (880, 899), (954, 911)
-        ]
+        self.members_loc = (622, 1000, 900)
+
         self.drag2loc = (1213, 564)
 
         self.locs = {
@@ -165,9 +164,12 @@ class Agent:
                     pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
                     continue
-
-                for idx in self.heros_id:
-                    loc = self.members_loc[idx]
+                
+                first_x, last_x, y = self.members_loc
+                for i, idx in enumerate(self.heros_id):
+                    assert(self.hero_cnt - i - 1 > 0)
+                    dis = (last_x - first_x) // (self.hero_cnt - i - 1)
+                    loc = (first_x + dis * (idx - i), y)
                     pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
                     pyautogui.click(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
                 
@@ -263,16 +265,23 @@ def find_relative_loc():
     rect, _ = find_lushi_window()
     print((pos[0]-rect[0], pos[1]-rect[1]))
 
+
+def move2loc(x, y):
+    pos = pyautogui.position()
+    rect, _ = find_lushi_window()
+    loc = (x + rect[0], y + rect[1])
+    pyautogui.moveTo(loc)
+
 def main():
     pyautogui.PAUSE = 0.8
-    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死，否则脚本会出错")
-    team_id = pyautogui.prompt(text="请输入出场队伍从左到右的序号，0为第一支队伍，1为第一支，2为第三支，默认为第三支队伍")
+    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本会出错")
+    team_id = pyautogui.prompt(text="请输入出场队伍从左到右的序号和队伍英雄数量且用空格隔开，0为第一支队伍，1为第一支，2为第三支，默认为2 6")
     heros_id = pyautogui.prompt(text="请输入要选择出场英雄的序号用空格隔开，0为1号位，1为2号位，以此类推。默认为1 4 5")
     skills_id = pyautogui.prompt(text="请输入英雄技能序号，默认为1 0 0")
     targets_id = pyautogui.prompt(text="请输入技能目标编号，-1为随机或AOE技能无目标，0为一号敌人，1为二号敌人，2为三号敌人，默认为-1 1 1")
 
     if team_id == "":
-        team_id = "2"
+        team_id = "2 6"
     if heros_id == "":
         heros_id = "1 4 5"
     if skills_id == "":
@@ -283,13 +292,13 @@ def main():
     heros_id = [int(s.strip()) for s in heros_id.strip().split(' ')]
     skills_id = [int(s.strip()) for s in skills_id.strip().split(' ')]
     targets_id = [int(s.strip()) for s in targets_id.strip().split(' ')]
-    team_id = int(team_id)
+    team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ')]
 
     assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
     assert(team_id in [0, 1, 2])
 
 
-    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id)
+    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt)
     agent.run()
             
 
