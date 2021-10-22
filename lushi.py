@@ -127,9 +127,7 @@ class Agent:
 
     
     def run(self):
-        battle_count = 0
-        
-
+        surprise_loc = None
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
@@ -204,6 +202,7 @@ class Agent:
 
             if 'final_confirm' in states:
                 pyautogui.click(states['final_confirm'][0])
+                surprise_loc = None
                 continue
             
             if 'start_game' in states:
