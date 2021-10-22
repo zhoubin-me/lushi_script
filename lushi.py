@@ -12,13 +12,6 @@ import os
 
 
 
-class Icons:
-    def __init__(self):
-        imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
-        for img in imgs:
-            k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
-            setattr(self, k, v)
 
 def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
@@ -39,14 +32,33 @@ def find_icon_location(lushi, icon):
         return False, None, None, maxVal
 
 
+def find_relative_loc():
+    pos = pyautogui.position()
+    rect, _ = find_lushi_window()
+    print((pos[0]-rect[0], pos[1]-rect[1]))
+
+
+def move2loc(x, y):
+    rect, _ = find_lushi_window()
+    loc = (x + rect[0], y + rect[1])
+    pyautogui.moveTo(loc)
+
+
 class Agent:
-    def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt):
-        self.icons = Icons()
+    def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt, early_stop):
+        self.icons = {}
+        imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
+            self.icons[k] = v
+        
         self.team_id = team_id
         self.heros_id = heros_id
         self.skills_id = skills_id
         self.targets_id = targets_id
         self.hero_cnt = hero_cnt
+        self.early_stop = early_stop
 
         self.hero_relative_locs = [
             (677, 632),
@@ -97,17 +109,39 @@ class Agent:
         self.surrender_loc = (815, 363)
 
         self.start_battle_loc = (1327, 454)
+        self.check_team_loc = (674, 885)
+        self.give_up_loc = (929, 706)
+        self.give_up_cfm_loc = (712, 560)
     
     def run(self):
         surprise_loc = None
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            pyautogui.moveTo(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
-            pyautogui.click()
-            print(states)
+            print(states, self.early_stop)
 
-            if 'mercenaries ' in states:
+            if  not ('destroy' in states or 'blue_portal' in states or 'boom' in states or 'stranger' in states):
+                pyautogui.moveTo(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
+                pyautogui.click()
+            else:
+                if 'stranger' in states:
+                    pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
+                    visitor_id = np.random.randint(0, 3)
+                    visitor_loc = self.visitor_locs[visitor_id]
+                    pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                    pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
+                    time.sleep(2.0)
+                    stranger_loc = states['stranger'][0]
+                    pyautogui.click(stranger_loc[0], stranger_loc[1], clicks=2, interval=0.25)
+                    print('Found stranger', states)
+
+                if self.early_stop:
+                    pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
+                    pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
+                    pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
+                continue
+
+            if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
                 continue
 
@@ -126,10 +160,11 @@ class Agent:
                 if 'team_lock' in states:
                     pyautogui.click(states['team_lock'][0])
                 pyautogui.click(rect[0] + self.start_team_loc[0], rect[1] + self.start_team_loc[1])
+                time.sleep(2)
                 continue
-
+            
             if 'member_ready' in states:
-                if 'boom' in states or 'ice_berg2' in states:
+                if 'ice_berg2' in states:
                     print("Surrendering")
                     pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
@@ -164,14 +199,6 @@ class Agent:
 
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
                 pyautogui.click(rect[0] + self.treasure_collect_loc[0], rect[1] + self.treasure_collect_loc[1])
-                continue     
-                
-
-            if 'visitor_list' in states:
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = self.visitor_locs[visitor_id]
-                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
-                pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
                 continue
             
             if 'final_reward' in states:
@@ -183,10 +210,6 @@ class Agent:
             if 'final_confirm' in states:
                 pyautogui.click(states['final_confirm'][0])
                 surprise_loc = None
-                continue
-            
-            if 'start_game' in states:
-                pyautogui.click(states['start_game'][0])
                 continue
 
             if 'surprise' in states:
@@ -200,7 +223,8 @@ class Agent:
                     for loc in side_locs:
                         pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
                         pyautogui.click(clicks=2, interval=0.25)
-                    pyautogui.click(surprise_loc)
+                    pyautogui.moveTo(surprise_loc)
+                    pyautogui.click(clicks=2, interval=0.25)
                 continue
             
             if 'skill_select' in states or 'not_ready_dots' in states:
@@ -225,11 +249,10 @@ class Agent:
     def check_state(self):
         lushi, image = find_lushi_window()
         output_list = {}
-        for k, v in self.icons.__dict__.items():
-            if not k.startswith('_'):
-                success, click_loc, conf = self.find_icon_and_click_loc(v, lushi, image)
-                if success:
-                    output_list[k] = (click_loc, conf)
+        for k, v in self.icons.items():
+            success, click_loc, conf = self.find_icon_and_click_loc(v, lushi, image)
+            if success:
+                output_list[k] = (click_loc, conf)
         return output_list, lushi
         
     def find_icon_and_click_loc(self, icon, lushi, image):
@@ -240,39 +263,28 @@ class Agent:
             click_loc = None
         return success, click_loc, conf
 
-def find_relative_loc():
-    pos = pyautogui.position()
-    rect, _ = find_lushi_window()
-    print((pos[0]-rect[0], pos[1]-rect[1]))
-
-
-def move2loc(x, y):
-    pos = pyautogui.position()
-    rect, _ = find_lushi_window()
-    loc = (x + rect[0], y + rect[1])
-    pyautogui.moveTo(loc)
-
 def main():
     pyautogui.PAUSE = 0.8
     pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本会出错；请参考config.txt修改配置文件")
     with open('config.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
-    
-    assert(len(lines) == 4)
 
-    team_id, heros_id, skills_id, targets_id = lines
+    assert(len(lines) == 5)
+
+    team_id, heros_id, skills_id, targets_id, early_stop = lines
 
 
     heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
     skills_id = [int(s.strip()) for s in skills_id.strip().split(' ') if not s.startswith('#')]
     targets_id = [int(s.strip()) for s in targets_id.strip().split(' ') if not s.startswith('#')]
     team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
+    early_stop = int(early_stop.split('#')[0].strip())
 
     assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
     assert(team_id in [0, 1, 2] and hero_cnt <= 6)
 
 
-    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt)
+    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt, early_stop=early_stop)
     agent.run()
             
 
