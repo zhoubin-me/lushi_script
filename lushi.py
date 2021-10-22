@@ -264,14 +264,12 @@ class Agent:
         return success, click_loc, conf
 
 def main():
-    pyautogui.PAUSE = 0.8
     pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本会出错；请参考config.txt修改配置文件")
     with open('config.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
-    assert(len(lines) == 5)
 
-    team_id, heros_id, skills_id, targets_id, early_stop = lines
+    team_id, heros_id, skills_id, targets_id, early_stop, delay = lines
 
 
     heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
@@ -279,10 +277,12 @@ def main():
     targets_id = [int(s.strip()) for s in targets_id.strip().split(' ') if not s.startswith('#')]
     team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
     early_stop = int(early_stop.split('#')[0].strip())
+    delay = float(delay.split('#')[0].strip())
 
     assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
     assert(team_id in [0, 1, 2] and hero_cnt <= 6)
 
+    pyautogui.PAUSE = delay
 
     agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt, early_stop=early_stop)
     agent.run()
