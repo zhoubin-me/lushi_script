@@ -8,19 +8,17 @@ import win32api
 from winguiauto import findTopWindow
 import win32gui
 import win32con
+import os
 
 
 
 class Icons:
     def __init__(self):
-        for k, v in Images.__dict__.items():
-            if not k.startswith('_'):
-                setattr(self, k, self.fname2img(v))
-
-    @staticmethod
-    def fname2img(fname):
-        return cv2.cvtColor(cv2.imread(fname), cv2.COLOR_BGR2GRAY)
-
+        imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
+            setattr(self, k, v)
 
 def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
@@ -40,29 +38,6 @@ def find_icon_location(lushi, icon):
     else:
         return False, None, None, maxVal
 
-    
-class Images:
-    yongbing = 'imgs/yongbing.png'
-    travel = 'imgs/travel.png'
-    air_element = 'imgs/air.png'
-    team_list = 'imgs/team_list.png'
-    team_lock = 'imgs/team_lock.png'
-    start_point = 'imgs/start_point.png'
-
-    member_ready = 'imgs/member_ready.png'
-
-    not_ready = 'imgs/not_ready.png'
-    skill_select = 'imgs/skill_select.png'
-    battle_ready2 = 'imgs/battle_ready2.png'
-    surprise = 'imgs/surprise2.png'
-
-    treasure_list = 'imgs/treasure_list.png'
-    treasure_replace = 'imgs/treasure_replace.png'
-    visitor_list = 'imgs/visitor_list.png'
-    final_reward = 'imgs/final_reward.png'
-
-    final_confirm = 'imgs/final_confirm.png'
-    boom = 'imgs/boom.png'
 
 class Agent:
     def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt):
@@ -133,8 +108,8 @@ class Agent:
             pyautogui.click()
             print(states)
 
-            if 'yongbing' in states:
-                pyautogui.click(states['yongbing'][0])
+            if 'mercenaries ' in states:
+                pyautogui.click(states['mercenaries'][0])
                 continue
 
             if 'travel' in states:
@@ -172,8 +147,8 @@ class Agent:
                 pyautogui.click(states['member_ready'][0])
                 continue
 
-            if 'battle_ready2' in states:
-                pyautogui.click(states['battle_ready2'][0])
+            if 'battle_ready' in states:
+                pyautogui.click(states['battle_ready'][0])
                 continue
 
 
@@ -221,7 +196,7 @@ class Agent:
                     pyautogui.click(surprise_loc)
                 continue
             
-            if 'skill_select' in states or 'not_ready' in states:
+            if 'skill_select' in states or 'not_ready_dots' in states:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
                 first_hero_loc = self.hero_relative_locs[0]
                 pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
