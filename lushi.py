@@ -96,8 +96,7 @@ class Agent:
         self.options_loc = (1579, 920)
         self.surrender_loc = (815, 363)
 
-        self.empty_loc = (1518, 921)
-
+        self.start_battle_loc = (1327, 454)
     
     def run(self):
         surprise_loc = None
@@ -142,8 +141,10 @@ class Agent:
                     dis = (last_x - first_x) // (self.hero_cnt - i - 1)
                     loc = (first_x + dis * (idx - i), y)
                     pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
-                    pyautogui.click(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
-                
+                    pyautogui.moveTo(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
+                    pyautogui.click()
+
+                time.sleep(0.5)
                 pyautogui.click(states['member_ready'][0])
                 continue
 
@@ -209,6 +210,8 @@ class Agent:
                     if target_id != -1:
                         enemy_loc = (rect[0] + self.enemy_mid_location[0], rect[1] + self.enemy_mid_location[1])
                         pyautogui.click(*enemy_loc)
+                time.sleep(0.5)
+                pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
                 continue
 
 
