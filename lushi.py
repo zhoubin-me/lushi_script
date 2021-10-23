@@ -114,6 +114,7 @@ class Agent:
         self.give_up_loc = (929, 706)
         self.give_up_cfm_loc = (712, 560)
         self.empty_loc = (1488, 921)
+        self.final_confirm = (794, 779)
     
     def run(self):
         surprise_loc = None
@@ -171,8 +172,7 @@ class Agent:
                 continue
 
             if 'final_confirm' in states:
-                pyautogui.click(states['final_confirm'][0])
-                surprise_loc = None
+                pyautogui.click(rect[0]+self.final_confirm[0], rect[1]+self.final_confirm[1])
                 continue
             
             if 'team_list' in states:
@@ -217,30 +217,38 @@ class Agent:
                     if target_id != -1:
                         enemy_loc = (rect[0] + self.enemy_mid_location[0], rect[1] + self.enemy_mid_location[1])
                         pyautogui.click(*enemy_loc)
-                time.sleep(0.5)
                 pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
                 continue
             else:
-                pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
+                if 'battle_ready' in states:
+                    pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
+                else:
+                    pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
+
             
 
-            if 'surprise' in states:
-                surprise_loc = states['surprise'][0]
-                if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
-                    side = 'left'
-                else:
-                    side = 'right'
-                side_locs = self.locs[side]
-                for loc in side_locs:
-                    pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
-                    pyautogui.click(clicks=2, interval=0.25)
-                pyautogui.moveTo(surprise_loc)
-                pyautogui.click(clicks=2, interval=0.25)
+            if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
-            if 'start_game' in states:
-                pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
+            if 'surprise' in states:
+                surprise_loc = states['surprise'][0]
+                pyautogui.moveTo(surprise_loc)
+                pyautogui.click(clicks=2, interval=0.25)
+
+            if 'map_not_ready' in states:
+                if surprise_loc is not None:
+                    if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
+                        side = 'left'
+                    else:
+                        side = 'right'
+                else:
+                    side = 'right'
+                side_loc = self.locs[side]
+                for loc in side_loc:
+                    pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
+                    pyautogui.click(clicks=2, interval=0.25)
+                continue
 
 
 
