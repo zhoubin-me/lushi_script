@@ -232,14 +232,14 @@ class Agent:
                     pyautogui.click(states['team_lock'][0])
                 pyautogui.click(rect[0] + self.start_team_loc[0], rect[1] + self.start_team_loc[1])
                 continue
-            
-            if 'boom2' in states:
-                print("Surrendering")
-                pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
-                pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
-                continue
 
             if 'member_ready' in states:
+                if 'boom2' in states or 'ice_berg2' in states:
+                    print("Surrendering")
+                    pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
+                    pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
+                    continue
+
                 if self.hero_cnt > 3:
                     first_x, last_x, y = self.members_loc
                     for i, idx in enumerate(self.heros_id):
@@ -296,25 +296,19 @@ class Agent:
                 else:
                     x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
 
-                if 'surprise' in states:
-                    surprise_loc = states['surprise'][0]
-
-                    if (side == 'left' and first_x < surprise_loc[0] and surprise_loc[0] < mid_x) or (side == 'right' and mid_x < surprise_loc[0] and surprise_loc[0] < last_x):
-                        if np.abs(surprise_loc[1] - rect[1] - self.map_locs[-1]) < 100:
-                            pyautogui.moveTo(surprise_loc)
-                            pyautogui.click(clicks=2, interval=0.25)
-                            continue
-                    
                 for x in (x1, x2, x3):
                     pyautogui.moveTo(x+rect[0], y+rect[1])
-                    pyautogui.click(clicks=2, interval=0.25)
+                    pyautogui.mouseDown()
+                    pyautogui.mouseUp()
 
-
-
-            if 'final_boss' in states:
-                pyautogui.moveTo(rect[0]+self.final_boss_loc[0], rect[1]+self.final_boss_loc[1])
-                pyautogui.click(clicks=2, interval=0.25)
-            
+                if 'surprise' in states:
+                    surprise_loc = states['surprise'][0]
+                    if (side == 'left' and first_x < surprise_loc[0] and surprise_loc[0] < mid_x) or (side == 'right' and mid_x < surprise_loc[0] and surprise_loc[0] < last_x):
+                        if np.abs(surprise_loc[1] - rect[1] - self.map_locs[-1]) < 100:
+                            pyautogui.moveTo(surprise_loc, duration=0.5)
+                            pyautogui.mouseDown()
+                            pyautogui.mouseUp()
+                
             pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
 
 def main():
