@@ -140,6 +140,17 @@ class Agent:
                     pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
                 continue
 
+            if 'treasure_list' in states or 'treasure_replace' in states:
+                treasure_loc_id = np.random.randint(0, 3)
+                treasure_loc = self.treasure_locs[treasure_loc_id]
+                if 'ice_berg' in states:
+                    x_dis = np.abs(treasure_loc[0] + rect[0] - states['ice_berg'][0][0])
+                    if x_dis < 100:
+                        continue
+                pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
+                pyautogui.click(rect[0] + self.treasure_collect_loc[0], rect[1] + self.treasure_collect_loc[1])
+                continue
+
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
                 continue
@@ -152,6 +163,17 @@ class Agent:
             if 'air_element' in states:
                 pyautogui.click(states['air_element'][0])
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
+                continue
+            
+            if 'final_reward' in states:
+                for rew in self.finial_reward_locs:
+                    pyautogui.moveTo(rect[0]+rew[0], rect[1]+rew[1])
+                    pyautogui.click()
+                continue
+
+            if 'final_confirm' in states:
+                pyautogui.click(states['final_confirm'][0])
+                surprise_loc = None
                 continue
             
             if 'team_list' in states:
@@ -182,30 +204,6 @@ class Agent:
                 time.sleep(0.5)
                 pyautogui.click(states['member_ready'][0])
                 continue
-
-            if 'treasure_list' in states or 'treasure_replace' in states:
-                treasure_loc_id = np.random.randint(0, 3)
-                treasure_loc = self.treasure_locs[treasure_loc_id]
-                if 'ice_berg' in states:
-                    x_dis = np.abs(treasure_loc[0] + rect[0] - states['ice_berg'][0][0])
-                    if x_dis < 100:
-                        continue
-                pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
-                pyautogui.click(rect[0] + self.treasure_collect_loc[0], rect[1] + self.treasure_collect_loc[1])
-                continue
-            
-            if 'final_reward' in states:
-                for rew in self.finial_reward_locs:
-                    pyautogui.moveTo(rect[0]+rew[0], rect[1]+rew[1])
-                    pyautogui.click()
-                continue
-
-            if 'final_confirm' in states:
-                pyautogui.click(states['final_confirm'][0])
-                surprise_loc = None
-                continue
-
-
             
             if 'not_ready_dots' in states:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
