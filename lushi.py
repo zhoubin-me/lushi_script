@@ -160,11 +160,11 @@ class Agent:
 
     def run(self):
         side = None
-        surprise_loc = None
+        surprise_in_mid = False
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            print(states, self.early_stop)
+            print(states, side, surprise_in_mid)
 
             if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.early_stop:
                 pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
@@ -286,16 +286,25 @@ class Agent:
                     side = 'left'
                 else:
                     side = 'right'
+                first_x, mid_x, last_x, y = self.map_locs
+                if np.abs(surprise_loc[0] - rect[0] - mid_x) < 50:
+                    surprise_in_mid = True
+                else:
+                    surprise_in_mid = False
+
 
             if 'map_not_ready' in states:
                 first_x, mid_x, last_x, y = self.map_locs
                 if side is None:
                     side = 'left'
                 if side == 'left':
-                    x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
+                    x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x
                 else:
                     x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
 
+                if surprise_in_mid:
+                    x1, x3 = x3, x1
+                
                 for x in (x1, x2, x3):
                     pyautogui.moveTo(x+rect[0], y+rect[1])
                     pyautogui.mouseDown()
