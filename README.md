@@ -11,11 +11,11 @@ Currently only support H1-2 map.
 * Support early stop once collected rewards from stranger
 * Fixed problem caused by ice wall from rewards
 * Fixed problem caused by blue portal, boom, etc
+* Support more maps with different count of rewards
 
 ### Plan
 * Support English
 * Support more resolution
-* Support more maps
 * Support multi-round battle skill selection
 
 ### Caution
