@@ -118,6 +118,7 @@ class Agent:
         self.give_up_cfm_loc = (712, 560)
         self.empty_loc = (1488, 921)
         self.final_confirm = (794, 779)
+        self.final_boss_loc = (646, 227)
 
     def load_config(self):
         with open('config.txt', 'r', encoding='utf-8') as f:
@@ -245,7 +246,8 @@ class Agent:
                         enemy_loc = (rect[0] + self.enemy_mid_location[0], rect[1] + self.enemy_mid_location[1])
                         pyautogui.moveTo(enemy_loc)
                         pyautogui.click()
-                pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
+                pyautogui.moveTo(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
+                pyautogui.click()
                 continue
             else:
                 if 'battle_ready' in states:
@@ -253,25 +255,22 @@ class Agent:
                 else:
                     pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
 
-            
-
             if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
             if 'surprise' in states:
-                surprise_loc = states['surprise'][0]
-                if 'surprise_collected' in states:
-                    conf = states['surprise_collected'][1]
-                else:
-                    conf = -1
-                if conf < 0.85:
-                    pyautogui.moveTo(surprise_loc)
-                    pyautogui.click(clicks=2, interval=0.25)
+                pyautogui.moveTo(surprise_loc)
+                pyautogui.click()
 
+                time.sleep(0.5)
+                states, rect = self.check_state()
+                if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
+                    pyautogui.moveTo(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
+                    pyautogui.click()
+                    continue
 
             if 'map_not_ready' in states:
-                pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 if 'surprise' in states:
                     surprise_loc = states['surprise'][0]
                 if surprise_loc is not None:
@@ -284,10 +283,16 @@ class Agent:
                 side_loc = self.locs[side]
                 for loc in side_loc:
                     pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
-                    pyautogui.click(clicks=2, interval=0.25)
-                continue
+                    pyautogui.click()
+                
+                time.sleep(0.5)
+                states, rect = self.check_state()
+                if 'final_boss' in states:
+                    pyautogui.moveTo(rect[0]+self.final_boss_loc[0], rect[1]+self.final_boss_loc[1])
+                    pyautogui.click()
+            
 
-
+                
 
     def check_state(self):
         lushi, image = find_lushi_window()
