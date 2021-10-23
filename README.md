@@ -1,19 +1,26 @@
 # lushi_script
 
-### Update
-* 支持选择出场英雄了
-* 支持配置文件了
-* 支持选择是否提前结束战斗
-* 修复了冰法出冰墙导致的问题
-* 修复了传送门导致的问题
-
-### Plan
-* 支持多分辨率
-* 支持其他副本
-* 支持多轮战斗的技能选择
 
 ## Introduction
-This script is to "SHUA" Mercenaries mode of Hearthstone
+This script is to save your time from Mercenaries mode of Hearthstone.
+Currently only support H1-2 map
+
+### Update
+* Support selection of heros
+* Use config files
+* Support early stop once collected rewards from stranger
+* Fixed problem caused by ice wall from rewards
+* Fixed problem caused by blue portal, boom, etc
+
+### Plan
+* Support English
+* Support more resolution
+* Support more maps
+* Support multi-round battle skill selection
+
+### Caution
+- Currently only support Simplified Chinese
+- Make sure you save your config.txt in 'utf-8' format
 
 ## Installation
 
