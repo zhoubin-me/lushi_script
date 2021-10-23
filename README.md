@@ -20,7 +20,7 @@ Currently only support H1-2 map
 
 ### Caution
 - Currently only support Simplified Chinese
-- Make sure you save your config.txt in 'utf-8' format
+- Make sure you save your ```config.txt``` in 'utf-8' format
 
 ## Installation
 
