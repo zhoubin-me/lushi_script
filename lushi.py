@@ -17,6 +17,7 @@ def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
+    image.save('out.png')
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
     return rect, image
 
@@ -92,14 +93,15 @@ class Agent:
 
         self.drag2loc = (1213, 564)
 
-        self.locs = {
-            'left': [(452, 464), (558, 461), (473, 465)],
-            'right': [(777, 478), (800, 459), (903, 469)]
+        self.map_locs = (420, 650, 900, 453)
+
+        reward_locs = {
+            5: [(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430), (806, 525)],
+            4: [(660, 314), (554, 687), (1010, 794), (1117, 405), (806, 525)],
+            3: [(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430), (806, 525)],
         }
 
-        self.finial_reward_locs = [
-            (660, 314), (554, 687), (1010, 794), (1117, 405), (806, 525)
-        ]
+        self.final_reward_locs = reward_locs[self.reward_cnt]
 
         self.select_travel_relative_loc = (1090, 674)
 
@@ -124,14 +126,12 @@ class Agent:
         with open('config.txt', 'r', encoding='utf-8') as f:
             lines = f.readlines()
 
-        team_id, heros_id, skills_id, targets_id, early_stop, delay, confidence = lines
-
-
+        others, heros_id, skills_id, targets_id, early_stop, delay, confidence = lines
         self.heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
         self.skills_id = [int(s.strip()) for s in skills_id.strip().split(' ') if not s.startswith('#')]
         self.targets_id = [int(s.strip()) for s in targets_id.strip().split(' ') if not s.startswith('#')]
 
-        self.team_id, self.hero_cnt, self.boss_id = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
+        self.team_id, self.hero_cnt, self.boss_id, self.reward_cnt = [int(s.strip()) for s in others.strip().split(' ') if not s.startswith('#')]
 
         self.early_stop = int(early_stop.split('#')[0].strip())
         self.confidence = float(confidence.split('#')[0].strip())
@@ -141,7 +141,25 @@ class Agent:
 
         pyautogui.PAUSE = float(delay.split('#')[0].strip())
     
+    def check_state(self):
+        lushi, image = find_lushi_window()
+        output_list = {}
+        for k, v in self.icons.items():
+            success, click_loc, conf = self.find_icon_loc(v, lushi, image)
+            if success:
+                output_list[k] = (click_loc, conf)
+        return output_list, lushi
+        
+    def find_icon_loc(self, icon, lushi, image):
+        success, X, Y, conf = find_icon_location(image, icon, self.confidence)
+        if success:
+            click_loc = (X + lushi[0], Y + lushi[1])
+        else:
+            click_loc = None
+        return success, click_loc, conf
+
     def run(self):
+        side = None
         surprise_loc = None
         while True:
             time.sleep(np.random.rand()+0.5)
@@ -168,10 +186,17 @@ class Agent:
             if 'treasure_list' in states or 'treasure_replace' in states:
                 treasure_loc_id = np.random.randint(0, 3)
                 treasure_loc = self.treasure_locs[treasure_loc_id]
+
                 if 'ice_berg' in states:
                     x_dis = np.abs(treasure_loc[0] + rect[0] - states['ice_berg'][0][0])
                     if x_dis < 100:
                         continue
+                
+                if 'ancient_call' in states:
+                    x_dis = np.abs(treasure_loc[0] + rect[0] - states['ancient_call'][0][0])
+                    if x_dis < 100:
+                        continue
+                
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
                 pyautogui.click(rect[0] + self.treasure_collect_loc[0], rect[1] + self.treasure_collect_loc[1])
                 continue
@@ -191,8 +216,8 @@ class Agent:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
                 continue
             
-            if 'final_reward' in states:
-                for loc in self.finial_reward_locs:
+            if 'final_reward' in states or 'final_reward2' in states:
+                for loc in self.final_reward_locs:
                     pyautogui.moveTo(rect[0] + loc[0], rect[1] + loc[1])
                     pyautogui.click()
                 continue
@@ -206,7 +231,6 @@ class Agent:
                 if 'team_lock' in states:
                     pyautogui.click(states['team_lock'][0])
                 pyautogui.click(rect[0] + self.start_team_loc[0], rect[1] + self.start_team_loc[1])
-                time.sleep(0.5)
                 continue
             
             if 'boom2' in states:
@@ -225,11 +249,13 @@ class Agent:
                         pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
                         pyautogui.moveTo(rect[0] + self.drag2loc[0], rect[1] + self.drag2loc[1])
                         pyautogui.click()
-
-                time.sleep(0.5)
                 pyautogui.click(states['member_ready'][0])
                 continue
-            
+
+            if 'battle_ready' in states:
+                pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
+                continue
+
             if 'not_ready_dots' in states:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
                 first_hero_loc = self.hero_relative_locs[0]
@@ -249,67 +275,47 @@ class Agent:
                 pyautogui.moveTo(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
                 pyautogui.click()
                 continue
-            else:
-                if 'battle_ready' in states:
-                    pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
-                else:
-                    pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
 
             if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
             if 'surprise' in states:
-                pyautogui.moveTo(surprise_loc)
-                pyautogui.click()
-
-                time.sleep(0.5)
-                states, rect = self.check_state()
-                if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
-                    pyautogui.moveTo(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
-                    pyautogui.click()
-                    continue
+                surprise_loc = states['surprise'][0]
+                if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
+                    side = 'left'
+                else:
+                    side = 'right'
 
             if 'map_not_ready' in states:
+                first_x, mid_x, last_x, y = self.map_locs
+                if side is None:
+                    side = 'left'
+                if side == 'left':
+                    x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
+                else:
+                    x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
+
                 if 'surprise' in states:
                     surprise_loc = states['surprise'][0]
-                if surprise_loc is not None:
-                    if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
-                        side = 'left'
-                    else:
-                        side = 'right'
-                else:
-                    side = 'left'
-                side_loc = self.locs[side]
-                for loc in side_loc:
-                    pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
-                    pyautogui.click()
-                
-                time.sleep(0.5)
-                states, rect = self.check_state()
-                if 'final_boss' in states:
-                    pyautogui.moveTo(rect[0]+self.final_boss_loc[0], rect[1]+self.final_boss_loc[1])
-                    pyautogui.click()
+
+                    if (side == 'left' and first_x < surprise_loc[0] and surprise_loc[0] < mid_x) or (side == 'right' and mid_x < surprise_loc[0] and surprise_loc[0] < last_x):
+                        if np.abs(surprise_loc[1] - rect[1] - self.map_locs[-1]) < 100:
+                            pyautogui.moveTo(surprise_loc)
+                            pyautogui.click(clicks=2, interval=0.25)
+                            continue
+                    
+                for x in (x1, x2, x3):
+                    pyautogui.moveTo(x+rect[0], y+rect[1])
+                    pyautogui.click(clicks=2, interval=0.25)
+
+
+
+            if 'final_boss' in states:
+                pyautogui.moveTo(rect[0]+self.final_boss_loc[0], rect[1]+self.final_boss_loc[1])
+                pyautogui.click(clicks=2, interval=0.25)
             
-
-                
-
-    def check_state(self):
-        lushi, image = find_lushi_window()
-        output_list = {}
-        for k, v in self.icons.items():
-            success, click_loc, conf = self.find_icon_and_click_loc(v, lushi, image)
-            if success:
-                output_list[k] = (click_loc, conf)
-        return output_list, lushi
-        
-    def find_icon_and_click_loc(self, icon, lushi, image):
-        success, X, Y, conf = find_icon_location(image, icon, self.confidence)
-        if success:
-            click_loc = (X + lushi[0], Y + lushi[1])
-        else:
-            click_loc = None
-        return success, click_loc, conf
+            pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
 
 def main():
     pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本可能会出错；请参考config.txt修改配置文件")
