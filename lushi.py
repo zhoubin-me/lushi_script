@@ -17,7 +17,9 @@ def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
+    image.save('out.png')
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+
     return rect, image
 
 def find_icon_location(lushi, icon):
@@ -25,8 +27,8 @@ def find_icon_location(lushi, icon):
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
     if maxVal > 0.8:
         (startX, startY) = maxLoc
-        endX = startX + icon.shape[1]
-        endY = startY + icon.shape[0]
+        endX = startX + icon.shape[0]
+        endY = startY + icon.shape[1]
         return True, (startX+endX)//2, (startY+endY)//2, maxVal
     else:
         return False, None, None, maxVal
@@ -112,6 +114,7 @@ class Agent:
         self.check_team_loc = (674, 885)
         self.give_up_loc = (929, 706)
         self.give_up_cfm_loc = (712, 560)
+        self.empty_loc = (1488, 921)
     
     def run(self):
         surprise_loc = None
@@ -120,21 +123,17 @@ class Agent:
             states, rect = self.check_state()
             print(states, self.early_stop)
 
-            if  not ('destroy' in states or 'blue_portal' in states or 'boom' in states or 'stranger' in states):
-                pyautogui.moveTo(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
-                pyautogui.click()
-            else:
-                if 'stranger' in states:
-                    pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
-                    visitor_id = np.random.randint(0, 3)
-                    visitor_loc = self.visitor_locs[visitor_id]
-                    pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
-                    pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
-                    time.sleep(2.0)
-                    stranger_loc = states['stranger'][0]
-                    pyautogui.click(stranger_loc[0], stranger_loc[1], clicks=2, interval=0.25)
-                    print('Found stranger', states)
-
+            if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.early_stop:
+                pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
+                pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
+                pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
+                continue
+            
+            if 'visitor_list' in states:
+                visitor_id = np.random.randint(0, 3)
+                visitor_loc = self.visitor_locs[visitor_id]
+                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
                 if self.early_stop:
                     pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
                     pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
@@ -184,11 +183,6 @@ class Agent:
                 pyautogui.click(states['member_ready'][0])
                 continue
 
-            if 'battle_ready' in states:
-                pyautogui.click(states['battle_ready'][0])
-                continue
-
-
             if 'treasure_list' in states or 'treasure_replace' in states:
                 treasure_loc_id = np.random.randint(0, 3)
                 treasure_loc = self.treasure_locs[treasure_loc_id]
@@ -196,7 +190,6 @@ class Agent:
                     x_dis = np.abs(treasure_loc[0] + rect[0] - states['ice_berg'][0][0])
                     if x_dis < 100:
                         continue
-
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
                 pyautogui.click(rect[0] + self.treasure_collect_loc[0], rect[1] + self.treasure_collect_loc[1])
                 continue
@@ -212,22 +205,9 @@ class Agent:
                 surprise_loc = None
                 continue
 
-            if 'surprise' in states:
-                surprise_loc = states['surprise'][0]
-                if 'start_point' not in states:
-                    if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
-                        side = 'left'
-                    else:
-                        side = 'right'
-                    side_locs = self.locs[side]
-                    for loc in side_locs:
-                        pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
-                        pyautogui.click(clicks=2, interval=0.25)
-                    pyautogui.moveTo(surprise_loc)
-                    pyautogui.click(clicks=2, interval=0.25)
-                continue
+
             
-            if 'skill_select' in states or 'not_ready_dots' in states:
+            if 'not_ready_dots' in states:
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
                 first_hero_loc = self.hero_relative_locs[0]
                 pyautogui.click(rect[0]+first_hero_loc[0], rect[1]+first_hero_loc[1])
@@ -243,6 +223,27 @@ class Agent:
                 time.sleep(0.5)
                 pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
                 continue
+            else:
+                pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
+            
+
+            if 'surprise' in states:
+                surprise_loc = states['surprise'][0]
+                if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
+                    side = 'left'
+                else:
+                    side = 'right'
+                side_locs = self.locs[side]
+                for loc in side_locs:
+                    pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
+                    pyautogui.click(clicks=2, interval=0.25)
+                pyautogui.moveTo(surprise_loc)
+                pyautogui.click(clicks=2, interval=0.25)
+                pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
+                continue
+
+            if 'start_game' in states:
+                pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
 
 
 
@@ -264,7 +265,7 @@ class Agent:
         return success, click_loc, conf
 
 def main():
-    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本会出错；请参考config.txt修改配置文件")
+    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本可能会出错；请参考config.txt修改配置文件")
     with open('config.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
