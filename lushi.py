@@ -184,7 +184,7 @@ class Agent:
                 continue
             
             if 'member_ready' in states:
-                if 'ice_berg2' in states:
+                if 'ice_berg2' in states or 'boom2' in states:
                     print("Surrendering")
                     pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
                     pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
@@ -227,11 +227,11 @@ class Agent:
 
             
 
-            if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states:
+            if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
-            if 'surprise' in states:
+            if 'surprise' in states and 'surprise_collected' not in states:
                 surprise_loc = states['surprise'][0]
                 pyautogui.moveTo(surprise_loc)
                 pyautogui.click(clicks=2, interval=0.25)
