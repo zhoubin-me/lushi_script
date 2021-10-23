@@ -18,13 +18,12 @@ def find_lushi_window():
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
-
     return rect, image
 
-def find_icon_location(lushi, icon):
+def find_icon_location(lushi, icon, confidence):
     result = cv2.matchTemplate(lushi, icon, cv2.TM_CCOEFF_NORMED)
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
-    if maxVal > 0.8:
+    if maxVal > confidence:
         (startX, startY) = maxLoc
         endX = startX + icon.shape[0]
         endY = startY + icon.shape[1]
@@ -46,7 +45,7 @@ def move2loc(x, y):
 
 
 class Agent:
-    def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt, early_stop):
+    def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt, early_stop, confidence):
         self.icons = {}
         imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
         for img in imgs:
@@ -60,6 +59,7 @@ class Agent:
         self.targets_id = targets_id
         self.hero_cnt = hero_cnt
         self.early_stop = early_stop
+        self.confidence = confidence
 
         self.hero_relative_locs = [
             (677, 632),
@@ -262,7 +262,7 @@ class Agent:
         return output_list, lushi
         
     def find_icon_and_click_loc(self, icon, lushi, image):
-        success, X, Y, conf = find_icon_location(image, icon)
+        success, X, Y, conf = find_icon_location(image, icon, self.confidence)
         if success:
             click_loc = (X + lushi[0], Y + lushi[1])
         else:
@@ -275,7 +275,7 @@ def main():
         lines = f.readlines()
 
 
-    team_id, heros_id, skills_id, targets_id, early_stop, delay = lines
+    team_id, heros_id, skills_id, targets_id, early_stop, delay, confidence = lines
 
 
     heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
@@ -284,13 +284,14 @@ def main():
     team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
     early_stop = int(early_stop.split('#')[0].strip())
     delay = float(delay.split('#')[0].strip())
+    confidence = float(confidence.split('#')[0].strip())
 
     assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
     assert(team_id in [0, 1, 2] and hero_cnt <= 6)
 
     pyautogui.PAUSE = delay
 
-    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt, early_stop=early_stop)
+    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt, early_stop=early_stop, confidence=confidence)
     agent.run()
             
 
