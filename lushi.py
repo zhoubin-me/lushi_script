@@ -166,9 +166,8 @@ class Agent:
                 continue
             
             if 'final_reward' in states:
-                for rew in self.finial_reward_locs:
-                    pyautogui.moveTo(rect[0]+rew[0], rect[1]+rew[1])
-                    pyautogui.click()
+                pyautogui.moveTo(states['final_reward'][0])
+                pyautogui.click()
                 continue
 
             if 'final_confirm' in states:
@@ -183,13 +182,13 @@ class Agent:
                 time.sleep(2)
                 continue
             
+            if 'boom2' in states:
+                print("Surrendering")
+                pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
+                pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
+                continue
+
             if 'member_ready' in states:
-                if 'ice_berg2' in states or 'boom2' in states:
-                    print("Surrendering")
-                    pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
-                    pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
-                    continue
-                
                 if self.hero_cnt > 3:
                     first_x, last_x, y = self.members_loc
                     for i, idx in enumerate(self.heros_id):
@@ -212,11 +211,14 @@ class Agent:
                 for idx, skill_id, target_id in zip([0, 1, 2], self.skills_id, self.targets_id):
                     hero_loc = (rect[0] + self.hero_relative_locs[idx][0], rect[1] + self.hero_relative_locs[idx][1])
                     skill_loc = (rect[0] + self.skill_relative_locs[skill_id][0], rect[1] + self.skill_relative_locs[skill_id][1])
-                    pyautogui.click(*skill_loc)
+
+                    pyautogui.moveTo(skill_loc)
+                    pyautogui.click()
                     
                     if target_id != -1:
                         enemy_loc = (rect[0] + self.enemy_mid_location[0], rect[1] + self.enemy_mid_location[1])
-                        pyautogui.click(*enemy_loc)
+                        pyautogui.moveTo(enemy_loc)
+                        pyautogui.click()
                 pyautogui.click(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
                 continue
             else:
@@ -231,12 +233,16 @@ class Agent:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
-            if 'surprise' in states and 'surprise_collected' in states:
+            if 'surprise' in states:
                 surprise_loc = states['surprise'][0]
-                surprise_collected_conf = states['surprise_collected'][1]
-                if surprise_collected_conf < 0.85:
+                if 'surprise_collected' in states:
+                    conf = states['surprise_collected'][1]
+                else:
+                    conf = -1
+                if conf < 0.85:
                     pyautogui.moveTo(surprise_loc)
                     pyautogui.click(clicks=2, interval=0.25)
+
 
             if 'map_not_ready' in states:
                 if 'surprise' in states:
