@@ -25,8 +25,8 @@ def find_icon_location(lushi, icon, confidence):
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
     if maxVal > confidence:
         (startX, startY) = maxLoc
-        endX = startX + icon.shape[0]
-        endY = startY + icon.shape[1]
+        endX = startX + icon.shape[1]
+        endY = startY + icon.shape[0]
         return True, (startX+endX)//2, (startY+endY)//2, maxVal
     else:
         return False, None, None, maxVal
