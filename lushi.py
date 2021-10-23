@@ -45,7 +45,7 @@ def move2loc(x, y):
 
 
 class Agent:
-    def __init__(self, team_id, heros_id, skills_id, targets_id, hero_cnt, early_stop, confidence):
+    def __init__(self):
         self.icons = {}
         imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
         for img in imgs:
@@ -53,18 +53,21 @@ class Agent:
             v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
             self.icons[k] = v
         
-        self.team_id = team_id
-        self.heros_id = heros_id
-        self.skills_id = skills_id
-        self.targets_id = targets_id
-        self.hero_cnt = hero_cnt
-        self.early_stop = early_stop
-        self.confidence = confidence
+        self.load_config()
 
         self.hero_relative_locs = [
             (677, 632),
             (807, 641),
             (943, 641)
+        ]
+
+        self.boss_relative_locs = [
+            (405, 352),
+            (676, 345),
+            (916, 362),
+            (405, 667),
+            (676, 667),
+            (916, 667),
         ]
 
         self.enemy_mid_location = (850, 285)
@@ -101,7 +104,7 @@ class Agent:
         self.select_travel_relative_loc = (1090, 674)
 
         self.team_locations = [(374, 324), (604, 330), (837, 324)]
-        self.team_loc = self.team_locations[team_id]
+        self.team_loc = self.team_locations[self.team_id]
         self.start_team_loc = (1190, 797)
         self.start_game_relative_loc = (1250, 732)
         self.start_point_relative_loc = (646, 712)
@@ -115,6 +118,27 @@ class Agent:
         self.give_up_cfm_loc = (712, 560)
         self.empty_loc = (1488, 921)
         self.final_confirm = (794, 779)
+
+    def load_config(self):
+        with open('config.txt', 'r', encoding='utf-8') as f:
+            lines = f.readlines()
+
+        team_id, heros_id, skills_id, targets_id, early_stop, delay, confidence = lines
+
+
+        self.heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
+        self.skills_id = [int(s.strip()) for s in skills_id.strip().split(' ') if not s.startswith('#')]
+        self.targets_id = [int(s.strip()) for s in targets_id.strip().split(' ') if not s.startswith('#')]
+
+        self.team_id, self.hero_cnt, self.boss_id = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
+
+        self.early_stop = int(early_stop.split('#')[0].strip())
+        self.confidence = float(confidence.split('#')[0].strip())
+
+        assert(len(self.skills_id) == 3 and len(self.targets_id) == 3 and len(self.heros_id) == 3)
+        assert(self.team_id in [0, 1, 2] and self.hero_cnt <= 6 and self.boss_id in list(range(6)))
+
+        pyautogui.PAUSE = float(delay.split('#')[0].strip())
     
     def run(self):
         surprise_loc = None
@@ -160,8 +184,9 @@ class Agent:
                 pyautogui.click(rect[0] + self.select_travel_relative_loc[0], rect[1] + self.select_travel_relative_loc[1])
                 continue
 
-            if 'air_element' in states:
-                pyautogui.click(states['air_element'][0])
+            if 'boss_list' in states:
+                loc = self.boss_relative_locs[self.boss_id]
+                pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
                 pyautogui.click(rect[0] + self.start_game_relative_loc[0], rect[1] + self.start_game_relative_loc[1])
                 continue
             
@@ -180,7 +205,7 @@ class Agent:
                 if 'team_lock' in states:
                     pyautogui.click(states['team_lock'][0])
                 pyautogui.click(rect[0] + self.start_team_loc[0], rect[1] + self.start_team_loc[1])
-                time.sleep(2)
+                time.sleep(0.5)
                 continue
             
             if 'boom2' in states:
@@ -232,7 +257,6 @@ class Agent:
 
             if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
-                time.sleep(1)
                 continue
 
             if 'surprise' in states:
@@ -247,6 +271,7 @@ class Agent:
 
 
             if 'map_not_ready' in states:
+                pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 if 'surprise' in states:
                     surprise_loc = states['surprise'][0]
                 if surprise_loc is not None:
@@ -254,7 +279,6 @@ class Agent:
                         side = 'left'
                     else:
                         side = 'right'
-                    
                 else:
                     side = 'left'
                 side_loc = self.locs[side]
@@ -284,28 +308,7 @@ class Agent:
 
 def main():
     pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本可能会出错；请参考config.txt修改配置文件")
-
-    with open('config.txt', 'r', encoding='utf-8') as f:
-        lines = f.readlines()
-
-
-    team_id, heros_id, skills_id, targets_id, early_stop, delay, confidence = lines
-
-
-    heros_id = [int(s.strip()) for s in heros_id.strip().split(' ') if not s.startswith('#')]
-    skills_id = [int(s.strip()) for s in skills_id.strip().split(' ') if not s.startswith('#')]
-    targets_id = [int(s.strip()) for s in targets_id.strip().split(' ') if not s.startswith('#')]
-    team_id, hero_cnt = [int(s.strip()) for s in team_id.strip().split(' ') if not s.startswith('#')]
-    early_stop = int(early_stop.split('#')[0].strip())
-    delay = float(delay.split('#')[0].strip())
-    confidence = float(confidence.split('#')[0].strip())
-
-    assert(len(skills_id) == 3 and len(targets_id) == 3 and len(heros_id) == 3)
-    assert(team_id in [0, 1, 2] and hero_cnt <= 6)
-
-    pyautogui.PAUSE = delay
-
-    agent = Agent(team_id=team_id, heros_id=heros_id, skills_id=skills_id, targets_id=targets_id, hero_cnt=hero_cnt, early_stop=early_stop, confidence=confidence)
+    agent = Agent()
     agent.run()
             
 
