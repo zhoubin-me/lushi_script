@@ -3,7 +3,7 @@
 
 ## Introduction
 This script is to save your time from Mercenaries mode of Hearthstone.
-Currently only support H1-2 map
+Currently only support H1-2 map.
 
 ### Update
 * Support selection of heros
