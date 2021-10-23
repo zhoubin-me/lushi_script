@@ -166,8 +166,9 @@ class Agent:
                 continue
             
             if 'final_reward' in states:
-                pyautogui.moveTo(states['final_reward'][0])
-                pyautogui.click()
+                for loc in self.finial_reward_locs:
+                    pyautogui.moveTo(rect[0] + loc[0], rect[1] + loc[1])
+                    pyautogui.click()
                 continue
 
             if 'final_confirm' in states:
@@ -231,6 +232,7 @@ class Agent:
 
             if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
+                time.sleep(1)
                 continue
 
             if 'surprise' in states:
