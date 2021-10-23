@@ -6,6 +6,11 @@
 * 支持选择是否提前结束战斗
 * 修复了冰法出冰山导致的问题
 
+## Plan
+* 支持多分辨率
+* 支持其他副本
+* 支持多轮战斗的技能选择
+
 ## Introduction
 This script is to "SHUA" Mercenaries mode of Hearthstone
 
