@@ -231,19 +231,24 @@ class Agent:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
-            if 'surprise' in states and 'surprise_collected' not in states:
+            if 'surprise' in states and 'surprise_collected' in states:
                 surprise_loc = states['surprise'][0]
-                pyautogui.moveTo(surprise_loc)
-                pyautogui.click(clicks=2, interval=0.25)
+                surprise_collected_conf = states['surprise_collected'][1]
+                if surprise_collected_conf < 0.85:
+                    pyautogui.moveTo(surprise_loc)
+                    pyautogui.click(clicks=2, interval=0.25)
 
             if 'map_not_ready' in states:
+                if 'surprise' in states:
+                    surprise_loc = states['surprise'][0]
                 if surprise_loc is not None:
                     if  surprise_loc[0] < self.start_point_relative_loc[0] + rect[0]:
                         side = 'left'
                     else:
                         side = 'right'
+                    
                 else:
-                    side = 'right'
+                    side = 'left'
                 side_loc = self.locs[side]
                 for loc in side_loc:
                     pyautogui.moveTo(loc[0] + rect[0], loc[1] + rect[1])
@@ -271,6 +276,7 @@ class Agent:
 
 def main():
     pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本可能会出错；请参考config.txt修改配置文件")
+
     with open('config.txt', 'r', encoding='utf-8') as f:
         lines = f.readlines()
 
