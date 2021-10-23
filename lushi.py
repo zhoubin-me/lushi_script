@@ -17,7 +17,6 @@ def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
-    image.save('out.png')
     image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
 
     return rect, image
