@@ -92,6 +92,8 @@ location:
   teams: [390, 600, 820, 330, 450, 600] # [first_x, mid_x, last_x, first_y, mid_y, last_y]
   # team select confirm button
   team_select: [1190, 800] # [x, y]
+  # team lock button
+  team_lock: [704, 572]
   
   # start game button, on boss selected or path selected
   start_game: [1250, 732] # [x, y]
@@ -108,8 +110,3 @@ location:
   give_up: [929, 706]
   # give up confirm button
   give_up_cfm: [712, 560]
-
-
-
-
-  

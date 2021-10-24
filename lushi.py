@@ -232,9 +232,8 @@ class Agent:
                 x_id = self.basic.team_id % 3
                 y_id = self.basic.team_id // 3
                 pyautogui.click(rect[0] + self.locs.teams[x_id], rect[1] + self.locs.teams[3 + y_id])
-                if 'team_lock' in states:
-                    pyautogui.click(states['team_lock'][0])
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
+                pyautogui.click(rect[0] + self.locs.team_lock[0], rect[1] + self.locs.team_lock[1])
                 surprise_loc = self.scan_surprise_loc(rect)
                 if surprise_loc is not None:
                     if  surprise_loc[0] < self.locs.start_point[0] + rect[0]:

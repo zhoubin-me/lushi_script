@@ -23,6 +23,7 @@ For discussion, welcome to our QQ Group: 832946624
 
 ### Caution
 - Currently only support Simplified Chinese
+- If you wanna blacklist some treasures during selection, put their screenshot into treasure_blacklist
 
 ## Installation
 
