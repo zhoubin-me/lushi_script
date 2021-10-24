@@ -206,7 +206,7 @@ class Agent:
                     is_in_blacklilst = False
                     for key in self.treasure_blacklist.keys():
                         if key in states:
-                            x_dis = np.abs(treasure_loc[0] + rect[0] - states[k][0][0])
+                            x_dis = np.abs(treasure_loc[0] + rect[0] - states[key][0][0])
                             if x_dis < 100:
                                 is_in_blacklilst = True
                                 break
