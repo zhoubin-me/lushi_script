@@ -27,7 +27,7 @@ For discussion, welcome to our QQ Group: 832946624
 - If you wanna blacklist some treasures during selection, put their screenshot into treasure_blacklist
 - Please download to lastest stable version in release page, if you still have problems, please report on issues page
 - For more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations
-
+- Please read carefully about basic section and skill section in  ```conig.yaml``` before you start your game
 ## Installation
 
 Make sure you installed python>=3.6.
