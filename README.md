@@ -13,6 +13,7 @@ For discussion, welcome to our QQ Group: 832946624
 * Fixed problem caused by ice wall from rewards
 * Fixed problem caused by blue portal, boom, etc
 * Fixed surprise location caused hangs
+* Fixed hero selection problem of team size 3, 4, 5
 * Support more maps with different count of rewards
 * Support multi-round battle skill selection
 
