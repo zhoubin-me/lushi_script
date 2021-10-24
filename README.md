@@ -20,6 +20,7 @@ For discussion, welcome to our QQ Group: 832946624
 * Support English
 * Support more resolution
 * Support enemy and hero count
+* Support Mac/Linux
 
 ### Caution
 - Currently only support Simplified Chinese
