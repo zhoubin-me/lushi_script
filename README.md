@@ -2,7 +2,9 @@
 
 
 ## Introduction
-This script is to save your time from Mercenaries mode of Hearthstone.
+This script is to save your time from Mercenaries mode of Hearthstone. 
+
+It is only for study purpose, you will take your own legal responsibility if you commercialize it or earn profit.
 
 For discussion, welcome to our QQ Group: 832946624
 
