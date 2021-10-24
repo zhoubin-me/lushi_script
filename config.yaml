@@ -15,7 +15,7 @@ basic:
   confidence: 0.8 
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  heros_id: [0, 1, 5]
+  heros_id: [1, 2, 5]
 
 skill:
   # battle round cycle
@@ -23,15 +23,15 @@ skill:
   cycle: 2
   # battle skill number
   ids:
-    0: [1, 1, 0] # first round battle skill number
-    1: [1, 1, 1] # second round battle skill number
+    0: [0, 1, 0] # first round battle skill number
+    1: [2, 1, 0] # second round battle skill number
     # 2: [1, 1, 0] # third round battle skill number
   
   # battle skill target number, start counting from 0
   # -1 means random or AOE skill with no targets, 1 means middle enemy 
   targets:
-    0: [-1, -1, 1] # first round battle skill target
-    1: [-1, -1, -1] # second round battle skill target
+    0: [1, 1, 1] # first round battle skill target
+    1: [1, 1, 1] # second round battle skill target
     # 2: [-1, -1, 1] # third round battle skill target
 
 # coordinations of buttons etc.
@@ -77,8 +77,10 @@ location:
   # last confirm after finishing the map
   final_confirm: [794, 779]
 
-  # an empty location to click when waiting
+  # empty location to click when waiting
   empty: [1488, 921]
+  # empty location to click when waiting during battles
+  empty_battle: [620, 750] 
   # mouse location during scroll
   scroll: [1011, 764]
   # travel point confirm button
