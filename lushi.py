@@ -315,7 +315,12 @@ class Agent:
 
 
 def main():
-    info = "Please start Hearthstone, change to windows mode, resolution to 1600x900, high quality graphics; currently only support 3 heros on battle field, please make sure you heros won't die, otherwise may cause problems; please refer to config.yaml to modify your configurations"
+    info = '''
+        Please start Hearthstone, change to windows mode, resolution to 1600x900, high quality graphics; 
+        Currently only support 3 heros on battle field, please make sure you heros won't die, otherwise may cause problems; 
+        Please refer to config.yaml to modify your configurations
+        '''
+
     pyautogui.confirm(text=info)
     agent = Agent()
     agent.run()

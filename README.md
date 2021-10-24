@@ -3,7 +3,6 @@
 
 ## Introduction
 This script is to save your time from Mercenaries mode of Hearthstone.
-Currently only support H1-2 map.
 
 For discussion, welcome to our QQ Group: 832946624
 
