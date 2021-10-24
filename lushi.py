@@ -315,7 +315,8 @@ class Agent:
 
 
 def main():
-    pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本可能会出错；请参考config.txt修改配置文件")
+    info = "Please start Hearthstone, change to windows mode, resolution to 1600x900, high quality graphics; currently only support 3 heros on battle field, please make sure you heros won't die, otherwise may cause problems; please refer to config.yaml to modify your configurations"
+    pyautogui.confirm(text=info)
     agent = Agent()
     agent.run()
             
