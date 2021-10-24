@@ -9,16 +9,17 @@ For discussion, welcome to our QQ Group: 832946624
 
 ### Update
 * Support selection of heros
-* Use config files
+* Use YAML config file
 * Support early stop once collected rewards from stranger
 * Fixed problem caused by ice wall from rewards
 * Fixed problem caused by blue portal, boom, etc
+* Fixed surprise location caused hangs
 * Support more maps with different count of rewards
+* Support multi-round battle skill selection
 
 ### Plan
 * Support English
 * Support more resolution
-* Support multi-round battle skill selection
 
 ### Caution
 - Currently only support Simplified Chinese
