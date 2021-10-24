@@ -46,11 +46,19 @@ def move2loc(x, y):
 class Agent:
     def __init__(self):
         self.icons = {}
+        self.treasure_blacklist = {}
         imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
         for img in imgs:
             k = img.split('.')[0]
             v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
             self.icons[k] = v
+
+        imgs = [img for img in os.listdir('treasure_blacklist') if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join('treasure_blacklist', img)), cv2.COLOR_BGR2GRAY)
+            self.treasure_blacklist[k] = v
+        
         self.load_config()
 
     def load_config(self):
@@ -64,12 +72,17 @@ class Agent:
     
     def check_state(self):
         lushi, image = find_lushi_window()
-        output_list = {}
+        output = {}
         for k, v in self.icons.items():
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
             if success:
-                output_list[k] = (click_loc, conf)
-        return output_list, lushi
+                output[k] = (click_loc, conf)
+
+        for k, v in self.treasure_blacklist.items():
+            success, click_loc, conf = self.find_icon_loc(v, lushi, image)
+            if success:
+                output[k] = (click_loc, conf)
+        return output, lushi
         
     def find_icon_loc(self, icon, lushi, image):
         success, X, Y, conf = find_icon_location(image, icon, self.basic.confidence)
@@ -111,12 +124,12 @@ class Agent:
             states, rect = self.check_state()
             time.sleep(np.random.rand()+self.basic.delay)
             if 'boom2' in states or 'ice_berg2' in states:
-                print("Surrendering")
+                print("Surrendering", states)
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                 pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                 break
-            
-            if 'member_ready' in states:
+
+            if 'member_not_ready' in states:
                 print("Selecting heros")
                 if self.basic.hero_count > 3:
                     first_x, last_x, y = self.locs.members
@@ -162,21 +175,6 @@ class Agent:
                 break
 
             if 'treasure_list' in states or 'treasure_replace' in states:
-                treasure_id = np.random.randint(0, 3)
-                treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
-
-                if 'ice_berg' in states:
-                    x_dis = np.abs(treasure_loc[0] + rect[0] - states['ice_berg'][0][0])
-                    if x_dis < 100:
-                        continue
-                
-                if 'ancient_call' in states:
-                    x_dis = np.abs(treasure_loc[0] + rect[0] - states['ancient_call'][0][0])
-                    if x_dis < 100:
-                        continue
-                
-                pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
-                pyautogui.click(rect[0] + self.locs.treasures_collect[0], rect[1] + self.locs.treasures_collect[1])
                 break
 
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
@@ -199,6 +197,27 @@ class Agent:
                 pyautogui.click(states['travel'][0])
                 pyautogui.click(rect[0] + self.locs.travel[0], rect[1] + self.locs.travel[1])
                 continue
+
+            if 'treasure_list' in states or 'treasure_replace' in states:
+                while True:
+                    treasure_id = np.random.randint(0, 3)
+                    treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
+
+                    is_in_blacklilst = False
+                    for key in self.treasure_blacklist.keys():
+                        if key in states:
+                            x_dis = np.abs(treasure_loc[0] + rect[0] - states[k][0][0])
+                            if x_dis < 100:
+                                is_in_blacklilst = True
+                                break
+                    
+                    if is_in_blacklilst:
+                        continue
+                    else:
+                        break
+                
+                pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
+                pyautogui.click(rect[0] + self.locs.treasures_collect[0], rect[1] + self.locs.treasures_collect[1])
 
             if 'boss_list' in states:
                 x_id = self.basic.boss_id % 3
@@ -251,6 +270,10 @@ class Agent:
                 self.enter_battle_mode()
                 continue
 
+            if 'member_not_ready' in states or 'not_ready_dots' in states or 'battle_ready' in states:
+                self.enter_battle_mode()
+                continue
+
             if 'final_reward' in states or 'final_reward2' in states:
                 reward_locs = eval(self.locs.rewards[self.basic.reward_count])
                 for loc in reward_locs:
@@ -263,7 +286,6 @@ class Agent:
             if 'final_confirm' in states:
                 pyautogui.click(rect[0]+self.locs.final_confirm[0], rect[1]+self.locs.final_confirm[1])
                 continue
-
 
 
             if 'map_not_ready' in states:
