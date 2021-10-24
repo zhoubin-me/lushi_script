@@ -19,6 +19,7 @@ For discussion, welcome to our QQ Group: 832946624
 ### Plan
 * Support English
 * Support more resolution
+* Support enemy and hero count
 
 ### Caution
 - Currently only support Simplified Chinese
