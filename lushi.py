@@ -109,6 +109,7 @@ class Agent:
         battle_round_count = 0
         while True:
             states, rect = self.check_state()
+            time.sleep(np.random.rand()+self.basic.delay)
             if 'boom2' in states or 'ice_berg2' in states:
                 print("Surrendering")
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
