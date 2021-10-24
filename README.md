@@ -24,7 +24,7 @@ For discussion, welcome to our QQ Group: 832946624
 ### Caution
 - Currently only support Simplified Chinese
 - If you wanna blacklist some treasures during selection, put their screenshot into treasure_blacklist
-- Please download to lastest stable version in relase page, if you still have problems, please report on issues page
+- Please download to lastest stable version in release page, if you still have problems, please report on issues page
 
 ## Installation
 
