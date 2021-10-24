@@ -1,0 +1,113 @@
+basic:
+  # number of your team ID for battle, start counting from 0
+  team_id: 2 
+  # number of the boss ID for battle, start counting from 0
+  boss_id: 4
+  # total number of your heros
+  hero_count: 6
+  # total number of rewards after finishing the map
+  reward_count: 5 
+  # whether early stop battle once collected surprise option on map, True or False
+  early_stop: False 
+  # delay between consecutive operations
+  delay: 0.5 
+  # confidence threshold for image template matching on screen
+  confidence: 0.8 
+  # number of hero ID for battle, start counting from 0
+  # the numbering sequence is for hero cards on hand before each battle, not for team buildup
+  heros_id: [0, 1, 5]
+
+skill:
+  # battle round cycle
+  # skills will be repeated every N battles
+  cycle: 2
+  # battle skill number
+  ids:
+    0: [1, 1, 0] # first round battle skill number
+    1: [1, 1, 1] # second round battle skill number
+    # 2: [1, 1, 0] # third round battle skill number
+  
+  # battle skill target number, start counting from 0
+  # -1 means random or AOE skill with no targets, 1 means middle enemy 
+  targets:
+    0: [-1, -1, 1] # first round battle skill target
+    1: [-1, -1, -1] # second round battle skill target
+    # 2: [-1, -1, 1] # third round battle skill target
+
+# coordinations of buttons etc.
+location:
+  # hero battle field locations
+  heros: [677, 807, 943, 641] #  [first_x, mid_x, last_x, y]
+  # hero skills locations
+  skills: [653, 801, 963, 450] # [first_x, mid_x, last_x, y]
+  # enemy battle field locations
+  enemies: [677, 850, 943, 285] # [first_x, mid_x, last_x, y]
+
+  # boss list locations
+  boss: [405, 696, 916, 350, 667] # [first_x, mid_x, last_x, upper_y, lower_y]
+
+  # treasures locations
+  treasures: [707, 960, 1200, 376] # [first_x, mid_x, last_x, y]
+  # treasure collection button
+  treasures_collect: [968, 765] # [x, y]
+
+  # visitors locations
+  visitors: [545, 790, 1042, 420] # [first_x, mid_x, last_x, y]
+  # visitor confirm button
+  visitors_confirm: [791, 688] # [x, y]
+
+  # heros on hand locations
+  members: [622, 1000, 900] # [first_x, last_x, y]
+  # drag on hand hero to this location
+  dragto: [1213, 564] # [x, y]
+
+  # focus area before battle
+  focus: [420, 650, 900, 453] # [first_x, mid_x, last_x, y]
+  
+  # final boss reward locations, depending on rewards count
+  rewards:
+    5: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
+    4: "(660, 314), (554, 687), (1010, 794), (1117, 405)" # [(x1, y1), ... ]
+    3: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
+    # confirm button after reward collection
+    confirm: [806, 525] #[x, y]
+  
+  # last boss location on map
+  final_boss: [646, 227]
+  # last confirm after finishing the map
+  final_confirm: [794, 779]
+
+  # an empty location to click when waiting
+  empty: [1488, 921]
+  # mouse location during scroll
+  scroll: [1011, 764]
+  # travel point confirm button
+  travel: [1090, 674] #[x, y]
+  # start point campfire on the map
+  start_point: [646, 712] # [x, y]
+
+  # team locations
+  teams: [390, 600, 820, 330, 450, 600] # [first_x, mid_x, last_x, first_y, mid_y, last_y]
+  # team select confirm button
+  team_select: [1190, 800] # [x, y]
+  
+  # start game button, on boss selected or path selected
+  start_game: [1250, 732] # [x, y]
+  # start battle button, on skill selection finished
+  start_battle: [1327, 454] # [x, y]
+
+  # option button
+  options: [1580, 920] # [x, y]
+  # surrender button
+  surrender: [815, 363] # [x, y]
+  # view team members button
+  view_team: [647, 885]
+  # give up button
+  give_up: [929, 706]
+  # give up confirm button
+  give_up_cfm: [712, 560]
+
+
+
+
+  
