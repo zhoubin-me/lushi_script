@@ -164,24 +164,8 @@ class Agent:
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            print(states, side, surprise_in_mid)
+            print(f"{states}, surprise side: {side}, surprise in middle: {surprise_in_mid}")
 
-            if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.early_stop:
-                pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
-                pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
-                pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
-                continue
-            
-            if 'visitor_list' in states:
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = self.visitor_locs[visitor_id]
-                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
-                pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
-                if self.early_stop:
-                    pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
-                    pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
-                    pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
-                continue
 
             if 'treasure_list' in states or 'treasure_replace' in states:
                 treasure_loc_id = np.random.randint(0, 3)
@@ -233,13 +217,13 @@ class Agent:
                 pyautogui.click(rect[0] + self.start_team_loc[0], rect[1] + self.start_team_loc[1])
                 continue
 
-            if 'member_ready' in states:
-                if 'boom2' in states or 'ice_berg2' in states:
-                    print("Surrendering")
-                    pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
-                    pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
-                    continue
+            if 'boom2' in states or 'ice_berg2' in states:
+                print("Surrendering")
+                pyautogui.click(rect[0]+self.options_loc[0], rect[1]+self.options_loc[1])
+                pyautogui.click(rect[0]+self.surrender_loc[0], rect[1]+self.surrender_loc[1])
+                continue
 
+            if 'member_ready' in states:
                 if self.hero_cnt > 3:
                     first_x, last_x, y = self.members_loc
                     for i, idx in enumerate(self.heros_id):
@@ -275,8 +259,8 @@ class Agent:
                 pyautogui.moveTo(rect[0] + self.start_battle_loc[0], rect[1] + self.start_battle_loc[1])
                 pyautogui.click()
                 continue
-
-            if 'start_game' in states or 'stranger' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
+            
+            if 'start_game' in states or 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
                 pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
                 continue
 
@@ -305,20 +289,52 @@ class Agent:
                 if surprise_in_mid:
                     x1, x3 = x3, x1
                 
-                for x in (x1, x2, x3):
-                    pyautogui.moveTo(x+rect[0], y+rect[1])
-                    pyautogui.mouseDown()
-                    pyautogui.mouseUp()
-
                 if 'surprise' in states:
                     surprise_loc = states['surprise'][0]
                     if (side == 'left' and first_x < surprise_loc[0] and surprise_loc[0] < mid_x) or (side == 'right' and mid_x < surprise_loc[0] and surprise_loc[0] < last_x):
                         if np.abs(surprise_loc[1] - rect[1] - self.map_locs[-1]) < 100:
-                            pyautogui.moveTo(surprise_loc, duration=0.5)
+                            pyautogui.moveTo(surprise_loc)
                             pyautogui.mouseDown()
                             pyautogui.mouseUp()
-                
+                            time.sleep(0.5)
+                            states, rect = self.check_state()
+                            if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.early_stop:
+                                pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
+                                pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
+                                pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
+                                continue
+                            
+                            if not 'map_not_ready' in states:
+                                pyautogui.click(rect[0]+self.start_game_relative_loc[0], rect[1]+self.start_game_relative_loc[1])
+                                time.sleep(0.5)
+                                states, rect = self.check_state()
+                            
+                            if 'visitor_list' in states:
+                                visitor_id = np.random.randint(0, 3)
+                                visitor_loc = self.visitor_locs[visitor_id]
+                                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                                pyautogui.click(rect[0] + self.visitor_choose_loc[0], rect[1] + self.visitor_choose_loc[1])
+                                if self.early_stop:
+                                    pyautogui.click(self.check_team_loc[0]+rect[0], self.check_team_loc[1]+rect[1])
+                                    pyautogui.click(self.give_up_loc[0]+rect[0], self.give_up_loc[1]+rect[1])
+                                    pyautogui.click(self.give_up_cfm_loc[0]+rect[0], self.give_up_cfm_loc[1]+rect[1])
+                                continue
+            
+                for x in (x1, x2, x3):
+                    pyautogui.moveTo(x+rect[0], y+rect[1])
+                    pyautogui.mouseDown()
+                    pyautogui.mouseUp()
+                time.sleep(0.5)
+                states, rect = self.check_state()
+                if 'map_not_ready' in states and 'final_boss' in states:
+                    pyautogui.moveTo(rect[0]+self.final_boss_loc[0], rect[1]+self.final_boss_loc[1])
+                    pyautogui.mouseDown()
+                    pyautogui.mouseUp()
+            
             pyautogui.click(rect[0] + self.empty_loc[0], rect[1] + self.empty_loc[1])
+
+
+
 
 def main():
     pyautogui.confirm(text="请启动炉石，将炉石调至窗口模式，分辨率设为1600x900，画质设为高，语言设为简体中文; 程序目前只支持三个场上英雄，请确保上场英雄不会死且队伍满6人，否则脚本可能会出错；请参考config.txt修改配置文件")
