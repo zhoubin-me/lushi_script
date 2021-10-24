@@ -232,7 +232,7 @@ class Agent:
 
             if 'visitor_list' in states:
                 visitor_id = np.random.randint(0, 3)
-                visitor_loc = self.locs.visitors[visitor_id]
+                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                 pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
                 pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
                 if self.basic.early_stop:
