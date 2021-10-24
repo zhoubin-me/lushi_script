@@ -127,16 +127,30 @@ class Agent:
                 print("Surrendering", states)
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                 pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
-                break
+                return "surrender"
 
             if 'member_not_ready' in states:
                 print("Selecting heros")
-                if self.basic.hero_count > 3:
+                if self.basic.hero_count <= 3:
+                    pyautogui.click(rect[0] + self.locs.start_battle[0], rect[1] + self.locs.start_battle[1])
+                else:
                     first_x, last_x, y = self.locs.members
+                    mid_x = (first_x + last_x) // 2
                     for i, idx in enumerate(self.basic.heros_id):
                         assert(self.basic.hero_count - i - 1 > 0)
-                        dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
-                        loc = (first_x + dis * (idx - i), y)
+                        current_heros_left = self.basic.hero_count - i
+                        if current_heros_left > 3:
+                            dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
+                            loc = (first_x + dis * (idx - i), y)
+                        elif current_heros_left == 3:
+                            loc = (mid_x + self.locs.members_distance * (idx - i - 1), y)
+                        elif current_heros_left == 2:
+                            if idx - i - 1 == 0:
+                                factor = 1
+                            else:
+                                factor = -1
+                            loc = (mid_x + self.locs.members_distance // 2 * factor, y)
+
                         pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
                         pyautogui.moveTo(rect[0] + self.locs.dragto[0], rect[1] + self.locs.dragto[1])
                         pyautogui.click()
@@ -179,11 +193,14 @@ class Agent:
 
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
+
         print("Battle ends")
+        return "win"
 
     def run(self):
         side = None
         surprise_in_mid = False
+        battle_info = ""
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
@@ -223,18 +240,19 @@ class Agent:
                 x_id = self.basic.boss_id % 3
                 y_id = self.basic.boss_id // 3
                 loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
-                print(x_id, y_id, loc)
                 pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
                 pyautogui.click(rect[0] + self.locs.start_game[0], rect[1] + self.locs.start_game[1])
                 continue
 
             if 'team_list' in states:
+                battle_info = ""
                 x_id = self.basic.team_id % 3
                 y_id = self.basic.team_id // 3
                 pyautogui.click(rect[0] + self.locs.teams[x_id], rect[1] + self.locs.teams[3 + y_id])
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
                 pyautogui.click(rect[0] + self.locs.team_lock[0], rect[1] + self.locs.team_lock[1])
                 surprise_loc = self.scan_surprise_loc(rect)
+
                 if surprise_loc is not None:
                     if  surprise_loc[0] < self.locs.start_point[0] + rect[0]:
                         side = 'left'
@@ -264,14 +282,15 @@ class Agent:
                 pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
                 continue
 
-            if 'start_game' in states:
+            if 'start_game' in states and battle_info != "surrender":
                 pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
-                self.enter_battle_mode()
+                battle_info = self.enter_battle_mode()
                 continue
 
             if 'member_not_ready' in states or 'not_ready_dots' in states or 'battle_ready' in states:
-                self.enter_battle_mode()
-                continue
+                if battle_info != "surrender":
+                    battle_info = self.enter_battle_mode()
+                    continue
 
             if 'final_reward' in states or 'final_reward2' in states:
                 reward_locs = eval(self.locs.rewards[self.basic.reward_count])

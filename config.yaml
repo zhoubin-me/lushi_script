@@ -9,13 +9,13 @@ basic:
   reward_count: 5 
   # whether early stop battle once collected surprise option on map, True or False
   early_stop: False 
-  # delay between consecutive operations
+  # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
   delay: 0.5 
   # confidence threshold for image template matching on screen
   confidence: 0.8 
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  heros_id: [1, 2, 5]
+  heros_id: [1, 2, 4]
 
 skill:
   # battle round cycle
@@ -58,6 +58,7 @@ location:
 
   # heros on hand locations
   members: [622, 1000, 900] # [first_x, last_x, y]
+  members_distance: 110
   # drag on hand hero to this location
   dragto: [1213, 564] # [x, y]
 
