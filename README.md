@@ -1,4 +1,4 @@
-# lushi_script
+# Hearthstone Mercenaries Mode Script
 
 
 ## Introduction
@@ -28,20 +28,13 @@ For bug reporting, please go to issues page to submit
 * Support enemy and hero count
 * Support Mac/Linux
 
-### Caution
-- Currently only support Simplified Chinese
-- If you wanna blacklist some treasures during selection, put their screenshot into treasure_blacklist
-- If you wanna run it in background, consider using a virtual machine
-- Please download to lastest stable version in release page, if you still have problems, please report on issues page
-- For more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations
-- Please read carefully about basic section and skill section in  ```conig.yaml``` before you start your game
 ## Installation
 
 Make sure you installed python>=3.6.
 To install python, we recommand [Anaconda](https://www.anaconda.com/products/individual#windows).
 Make sure you added python path into your ```$PATH``` system environment/variables
 
-Run the following in your commandline/terminal for requirements installation
+Run the following in your commandline/terminal for **Requirements** installation
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 ```
@@ -50,7 +43,15 @@ pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 If you need a stable version, goto Release to download.
 If you wanna test latest version, download the main branch.
 
-In your commandline/terminal, CD to folder where ```lushi.py``` locates,  run the following
+In your commandline/terminal, ```cd``` to folder where ```lushi.py``` locates,  run the following
 ```bash
 python lushi.py 
 ```
+
+## Caution
+- Currently only support **Simplified Chinese**, make sure your Hearthstone language is set to this
+- Default **resolution** is 1600x900 in windows mode; for more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations
+- Please read carefully about **basic section and skill section** in  ```conig.yaml``` before you start your game
+- If you wanna blacklist some treasures during selection, put their screenshot into ```treasure_blacklist``` folder
+- If you wanna run it in background, consider using a virtual machine
+- Please download to **lastest stable** version in release page, if you still have problems, please report on issues page
