@@ -15,9 +15,11 @@ basic:
   confidence: 0.8 
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  heros_id: [1, 2, 5]
+  heros_id: [2, 3, 5]
   # Choose language of your hearthstone
   lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
+  # PVP Surrender Mode or PVE 
+  mode: 'pve' # 'pvp' or 'pve'
 
 skill:
   # battle round cycle
@@ -113,3 +115,6 @@ location:
   give_up: [929, 706]
   # give up confirm button
   give_up_cfm: [712, 560]
+
+  #
+  pvp_enemy_color_region: [1329, 262, 1376, 397] # [x1, y1, x2, y2]
