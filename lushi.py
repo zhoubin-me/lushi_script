@@ -204,7 +204,7 @@ class Agent:
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            print(f"{states}, surprise side: {side}, surprise in middle: {surprise_in_mid}")
+            print(f"{states}, surprise side: {side}, surprise in middle: {surprise_in_mid}, last battle info : {battle_info}")
 
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
@@ -235,6 +235,13 @@ class Agent:
                 
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
                 pyautogui.click(rect[0] + self.locs.treasures_collect[0], rect[1] + self.locs.treasures_collect[1])
+
+            if 'boom2' in states or 'ice_berg2' in states:
+                print("Surrendering", states)
+                pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                battle_info = 'surrender'
+                continue
 
             if 'boss_list' in states:
                 x_id = self.basic.boss_id % 3
@@ -327,6 +334,7 @@ class Agent:
                             pyautogui.mouseUp()
                             time.sleep(0.5)
                             states, rect = self.check_state()
+                            print('Found surprise', states)
                             if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
                                 pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
                                 pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])

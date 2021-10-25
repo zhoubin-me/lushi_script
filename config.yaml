@@ -6,7 +6,7 @@ basic:
   # total number of your heros
   hero_count: 6
   # total number of rewards after finishing the map
-  reward_count: 5 
+  reward_count: 4 
   # whether early stop battle once collected surprise option on map, True or False
   early_stop: False 
   # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
@@ -23,15 +23,15 @@ skill:
   cycle: 2
   # battle skill number
   ids:
-    0: [0, 1, 0] # first round battle skill number
-    1: [2, 1, 0] # second round battle skill number
+    0: [1, 1, 0] # first round battle skill number
+    1: [1, 1, 1] # second round battle skill number
     # 2: [1, 1, 0] # third round battle skill number
   
   # battle skill target number, start counting from 0
   # -1 means random or AOE skill with no targets, 1 means middle enemy 
   targets:
-    0: [1, 1, 1] # first round battle skill target
-    1: [1, 1, 1] # second round battle skill target
+    0: [-1, -1, 1] # first round battle skill target
+    1: [-1, -1, -1] # second round battle skill target
     # 2: [-1, -1, 1] # third round battle skill target
 
 # coordinations of buttons etc.
