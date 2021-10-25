@@ -10,24 +10,6 @@ For discussion, welcome to our QQ Group: 832946624
 
 For bug reporting, please go to issues page to submit
 
-### Update
-* Support selection of heros
-* Use YAML config file
-* Support early stop once collected rewards from stranger
-* Fixed problem caused by ice wall from rewards
-* Fixed problem caused by blue portal, boom, etc
-* Fixed surprise location caused hangs
-* Fixed hero selection problem of team size 3, 4, 5
-* Fixed problem of re-entering battle mode when boom is met and surrender
-* Support more maps with different count of rewards
-* Support multi-round battle skill selection
-
-### Plan
-* Support English
-* Support more resolution
-* Support enemy and hero count
-* Support Mac/Linux
-
 ## Installation
 
 Make sure you installed python>=3.6.
