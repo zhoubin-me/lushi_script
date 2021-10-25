@@ -48,10 +48,10 @@ class Agent:
     def __init__(self):
         self.icons = {}
         self.treasure_blacklist = {}
-        imgs = [img for img in os.listdir('imgs') if img.endswith('.png')]
+        imgs = [img for img in os.listdir(os.path.join('imgs', 'icons')) if img.endswith('.png')]
         for img in imgs:
             k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
+            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'icons', img)), cv2.COLOR_BGR2GRAY)
             self.icons[k] = v
 
         imgs = [img for img in os.listdir(os.path.join('imgs', 'treasure_blacklist')) if img.endswith('.png')]
