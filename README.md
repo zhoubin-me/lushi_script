@@ -8,6 +8,8 @@ It is only for study purpose, you will take your own legal responsibility if you
 
 For discussion, welcome to our QQ Group: 832946624
 
+For bug reporting, please go to issues page to submit
+
 ### Update
 * Support selection of heros
 * Use YAML config file
