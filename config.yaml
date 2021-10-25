@@ -2,20 +2,20 @@ basic:
   # number of your team ID for battle, start counting from 0
   team_id: 2 
   # number of the boss ID for battle, start counting from 0
-  boss_id: 4
+  boss_id: 0
   # total number of your heros
   hero_count: 6
   # total number of rewards after finishing the map
-  reward_count: 4 
-  # whether early stop battle once collected surprise option on map, True or False
-  early_stop: False 
+  reward_count: 5
+  # whether early stop battle once collected surprise option on map, 1 means early stop, 0 means continue
+  early_stop: 1 
   # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
   delay: 0.5 
   # confidence threshold for image template matching on screen
   confidence: 0.8 
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  heros_id: [1, 2, 4]
+  heros_id: [2, 3, 5]
 
 skill:
   # battle round cycle

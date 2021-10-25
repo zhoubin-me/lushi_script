@@ -204,7 +204,7 @@ class Agent:
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            print(f"{states}, surprise side: {side}, surprise in middle: {surprise_in_mid}, last battle info : {battle_info}")
+            print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, last battle info : {battle_info}")
 
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
@@ -243,6 +243,12 @@ class Agent:
                 battle_info = 'surrender'
                 continue
 
+            if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
+                pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
+                pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])
+                pyautogui.click(self.locs.give_up_cfm[0]+rect[0], self.locs.give_up_cfm[1]+rect[1])
+                continue
+
             if 'boss_list' in states:
                 x_id = self.basic.boss_id % 3
                 y_id = self.basic.boss_id // 3
@@ -266,7 +272,7 @@ class Agent:
                     else:
                         side = 'right'
                     first_x, mid_x, last_x, y = self.locs.focus
-                    if np.abs(surprise_loc[0] - rect[0] - mid_x) < 50:
+                    if np.abs(surprise_loc[0] - rect[0] - mid_x) < 90:
                         surprise_in_mid = True
                     else:
                         surprise_in_mid = False
@@ -278,7 +284,10 @@ class Agent:
                 visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                 pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
                 pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
+                time.sleep(self.basic.delay)
+                print("Visitors Selected")
                 if self.basic.early_stop:
+                    print("Early stopping")
                     pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
                     pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])
                     pyautogui.click(self.locs.give_up_cfm[0]+rect[0], self.locs.give_up_cfm[1]+rect[1])
@@ -312,6 +321,15 @@ class Agent:
                 pyautogui.click(rect[0]+self.locs.final_confirm[0], rect[1]+self.locs.final_confirm[1])
                 continue
 
+            if 'map_not_ready' in states and 'final_boss' in states:
+                pyautogui.moveTo(rect[0]+self.locs.final_boss[0], rect[1]+self.locs.final_boss[1])
+                pyautogui.mouseDown()
+                pyautogui.mouseUp()
+                time.sleep(self.basic.delay)
+                states, rect = self.check_state()
+                if 'start_game' in states:
+                    pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
+                    continue
 
             if 'map_not_ready' in states:
                 first_x, mid_x, last_x, y = self.locs.focus
@@ -325,36 +343,8 @@ class Agent:
                 if surprise_in_mid:
                     x1, x3 = x3, x1
                 
-                if 'surprise' in states:
-                    surprise_loc = states['surprise'][0]
-                    if (side == 'left' and first_x < surprise_loc[0] and surprise_loc[0] < mid_x) or (side == 'right' and mid_x < surprise_loc[0] and surprise_loc[0] < last_x):
-                        if np.abs(surprise_loc[1] - rect[1] - self.locs.focus[-1]) < 100:
-                            pyautogui.moveTo(surprise_loc)
-                            pyautogui.mouseDown()
-                            pyautogui.mouseUp()
-                            time.sleep(0.5)
-                            states, rect = self.check_state()
-                            print('Found surprise', states)
-                            if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
-                                pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
-                                pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])
-                                pyautogui.click(self.locs.give_up_cfm[0]+rect[0], self.locs.give_up_cfm[1]+rect[1])
-                                continue
-                            
-                            if 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
-                                pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
-                                continue
-            
                 for x in (x1, x2, x3):
                     pyautogui.moveTo(x+rect[0], y+rect[1])
-                    pyautogui.mouseDown()
-                    pyautogui.mouseUp()
-                
-                time.sleep(0.5)
-                states, rect = self.check_state()
-
-                if 'map_not_ready' in states and 'final_boss' in states:
-                    pyautogui.moveTo(rect[0]+self.locs.final_boss[0], rect[1]+self.locs.final_boss[1])
                     pyautogui.mouseDown()
                     pyautogui.mouseUp()
 
