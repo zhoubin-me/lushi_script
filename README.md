@@ -8,6 +8,8 @@ It is only for study purpose, you will take your own legal responsibility if you
 
 For discussion, welcome to our QQ Group: 832946624
 
+For bug reporting, please go to issues page to submit
+
 ### Update
 * Support selection of heros
 * Use YAML config file
@@ -29,6 +31,7 @@ For discussion, welcome to our QQ Group: 832946624
 ### Caution
 - Currently only support Simplified Chinese
 - If you wanna blacklist some treasures during selection, put their screenshot into treasure_blacklist
+- If you wanna run it in background, consider using a virtual machine
 - Please download to lastest stable version in release page, if you still have problems, please report on issues page
 - For more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations
 - Please read carefully about basic section and skill section in  ```conig.yaml``` before you start your game
