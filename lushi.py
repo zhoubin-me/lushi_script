@@ -356,9 +356,8 @@ class Agent:
 
 def main():
     info = '''
-        Please start Hearthstone, change to windows mode, resolution to 1600x900, high quality graphics; 
+        Please read carefully CAUTION section on README file and BASIC SKILL section in config.yaml before you start the game
         Currently only support 3 heros on battle field, please make sure you heros won't die, otherwise may cause problems; 
-        Please refer to config.yaml to modify your configurations;
         Please switch to Hearthstone window when this script is running;
         Make sure you switched to boss selection stage or earlier otherwise would cause problems;
         For discussiona about this script, welcome to join our QQ group: 832946624
