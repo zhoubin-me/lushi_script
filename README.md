@@ -51,7 +51,7 @@ pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 If you need a stable version, goto Release to download.
 If you wanna test latest version, download the main branch.
 
-In your commandline/terminal, CD to folder where ```lushi.py``` locates,  run the following
+In your commandline/terminal, ```cd``` to folder where ```lushi.py``` locates,  run the following
 ```bash
 python lushi.py 
 ```
