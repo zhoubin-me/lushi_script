@@ -16,6 +16,8 @@ basic:
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
   heros_id: [1, 2, 5]
+  # Choose language of your hearthstone
+  lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
 
 skill:
   # battle round cycle

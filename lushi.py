@@ -54,10 +54,10 @@ class Agent:
             v = cv2.cvtColor(cv2.imread(os.path.join('imgs', img)), cv2.COLOR_BGR2GRAY)
             self.icons[k] = v
 
-        imgs = [img for img in os.listdir('treasure_blacklist') if img.endswith('.png')]
+        imgs = [img for img in os.listdir(os.path.join('imgs', 'treasure_blacklist')) if img.endswith('.png')]
         for img in imgs:
             k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join('treasure_blacklist', img)), cv2.COLOR_BGR2GRAY)
+            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'treasure_blacklist', img)), cv2.COLOR_BGR2GRAY)
             self.treasure_blacklist[k] = v
         
         self.load_config()
@@ -119,15 +119,15 @@ class Agent:
         return None
     
 
-
     def run(self):
         side = None
         surprise_in_mid = False
+        heros_alive = 0
         battle_round_count = 0
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}")
+            print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}, heros alive {heros_alive}")
 
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
@@ -163,34 +163,30 @@ class Agent:
                 print("Surrendering", states)
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                 pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
-                battle_info = 'surrender'
                 continue
 
             if 'member_not_ready' in states:
                 print("Selecting heros")
-                if self.basic.hero_count <= 3:
-                    pyautogui.click(rect[0] + self.locs.start_battle[0], rect[1] + self.locs.start_battle[1])
-                else:
-                    first_x, last_x, y = self.locs.members
-                    mid_x = (first_x + last_x) // 2
-                    for i, idx in enumerate(self.basic.heros_id):
-                        assert(self.basic.hero_count - i - 1 > 0)
-                        current_heros_left = self.basic.hero_count - i
-                        if current_heros_left > 3:
-                            dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
-                            loc = (first_x + dis * (idx - i), y)
-                        elif current_heros_left == 3:
-                            loc = (mid_x + self.locs.members_distance * (idx - i - 1), y)
-                        elif current_heros_left == 2:
-                            if idx - i - 1 == 0:
-                                factor = 1
-                            else:
-                                factor = -1
-                            loc = (mid_x + self.locs.members_distance // 2 * factor, y)
-
-                        pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
-                        pyautogui.moveTo(rect[0] + self.locs.dragto[0], rect[1] + self.locs.dragto[1])
-                        pyautogui.click()
+                first_x, last_x, y = self.locs.members
+                mid_x = (first_x + last_x) // 2
+                for i, idx in enumerate(self.basic.heros_id):
+                    current_heros_left = self.basic.hero_count - i
+                    if current_heros_left > 3:
+                        dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
+                        loc = (first_x + dis * (idx - i), y)
+                    elif current_heros_left == 3:
+                        loc = (mid_x + self.locs.members_distance * (idx - i - 1), y)
+                    elif current_heros_left == 2:
+                        if idx - i - 1 == 0:
+                            factor = 1
+                        else:
+                            factor = -1
+                        loc = (mid_x + self.locs.members_distance // 2 * factor, y)
+                    elif current_heros_left == 1:
+                        loc = (mid_x, y)
+                    pyautogui.click(rect[0] + loc[0], rect[1] + loc[1])
+                    pyautogui.moveTo(rect[0] + self.locs.dragto[0], rect[1] + self.locs.dragto[1])
+                    pyautogui.click()
                 continue
 
             if 'not_ready_dots' in states:
@@ -234,7 +230,6 @@ class Agent:
                 continue
 
             if 'team_list' in states:
-                battle_info = ""
                 x_id = self.basic.team_id % 3
                 y_id = self.basic.team_id // 3
                 pyautogui.click(rect[0] + self.locs.teams[x_id], rect[1] + self.locs.teams[3 + y_id])
