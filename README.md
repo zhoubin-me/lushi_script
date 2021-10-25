@@ -50,7 +50,8 @@ python lushi.py
 
 ## Caution
 - Currently only support **Simplified Chinese**, make sure your Hearthstone language is set to this
-- Default **resolution** is 1600x900 in windows mode; for more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations
+- Make sure your hearthstone is set to **windows mode, high graphic quality and 1600x900 resolution**
+- For more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations;
 - Please read carefully about **basic section and skill section** in  ```conig.yaml``` before you start your game
 - If you wanna blacklist some treasures during selection, put their screenshot into ```treasure_blacklist``` folder
 - If you wanna run it in background, consider using a virtual machine
