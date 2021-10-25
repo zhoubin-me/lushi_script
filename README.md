@@ -1,4 +1,4 @@
-# lushi_script
+# Hearthstone Mercenaries Mode Script
 
 
 ## Introduction
