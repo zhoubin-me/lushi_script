@@ -1,6 +1,6 @@
 basic:
   # number of your team ID for battle, start counting from 0
-  team_id: 2
+  team_id: 3
   # number of the boss ID for battle, start counting from 0
   boss_id: 0
   # total number of your heros
@@ -19,7 +19,7 @@ basic:
   # Choose language of your hearthstone
   lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
   # PVP Surrender Mode or PVE 
-  mode: 'pve' # 'pvp' or 'pve'
+  mode: 'pvp' # 'pvp' or 'pve'
 
 skill:
   # battle round cycle
@@ -116,5 +116,7 @@ location:
   # give up confirm button
   give_up_cfm: [712, 560]
 
+
+
   #
-  pvp_enemy_color_region: [1329, 262, 1376, 397] # [x1, y1, x2, y2]
+  pvp_enemy_region: [1329, 262, 1376, 397] # [x1, y1, x2, y2]

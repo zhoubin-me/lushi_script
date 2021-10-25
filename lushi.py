@@ -60,6 +60,12 @@ class Agent:
             v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'treasure_blacklist', img)), cv2.COLOR_BGR2GRAY)
             self.treasure_blacklist[k] = v
         
+        imgs = [img for img in os.listdir(os.path.join('imgs', 'heros_whitelist')) if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'heros_whitelist', img)), cv2.COLOR_BGR2GRAY)
+            self.heros_whitelist[k] = v
+        
         self.load_config()
 
     def load_config(self):
@@ -83,8 +89,16 @@ class Agent:
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
             if success:
                 output[k] = (click_loc, conf)
+        
+        for k, v in self.heros_whitelist.items():
+            success, click_loc, conf = self.find_icon_loc(v, lushi, image)
+            if success:
+                output[k] = (click_loc, conf)
+        
         return output, lushi
         
+
+
     def find_icon_loc(self, icon, lushi, image):
         success, X, Y, conf = find_icon_location(image, icon, self.basic.confidence)
         if success:
@@ -118,8 +132,37 @@ class Agent:
         print("Did not found any surprise")
         return None
     
+    def run_pvp(self):
+        while True:
+            time.sleep(self.basic.delay)
+            states, rect = self.check_state()
+            print(states)
+            if 'pvp' in states:
+                pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
+                continue
+            
+            if 'member_not_ready' in states:
+                print("Surrendering")
+                pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                for _ in range(5):
+                    pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+                continue
+            
+            if 'final_reward' in states or 'final_reward2' in states:
+                reward_locs = eval(self.locs.rewards[self.basic.reward_count])
+                for loc in reward_locs:
+                    pyautogui.moveTo(rect[0] + loc[0], rect[1] + loc[1])
+                    pyautogui.click()
+                pyautogui.moveTo(rect[0] + self.locs.rewards['confirm'][0], rect[1] + self.locs.rewards['confirm'][1])
+                pyautogui.click()
+                for _ in range(5):
+                    pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+                continue
+            
 
-    def run(self):
+
+    def run_pve(self):
         side = None
         surprise_in_mid = False
         heros_alive = 0
@@ -251,10 +294,17 @@ class Agent:
 
 
             if 'visitor_list' in states:
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-                pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
-                pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
+                states, rect = self.check_state()
+                for key in self.heros_whitelist.keys():
+                    if key in states:
+                        pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                        pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
+                else:
+                    visitor_id = np.random.randint(0, 3)
+                    visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+                    pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
+                    pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
+                
                 for _ in range(5):
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 print("Visitors Selected")
@@ -319,19 +369,16 @@ class Agent:
 
 
 
+                
 
 def main():
-    info = '''
-        Please read carefully CAUTION section on README file and BASIC SKILL section in config.yaml before you start the game
-        Currently only support 3 heros on battle field, please make sure you heros won't die, otherwise may cause problems; 
-        Please switch to Hearthstone window when this script is running;
-        Make sure you switched to boss selection stage or earlier otherwise would cause problems;
-        For discussiona about this script, welcome to join our QQ group: 832946624
-        '''
-
-    pyautogui.confirm(text=info)
     agent = Agent()
-    agent.run()
+    if agent.basic.mode == 'pve':
+        agent.run_pve()
+    elif agent.basic.mode == 'pvp':
+        agent.run_pvp()
+    else:
+        raise ValueError("Mode is wrong")
             
 
 if __name__ == '__main__':
