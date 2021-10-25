@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import pyautogui
 import cv2
 import time
