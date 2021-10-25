@@ -107,10 +107,10 @@ class Agent:
 
         for _ in range(10):
             states, rect = self.check_state()
-            pyautogui.scroll(40)
+            pyautogui.scroll(60)
             if 'surprise' in states:
                 for _ in range(10):
-                    pyautogui.scroll(-40)
+                    pyautogui.scroll(-60)
                 loc = states['surprise'][0]
                 print(f"Found surprise during scrolling {loc}")
                 return loc
@@ -123,11 +123,11 @@ class Agent:
     def run(self):
         side = None
         surprise_in_mid = False
-        battle_info = ""
+        battle_round_count = 0
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect = self.check_state()
-            print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, last battle info : {battle_info}")
+            print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}")
 
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
@@ -212,9 +212,6 @@ class Agent:
                         enemy_loc = (rect[0] + self.locs.enemies[1], rect[1] + self.locs.enemies[-1])
                         pyautogui.moveTo(enemy_loc)
                         pyautogui.click()
-                
-                pyautogui.moveTo(rect[0] + self.locs.start_battle[0], rect[1] + self.locs.start_battle[1])
-                pyautogui.click()
                 continue
 
             if 'battle_ready' in states:
@@ -263,8 +260,8 @@ class Agent:
                 visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                 pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
                 pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
-                pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
-                time.sleep(self.basic.delay)
+                for _ in range(5):
+                    pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 print("Visitors Selected")
                 if self.basic.early_stop:
                     print("Early stopping")

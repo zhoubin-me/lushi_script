@@ -15,7 +15,7 @@ basic:
   confidence: 0.8 
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  heros_id: [2, 3, 5]
+  heros_id: [1, 2, 5]
 
 skill:
   # battle round cycle
