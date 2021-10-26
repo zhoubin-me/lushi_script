@@ -36,7 +36,7 @@ pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
 - For more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations;
 - Please read carefully about **basic section and skill section** in  ```conig.yaml``` before you start your game
 - If you wanna blacklist some treasures during selection, put their screenshot into ```imgs_eng/treasure_blacklist``` folder
-- If you wanna whitelist some heros during stranger reward selection, put their screenshot into ```imgs_eng/heros_whitelist``` folder, ***BUT*** DO NOT copy the whole card image, only charactor avatar, otherwise may not recognize
+- If you wanna whitelist some heros during stranger reward selection, put their screenshot into ```imgs_eng/heros_whitelist``` folder, **BUT DO NOT** copy the whole card image, only charactor avatar, otherwise may not recognize
 - If you wanna run it in background, consider using a virtual machine
 - Please download to **lastest stable** version in release page, if you still have problems, please report on issues page
 
