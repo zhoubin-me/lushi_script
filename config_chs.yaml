@@ -18,12 +18,14 @@ basic:
   start_heros_id: [1, 3, 4]
   # 如果任意场上佣兵阵亡, 替补佣兵的上场顺序
   next_heros_id: [0, 2, 5]
-  # 炉石传说的语言
-  lang: 'chs' # 'chs' 简体中文, 'eng' 英语
+
+
   # PVP投降脚本 或者 PVE
-  mode: 'pve' # 'pvp' or 'pve'
+  mode: 'pvp' # 'pvp' or 'pve'
   # 投降延迟时间
   pvp_delay: 1 # in seconds
+  # 是否快速投降，因为官方的设置，有时候投降按钮位置会变化，快速投降会导致投降失败，
+  fast_surrender: 1 # 1为快速投降，0为识别投降按钮再投降，当然投降速度会变慢
 
 skill:
   # battle round cycle

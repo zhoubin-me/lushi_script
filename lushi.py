@@ -199,9 +199,14 @@ class Agent:
             
             if 'pvp_ready' in states or 'member_not_ready' in states:
                 print("Surrendering")
-                time.sleep(self.basic.pvp_delay)
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
-                pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                time.sleep(self.basic.pvp_delay)
+                if self.basic.fast_surrender:
+                    pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                else:
+                    states, rect, screen = self.check_state()
+                    if 'surrender' in states:
+                        pyautogui.click(states['surrender'][0])
                 for _ in range(5):
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 continue

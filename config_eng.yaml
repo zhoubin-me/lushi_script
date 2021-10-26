@@ -18,10 +18,14 @@ basic:
   start_heros_id: [0, 1, 5]
   # if any start heros died, use the following heros by order
   next_heros_id: [0, 1, 4]
+
+
   # PVP Surrender Mode or PVE
-  mode: 'pvp' # 'pvp' or 'pve'
+  mode: 'pve' # 'pvp' or 'pve'
   # When game started, after N seconds, start to surrender
   pvp_delay: 1.0 # in seconds
+  # whether need fast surrender, since surrender button keeps changing position, fast surrender may fail to surrend
+  fast_surrender: 1 # 1 means fast surrender, 0 means recognize surrender button first, which slows down surrrender speed
 
 skill:
   # battle round cycle
