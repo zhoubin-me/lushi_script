@@ -162,8 +162,9 @@ class Agent:
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
                 continue
             
-            if 'member_not_ready' in states:
+            if 'pvp_ready' in states:
                 print("Surrendering")
+                time.sleep(self.basic.pvp_delay)
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                 pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                 for _ in range(5):

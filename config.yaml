@@ -22,6 +22,7 @@ basic:
   lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
   # PVP Surrender Mode or PVE 
   mode: 'pvp' # 'pvp' or 'pve'
+  pvp_delay: 5 # in seconds
 
 skill:
   # battle round cycle
@@ -118,7 +119,7 @@ location:
   # give up confirm button
   give_up_cfm: [712, 560]
   
-  pvp_reward_loc: [804, 471]
+  pvp_reward: [804, 471]
 
 
   #
