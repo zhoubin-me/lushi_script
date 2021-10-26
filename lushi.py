@@ -10,8 +10,7 @@ import yaml
 from types import SimpleNamespace
 from PIL import ImageGrab, Image
 import platform
-import pytesseract
-import argparse
+# import pytesseract
 
 if platform.system() == 'Windows':
     import win32gui
@@ -145,8 +144,8 @@ class Agent:
                 img_copy[:, :, 1][mask] = 255
                 img_copy[:, :, 2][mask] = 255
 
-        img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
-        Image.fromarray(img_copy)
+        # img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
+        # Image.fromarray(img_copy)
 
 
     def find_icon_loc(self, icon, lushi, image):
@@ -422,7 +421,6 @@ class Agent:
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
 def main():
-    import argparse
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
     args = parser.parse_args()
