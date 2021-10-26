@@ -10,6 +10,8 @@ import yaml
 from types import SimpleNamespace
 from PIL import ImageGrab, Image
 import platform
+import pytesseract
+import argparse
 
 if platform.system() == 'Windows':
     import win32gui
@@ -19,7 +21,6 @@ if platform.system() == 'Windows':
         hwnd = findTopWindow(title)
         rect = win32gui.GetWindowPlacement(hwnd)[-1]
         image = ImageGrab.grab(rect)
-        # image.save('out.png')
         image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
         return rect, image
 elif platform.system() == 'Darwin':
@@ -37,6 +38,7 @@ elif platform.system() == 'Darwin':
 else:
     raise ValueError(f"Plafform {platform.platform()} is not supported yet")
 
+
 def find_icon_location(lushi, icon, confidence):
     result = cv2.matchTemplate(lushi, icon, cv2.TM_CCOEFF_NORMED)
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
@@ -47,7 +49,6 @@ def find_icon_location(lushi, icon, confidence):
         return True, (startX+endX)//2, (startY+endY)//2, maxVal
     else:
         return False, None, None, maxVal
-
 
 def find_relative_loc(title='炉石传说'):
     pos = pyautogui.position()
@@ -62,45 +63,52 @@ def move2loc(x, y, title='炉石传说'):
 
 
 class Agent:
-    def __init__(self):
+    def __init__(self, lang):
+        self.lang = lang
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
-        imgs = [img for img in os.listdir(os.path.join('imgs', 'icons')) if img.endswith('.png')]
-        for img in imgs:
-            k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'icons', img)), cv2.COLOR_BGR2GRAY)
-            self.icons[k] = v
-
-        imgs = [img for img in os.listdir(os.path.join('imgs', 'treasure_blacklist')) if img.endswith('.png')]
-        for img in imgs:
-            k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'treasure_blacklist', img)), cv2.COLOR_BGR2GRAY)
-            self.treasure_blacklist[k] = v
-        
-        imgs = [img for img in os.listdir(os.path.join('imgs', 'heros_whitelist')) if img.endswith('.png')]
-        for img in imgs:
-            k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join('imgs', 'heros_whitelist', img)), cv2.COLOR_BGR2GRAY)
-            self.heros_whitelist[k] = v
-        
         self.load_config()
 
     def load_config(self):
-        with open('config.yaml', 'r') as f:
+        if self.lang == 'eng':
+            cfg_file = 'config_eng.yaml'
+            img_folder = 'imgs_eng'
+            self.title = 'hearthstone'
+        elif self.lang == 'chs':
+            cfg_file = 'config_chs.yaml'
+            img_folder = "imgs_chs"
+            self.title = "炉石传说"
+        else:
+            raise ValueError(f"Language {self.lang} is not supported yet")
+
+        with open(cfg_file, 'r') as f:
             config = yaml.safe_load(f)
 
         self.basic = SimpleNamespace(**config['basic'])
         self.skill = SimpleNamespace(**config['skill'])
         self.locs = SimpleNamespace(**config['location'])
         pyautogui.PAUSE = self.basic.delay
-        if self.basic.lang == 'eng':
-            self.title = 'hearthstone'
-        elif self.basic.lang == 'chs':
-            self.title = '炉石传说'
-        else:
-            raise ValueError(f"Language {self.basic.lang} is not supported")
-    
+
+        imgs = [img for img in os.listdir(os.path.join(img_folder, 'icons')) if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join(img_folder, 'icons', img)), cv2.COLOR_BGR2GRAY)
+            self.icons[k] = v
+
+        imgs = [img for img in os.listdir(os.path.join(img_folder, 'treasure_blacklist')) if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join(img_folder, 'treasure_blacklist', img)), cv2.COLOR_BGR2GRAY)
+            self.treasure_blacklist[k] = v
+
+        imgs = [img for img in os.listdir(os.path.join(img_folder, 'heros_whitelist')) if img.endswith('.png')]
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join(img_folder, 'heros_whitelist', img)), cv2.COLOR_BGR2GRAY)
+            self.heros_whitelist[k] = v
+
+
     def check_state(self):
         lushi, image = find_lushi_window(self.title)
         output = {}
@@ -124,9 +132,9 @@ class Agent:
     def analyse_battle_field(self, screen):
         x1, y1, x2, y2 = self.locs.enemy_region
         img = screen[x1:x2, y1:y2]
-        imgray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
 
-        ret, thresh = cv.threshold(img_gray, 250, 255, 0)
+        ret, thresh = cv2.threshold(img_gray, 250, 255, 0)
         num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
         img_copy = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
         # print(stats)
@@ -139,7 +147,6 @@ class Agent:
 
         img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
         Image.fromarray(img_copy)
-
 
 
     def find_icon_loc(self, icon, lushi, image):
@@ -189,7 +196,7 @@ class Agent:
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
                 continue
             
-            if 'pvp_ready' in states:
+            if 'pvp_ready' in states or 'member_not_ready' in states:
                 print("Surrendering")
                 time.sleep(self.basic.pvp_delay)
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
@@ -208,9 +215,6 @@ class Agent:
                 for _ in range(5):
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 continue
-            
-            if 'pvp_reward' in states:
-                pyautogui.click(rect[0] + self.locs.pvp_reward[0], rect[1] + self.locs.pvp_reward[1])
             
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
@@ -333,7 +337,7 @@ class Agent:
                 surprise_loc = self.scan_surprise_loc(rect)
 
                 if surprise_loc is not None:
-                    if  surprise_loc[0] < self.locs.start_point[0] + rect[0]:
+                    if surprise_loc[0] < self.locs.start_point[0] + rect[0]:
                         side = 'left'
                     else:
                         side = 'right'
@@ -417,19 +421,20 @@ class Agent:
 
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
-
-
-                
-
 def main():
-    agent = Agent()
+    import argparse
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
+    args = parser.parse_args()
+
+    agent = Agent(lang=args.lang)
     if agent.basic.mode == 'pve':
         agent.run_pve()
     elif agent.basic.mode == 'pvp':
         agent.run_pvp()
     else:
-        raise ValueError("Mode is wrong")
-            
+        raise ValueError(f"Mode {agent.basic.mode} is not supported yet")
+
 
 if __name__ == '__main__':
     main()

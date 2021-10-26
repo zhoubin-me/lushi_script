@@ -3,5 +3,5 @@ import time
 
 if __name__ == '__main__':
     while True:
-        find_relative_loc()
+        find_relative_loc(title='hearthstone')
         time.sleep(1)

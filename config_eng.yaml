@@ -1,29 +1,25 @@
 basic:
   # number of your team ID for battle, start counting from 0
-  team_id: 3
+  team_id: 4
   # number of the boss ID for battle, start counting from 0
-  boss_id: 0
+  boss_id: 1
   # total number of your heros
   hero_count: 6
   # total number of rewards after finishing the map
-  reward_count: 5
+  reward_count: 4
   # whether early stop battle once collected surprise option on map, 1 means early stop, 0 means continue
   early_stop: 1
   # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
-  delay: 0.5 
+  delay: 0.5
   # confidence threshold for image template matching on screen
-  confidence: 0.8 
+  confidence: 0.8
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  start_heros_id: [2, 3, 5]
+  start_heros_id: [0, 1, 5]
   # if any start heros died, use the following heros by order
   next_heros_id: [0, 1, 4]
-  # Choose language of your hearthstone
-  lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
-  # PVP Surrender Mode or PVE 
-  mode: 'pvp' # 'pvp' or 'pve'
-  # When game started, after this delay, start to surrender
-  pvp_delay: 1 # in seconds
+  # PVP Surrender Mode or PVE
+  mode: 'pve' # 'pvp' or 'pve'
 
 skill:
   # battle round cycle
@@ -34,9 +30,9 @@ skill:
     0: [1, 1, 0] # first round battle skill number
     1: [1, 1, 1] # second round battle skill number
     # 2: [1, 1, 0] # third round battle skill number
-  
+
   # battle skill target number, start counting from 0
-  # -1 means random or AOE skill with no targets, 1 means middle enemy 
+  # -1 means random or AOE skill with no targets, 1 means middle enemy
   targets:
     0: [-1, -1, 1] # first round battle skill target
     1: [-1, -1, -1] # second round battle skill target
@@ -45,82 +41,81 @@ skill:
 # coordinations of buttons etc.
 location:
   # hero battle field locations
-  heros: [677, 807, 943, 641] #  [first_x, mid_x, last_x, y]
+  heros: [410, 520, 630, 545] #  [first_x, mid_x, last_x, y]
   # hero skills locations
-  skills: [653, 801, 963, 450] # [first_x, mid_x, last_x, y]
+  skills: [390, 520, 650, 380] # [first_x, mid_x, last_x, y]
   # enemy battle field locations
-  enemies: [677, 850, 943, 285] # [first_x, mid_x, last_x, y]
+  enemies: [410, 520, 630, 240] # [first_x, mid_x, last_x, y]
 
   # boss list locations
-  boss: [405, 696, 916, 350, 667] # [first_x, mid_x, last_x, upper_y, lower_y]
+  boss: [170, 400, 630, 300, 560] # [first_x, mid_x, last_x, upper_y, lower_y]
 
   # treasures locations
-  treasures: [707, 960, 1200, 376] # [first_x, mid_x, last_x, y]
+  treasures: [430, 650, 870, 390] # [first_x, mid_x, last_x, y]
   # treasure collection button
-  treasures_collect: [968, 765] # [x, y]
-
+  treasures_collect: [650, 650] # [x, y]
+  # TODO
   # visitors locations
-  visitors: [545, 790, 1042, 420] # [first_x, mid_x, last_x, y]
+  visitors: [290, 510, 720, 345] # [first_x, mid_x, last_x, y]
   # visitor confirm button
-  visitors_confirm: [791, 688] # [x, y]
+  visitors_confirm: [500, 564] # [x, y]
 
   # heros on hand locations
-  members: [622, 1000, 900] # [first_x, last_x, y]
-  members_distance: 110
+  members: [339, 706, 762] # [first_x, last_x, y]
+  members_distance: 70
   # drag on hand hero to this location
-  dragto: [1213, 564] # [x, y]
+  dragto: [780, 465] # [x, y]
 
   # focus area before battle
-  focus: [420, 650, 900, 453] # [first_x, mid_x, last_x, y]
-  
+  focus: [165, 385, 600, 400] # [first_x, mid_x, last_x, y]
+
   # final boss reward locations, depending on rewards count
   rewards:
-    5: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
-    4: "(660, 314), (554, 687), (1010, 794), (1117, 405)" # [(x1, y1), ... ]
-    3: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
+    5: "(547, 269), (294, 353), (367, 658), (739, 666), (805, 357)" # [(x1, y1), ... ]
+    4: "(385, 257), (299, 588), (685, 685), (788, 342)" # [(x1, y1), ... ]
+    3: "(555, 276), (340, 600), (787, 615)" # [(x1, y1), ... ]
     # confirm button after reward collection
-    confirm: [806, 525] #[x, y]
-  
+    confirm: [535, 442] #[x, y]
+
   # last boss location on map
-  final_boss: [646, 227]
+  final_boss: [380, 190]
   # last confirm after finishing the map
-  final_confirm: [794, 779]
+  final_confirm: [515, 660]
 
   # empty location to click when waiting
-  empty: [1488, 921]
+  empty: [937, 787]
   # empty location to click when waiting during battles
-  empty_battle: [620, 750] 
+  empty_battle: [142, 324]
   # mouse location during scroll
-  scroll: [1011, 764]
+  scroll: [682, 643]
   # travel point confirm button
-  travel: [1090, 674] #[x, y]
+  travel: [753, 573] #[x, y]
   # start point campfire on the map
-  start_point: [646, 712] # [x, y]
+  start_point: [377, 602] # [x, y]
 
   # team locations
-  teams: [390, 600, 820, 330, 450, 600] # [first_x, mid_x, last_x, first_y, mid_y, last_y]
+  teams: [145, 338, 530, 277, 386, 500] # [first_x, mid_x, last_x, first_y, mid_y, last_y]
   # team select confirm button
-  team_select: [1190, 800] # [x, y]
+  team_select: [838, 673] # [x, y]
   # team lock button
-  team_lock: [704, 572]
-  
+  team_lock: [438, 489]
+
   # start game button, on boss selected or path selected
-  start_game: [1250, 732] # [x, y]
+  start_game: [908, 632] # [x, y]
   # start battle button, on skill selection finished
-  start_battle: [1327, 454] # [x, y]
+  start_battle: [925, 640] # [x, y]
 
   # option button
-  options: [1580, 920] # [x, y]
+  options: [1007, 781] # [x, y]
   # surrender button
-  surrender: [815, 363] # [x, y]
+  surrender: [522, 303] # [x, y]
   # view team members button
-  view_team: [647, 885]
+  view_team: [393, 745]
   # give up button
-  give_up: [929, 706]
+  give_up: [613, 598]
   # give up confirm button
-  give_up_cfm: [712, 560]
-  
-  pvp_reward: [804, 471]
+  give_up_cfm: [434, 464] # [x, y]
+
 
 
   #
