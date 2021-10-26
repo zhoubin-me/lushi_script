@@ -1,44 +1,46 @@
 basic:
-  # number of your team ID for battle, start counting from 0
-  team_id: 4
-  # number of the boss ID for battle, start counting from 0
-  boss_id: 1
-  # total number of your heros
+  # 出战队伍的编号, 从0开始计数
+  team_id: 2
+  # 目标悬赏的编号, 从0开始计数
+  boss_id: 4
+  # 队伍中佣兵的数量，至少3人
   hero_count: 6
-  # total number of rewards after finishing the map
-  reward_count: 4
-  # whether early stop battle once collected surprise option on map, 1 means early stop, 0 means continue
-  early_stop: 1
-  # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
+  # 完成悬赏后的奖励数目
+  reward_count: 5
+  # 在拿到神秘选项后是否提前结束战斗, 1 为提前结束, 0 为继续战斗
+  early_stop: 0
+  # 连续操作之间的延迟, 如果脚本经常少点某些按钮, 你可能需要增加延迟使delay > 1.0
   delay: 0.5
-  # confidence threshold for image template matching on screen
-  confidence: 0.8 
-  # number of hero ID for battle, start counting from 0
-  # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  start_heros_id: [0, 1, 5]
-  # if any start heros died, use the following heros by order
-  next_heros_id: [0, 1, 4]
-  # PVP Surrender Mode or PVE
-  mode: 'pvp' # 'pvp' or 'pve'
-  # When game started, after this delay, start to surrender
+  # 屏幕上图像模板匹配的置信阈值
+  confidence: 0.8
+  # 战斗中佣兵的排序, 从0开始计数
+  # 战斗开始时先上场的佣兵序号, 不是构筑队伍时的顺序,是战斗开始时在你手牌中的顺序
+  start_heros_id: [1, 3, 4]
+  # 如果任意场上佣兵阵亡, 替补佣兵的上场顺序
+  next_heros_id: [0, 2, 5]
+  # 炉石传说的语言
+  lang: 'chs' # 'chs' 简体中文, 'eng' 英语
+  # PVP投降脚本 或者 PVE
+  mode: 'pve' # 'pvp' or 'pve'
+  # 投降延迟时间
   pvp_delay: 1 # in seconds
 
 skill:
   # battle round cycle
-  # skills will be repeated every N battles
+  # 战斗时技能每几回合循环一次
   cycle: 2
-  # battle skill number
+  # 战斗技能编号,从0开始
   ids:
-    0: [1, 1, 0] # first round battle skill number
-    1: [1, 1, 1] # second round battle skill number
-    # 2: [1, 1, 0] # third round battle skill number
-  
-  # battle skill target number, start counting from 0
-  # -1 means random or AOE skill with no targets, 1 means middle enemy 
+    0: [0, 0, 0] # 第一回合使用的技能
+    1: [1, 0, 0] # 第二回合使用的技能
+    # 2: [0, 0, 0] # 第三回合使用的技能
+
+  # 技能目标, 从0开始
+  # -1 指点一下就能释放的无须瞄准的非指向性技能, 1 指中间的敌人
   targets:
-    0: [-1, -1, 1] # first round battle skill target
-    1: [-1, -1, -1] # second round battle skill target
-    # 2: [-1, -1, 1] # third round battle skill target
+    0: [1, 1, 1] # 第一回合的技能目标
+    1: [-1, 1, 1] # 第二回合的技能目标
+    # 2: [1, 1, 1] # 第三回合的技能目标
 
 # coordinations of buttons etc.
 location:
@@ -70,7 +72,7 @@ location:
 
   # focus area before battle
   focus: [420, 650, 900, 453] # [first_x, mid_x, last_x, y]
-  
+
   # final boss reward locations, depending on rewards count
   rewards:
     5: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
@@ -78,7 +80,7 @@ location:
     3: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
     # confirm button after reward collection
     confirm: [806, 525] #[x, y]
-  
+
   # last boss location on map
   final_boss: [646, 227]
   # last confirm after finishing the map
@@ -87,7 +89,7 @@ location:
   # empty location to click when waiting
   empty: [1488, 921]
   # empty location to click when waiting during battles
-  empty_battle: [620, 750] 
+  empty_battle: [620, 750]
   # mouse location during scroll
   scroll: [1011, 764]
   # travel point confirm button
@@ -101,7 +103,7 @@ location:
   team_select: [1190, 800] # [x, y]
   # team lock button
   team_lock: [704, 572]
-  
+
   # start game button, on boss selected or path selected
   start_game: [1250, 732] # [x, y]
   # start battle button, on skill selection finished
@@ -110,7 +112,7 @@ location:
   # option button
   options: [1580, 920] # [x, y]
   # surrender button
-  surrender: [815, 363] # [x, y]
+  surrender: [815, 343] # [x, y]
   # view team members button
   view_team: [647, 885]
   # give up button

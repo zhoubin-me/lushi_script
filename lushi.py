@@ -23,18 +23,18 @@ if platform.system() == 'Windows':
         image = ImageGrab.grab(rect)
         image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
         return rect, image
-elif platform.system() == 'Darwin':
-    import psutil
-    from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
-    
-    def find_lushi_window(title):
-        for p in psutil.process_iter():
-            if p.name == title:
-                pid = p.pid
-                app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
-                app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
-        else:
-            raise ValueError("Hearthstone is not running")
+# elif platform.system() == 'Darwin':
+#     import psutil
+#     from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
+#
+#     def find_lushi_window(title):
+#         for p in psutil.process_iter():
+#             if p.name == title:
+#                 pid = p.pid
+#                 app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
+#                 app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
+#         else:
+#             raise ValueError("Hearthstone is not running")
 else:
     raise ValueError(f"Plafform {platform.platform()} is not supported yet")
 
@@ -82,7 +82,7 @@ class Agent:
         else:
             raise ValueError(f"Language {self.lang} is not supported yet")
 
-        with open(cfg_file, 'r') as f:
+        with open(cfg_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
 
         self.basic = SimpleNamespace(**config['basic'])
