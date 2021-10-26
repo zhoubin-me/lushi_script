@@ -8,6 +8,8 @@ out.png
 *.so
 
 # Distribution / packaging
+.idea
+.ipynb_checkpoints
 .Python
 build/
 develop-eggs/

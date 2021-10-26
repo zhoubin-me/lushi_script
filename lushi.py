@@ -99,7 +99,7 @@ class Agent:
         elif self.basic.lang == 'chs':
             self.title = '炉石传说'
         else:
-            raise ValueError(f"Language {} is not supported")
+            raise ValueError(f"Language {self.basic.lang} is not supported")
     
     def check_state(self):
         lushi, image = find_lushi_window(self.basic.title)
