@@ -1,5 +1,6 @@
 # Hearthstone Mercenaries Mode Script
 
+中文用户请阅读[这里](https://github.com/zhoubin-me/lushi_script/blob/main/README_CN.md)
 
 ## Introduction
 This script is to save your time from Mercenaries mode of Hearthstone. 
