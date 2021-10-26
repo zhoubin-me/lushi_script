@@ -17,7 +17,8 @@ def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
-    image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+    image.save('out.png')
+    # image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
     return rect, image
 
 def find_icon_location(lushi, icon, confidence):
@@ -79,7 +80,7 @@ class Agent:
     
     def check_state(self):
         lushi, image = find_lushi_window()
-        output = {}
+        output = {'screen': image}
         for k, v in self.icons.items():
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
             if success:
@@ -96,7 +97,27 @@ class Agent:
                 output[k] = (click_loc, conf)
         
         return output, lushi
-        
+    
+    def analyse_battle_field(self, screen):
+        x1, y1, x2, y2 = self.locs.enemy_region
+        img = screen[x1:x2, y1:y2]
+        imgray = cv.cvtColor(img, cv.COLOR_BGR2GRAY)
+
+        ret, thresh = cv.threshold(img_gray, 250, 255, 0)
+        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
+        img_copy = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
+        # print(stats)
+        for i in range(1, num_labels):
+            mask = labels == i
+            if stats[i][-1] > 50:
+                img_copy[:, :, 0][mask] = 255
+                img_copy[:, :, 1][mask] = 255
+                img_copy[:, :, 2][mask] = 255
+
+        img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
+        print(img_data)
+        Image.fromarray(img_copy)
+
 
 
     def find_icon_loc(self, icon, lushi, image):
@@ -212,7 +233,7 @@ class Agent:
                 print("Selecting heros")
                 first_x, last_x, y = self.locs.members
                 mid_x = (first_x + last_x) // 2
-                for i, idx in enumerate(self.basic.heros_id):
+                for i, idx in enumerate(self.basic.start_heros_id):
                     current_heros_left = self.basic.hero_count - i
                     if current_heros_left > 3:
                         dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
@@ -294,7 +315,6 @@ class Agent:
 
 
             if 'visitor_list' in states:
-                states, rect = self.check_state()
                 for key in self.heros_whitelist.keys():
                     if key in states:
                         pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])

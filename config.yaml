@@ -15,7 +15,9 @@ basic:
   confidence: 0.8 
   # number of hero ID for battle, start counting from 0
   # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  heros_id: [2, 3, 5]
+  start_heros_id: [2, 3, 5]
+  # if any start heros died, use the following heros by order
+  next_heros_id: [0, 1, 4]
   # Choose language of your hearthstone
   lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
   # PVP Surrender Mode or PVE 
@@ -119,4 +121,5 @@ location:
 
 
   #
-  pvp_enemy_region: [1329, 262, 1376, 397] # [x1, y1, x2, y2]
+  enemy_region: [400, 300, 1230, 400] # [x1, y1, x2, y2]
+  hero_region: [400, 650, 1230, 750]
