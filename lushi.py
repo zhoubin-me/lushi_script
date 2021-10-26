@@ -181,6 +181,11 @@ class Agent:
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 continue
             
+            if 'pvp_reward' in states:
+                pyautogui.click(rect[0] + self.locs.pvp_reward[0], rect[1] + self.locs.pvp_reward[1])
+            
+            pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+
 
 
     def run_pve(self):

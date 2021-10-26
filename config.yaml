@@ -117,7 +117,8 @@ location:
   give_up: [929, 706]
   # give up confirm button
   give_up_cfm: [712, 560]
-
+  
+  pvp_reward_loc: [804, 471]
 
 
   #
