@@ -4,22 +4,38 @@ import cv2
 import time
 import numpy as np
 
-import win32gui
 import os
 import yaml
 
 from types import SimpleNamespace
 from PIL import ImageGrab, Image
-from winguiauto import findTopWindow
+import platform
 
+if platform.system() == 'Windows':
+    import win32gui
+    from winguiauto import findTopWindow
 
-def find_lushi_window():
-    hwnd = findTopWindow("炉石传说")
-    rect = win32gui.GetWindowPlacement(hwnd)[-1]
-    image = ImageGrab.grab(rect)
-    # image.save('out.png')
-    image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
-    return rect, image
+    def find_lushi_window(title):
+        hwnd = findTopWindow(title)
+        rect = win32gui.GetWindowPlacement(hwnd)[-1]
+        image = ImageGrab.grab(rect)
+        # image.save('out.png')
+        image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+        return rect, image
+elif platform.system() == 'Darwin':
+    import psutil
+    from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
+    
+    def find_lushi_window(title):
+        for p in psutil.process_iter():
+            if p.name == title:
+                pid = p.pid
+                app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
+                app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
+        else:
+            raise ValueError("Hearthstone is not running")
+else:
+    raise ValueError(f"Plafform {platform.platform()} is not supported yet")
 
 def find_icon_location(lushi, icon, confidence):
     result = cv2.matchTemplate(lushi, icon, cv2.TM_CCOEFF_NORMED)
@@ -33,14 +49,14 @@ def find_icon_location(lushi, icon, confidence):
         return False, None, None, maxVal
 
 
-def find_relative_loc():
+def find_relative_loc(title='炉石传说'):
     pos = pyautogui.position()
-    rect, _ = find_lushi_window()
+    rect, _ = find_lushi_window(title)
     print((pos[0]-rect[0], pos[1]-rect[1]))
 
 
-def move2loc(x, y):
-    rect, _ = find_lushi_window()
+def move2loc(x, y, title='炉石传说'):
+    rect, _ = find_lushi_window(title)
     loc = (x + rect[0], y + rect[1])
     pyautogui.moveTo(loc)
 
@@ -78,9 +94,15 @@ class Agent:
         self.skill = SimpleNamespace(**config['skill'])
         self.locs = SimpleNamespace(**config['location'])
         pyautogui.PAUSE = self.basic.delay
+        if self.basic.lang == 'eng':
+            self.title = 'hearthstone'
+        elif self.basic.lang == 'chs':
+            self.title = '炉石传说'
+        else:
+            raise ValueError(f"Language {} is not supported")
     
     def check_state(self):
-        lushi, image = find_lushi_window()
+        lushi, image = find_lushi_window(self.basic.title)
         output = {}
         for k, v in self.icons.items():
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
