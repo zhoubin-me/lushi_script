@@ -183,6 +183,7 @@ class Agent:
         return None
 
     def run_pvp(self):
+        self.basic.reward_count = 5
         while True:
             time.sleep(self.basic.delay + np.random.rand())
             states, rect, screen = self.check_state()

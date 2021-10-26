@@ -19,7 +19,9 @@ basic:
   # if any start heros died, use the following heros by order
   next_heros_id: [0, 1, 4]
   # PVP Surrender Mode or PVE
-  mode: 'pve' # 'pvp' or 'pve'
+  mode: 'pvp' # 'pvp' or 'pve'
+  # When game started, after N seconds, start to surrender
+  pvp_delay: 1.0 # in seconds
 
 skill:
   # battle round cycle
