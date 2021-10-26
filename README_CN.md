@@ -25,7 +25,7 @@ pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
 
 ## 运行之前
 
-- 请确保已将你的炉石设为窗口即墨市
+- 请确保已将你的炉石设为窗口模式
 - 中文用户需将炉石分辨率设为 **1024x768**
 - 英文用户需将炉石分辨率设为 **1600x900**
 - 想要使用其他分辨率，请更改```config_chs.yaml```里的location栏, 用```find_coordinates.py``` 来记录鼠标坐标;
