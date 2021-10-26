@@ -26,8 +26,8 @@ pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
 ## 运行之前
 
 - 请确保已将你的炉石设为窗口模式
-- 中文用户需将炉石分辨率设为 **1024x768**
-- 英文用户需将炉石分辨率设为 **1600x900**
+- 英文用户需将炉石分辨率设为 **1024x768**
+- 中文用户需将炉石分辨率设为 **1600x900**
 - 想要使用其他分辨率，请更改```config_chs.yaml```里的location栏, 用```find_coordinates.py``` 来记录鼠标坐标;
 - 开始游戏前，请认真阅读并设置```config.yaml```里的basic和skill栏
 - 如果你不想要某些宝藏，请将其对应分辨率下的截图放置```imgs_eng/treasure_blacklist```文件夹
@@ -37,8 +37,9 @@ pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
 
 ## 运行
 
-在你的CMD或者terminal里，cd到```lushi.py```所在文件夹，并运行
+请在你的CMD或者terminal里，cd到```lushi.py```所在文件夹，并运行
 ```bash
 python lushi.py --lang chs
 ```
+
 
