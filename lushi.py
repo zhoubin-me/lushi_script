@@ -102,7 +102,7 @@ class Agent:
             raise ValueError(f"Language {self.basic.lang} is not supported")
     
     def check_state(self):
-        lushi, image = find_lushi_window(self.basic.title)
+        lushi, image = find_lushi_window(self.title)
         output = {}
         for k, v in self.icons.items():
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
@@ -174,7 +174,7 @@ class Agent:
         
         print("Did not found any surprise")
         return None
-    
+
     def run_pvp(self):
         while True:
             time.sleep(self.basic.delay + np.random.rand())
@@ -213,8 +213,6 @@ class Agent:
                 pyautogui.click(rect[0] + self.locs.pvp_reward[0], rect[1] + self.locs.pvp_reward[1])
             
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
-
-
 
     def run_pve(self):
         side = None
@@ -312,7 +310,7 @@ class Agent:
                 battle_round_count += 1
                 continue
 
-            if  ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
+            if ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
                 pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
                 pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])
                 pyautogui.click(self.locs.give_up_cfm[0]+rect[0], self.locs.give_up_cfm[1]+rect[1])
@@ -345,7 +343,6 @@ class Agent:
                     else:
                         surprise_in_mid = False
                     continue
-
 
             if 'visitor_list' in states:
                 for key in self.heros_whitelist.keys():
