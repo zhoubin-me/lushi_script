@@ -8,7 +8,7 @@ It is only for study purpose, you will take your own legal responsibility if you
 
 For discussion, welcome to our QQ Group: 832946624
 
-For bug reporting, please go to issues page to submit
+For bug reporting, please go to [Issues](https://github.com/zhoubin-me/lushi_script/issues) page to submit
 
 ## Installation
 
