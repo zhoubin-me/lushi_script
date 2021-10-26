@@ -22,7 +22,7 @@ basic:
   lang: 'chs' # 'chs' for Simplified Chinese, 'eng' for English
   # PVP Surrender Mode or PVE 
   mode: 'pvp' # 'pvp' or 'pve'
-  # After this delay when game started, start to surrender
+  # When game started, after this delay, start to surrender
   pvp_delay: 1 # in seconds
 
 skill:
