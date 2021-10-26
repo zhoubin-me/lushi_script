@@ -17,10 +17,14 @@ Windows用户请在command line里输入以下来安装需求包：
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 ```
-Mac OS 用户请在terminal里输入以下来安装需求包
-```bash
-pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
-```
+
+[comment]: <> (Mac OS 用户请在terminal里输入以下来安装需求包)
+
+[comment]: <> (```bash)
+
+[comment]: <> (pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa)
+
+[comment]: <> (```)
 
 
 ## 运行之前

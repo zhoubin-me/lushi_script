@@ -1,0 +1,107 @@
+import cv2
+import pyautogui
+from PIL import ImageGrab, Image
+import numpy as np
+import platform
+import psutil
+import os
+import time
+
+PLATFORM = platform.system()
+
+if PLATFORM:
+    import win32gui
+    from winguiauto import findTopWindow
+
+    def windowEnumerationHandler(hwnd, top_windows):
+        top_windows.append((hwnd, win32gui.GetWindowText(hwnd)))
+
+    def set_top_window(title):
+        top_windows = []
+        win32gui.EnumWindows(windowEnumerationHandler, top_windows)
+        for i in top_windows:
+            if title in i[1].lower():
+                win32gui.ShowWindow(i[0],5)
+                win32gui.SetForegroundWindow(i[0])
+                return True
+        else:
+            return False
+
+    def find_lushi_window(title):
+        hwnd = findTopWindow(title)
+        rect = win32gui.GetWindowPlacement(hwnd)[-1]
+        image = ImageGrab.grab(rect)
+        image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+        return rect, image
+
+
+
+# elif platform.system() == 'Darwin':
+#     import psutil
+#     from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
+#
+#     def find_lushi_window(title):
+#         for p in psutil.process_iter():
+#             if p.name == title:
+#                 pid = p.pid
+#                 app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
+#                 app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
+#         else:
+#             raise ValueError("Hearthstone is not running")
+else:
+    raise ValueError(f"Plafform {platform.platform()} is not supported yet")
+
+def find_icon_location(lushi, icon, confidence):
+    result = cv2.matchTemplate(lushi, icon, cv2.TM_CCOEFF_NORMED)
+    (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
+    if maxVal > confidence:
+        (startX, startY) = maxLoc
+        endX = startX + icon.shape[1]
+        endY = startY + icon.shape[0]
+        return True, (startX+endX)//2, (startY+endY)//2, maxVal
+    else:
+        return False, None, None, maxVal
+
+def find_relative_loc(title='炉石传说'):
+    pos = pyautogui.position()
+    rect, _ = find_lushi_window(title)
+    print((pos[0]-rect[0], pos[1]-rect[1]))
+
+
+def move2loc(x, y, title='炉石传说'):
+    rect, _ = find_lushi_window(title)
+    loc = (x + rect[0], y + rect[1])
+    pyautogui.moveTo(loc)
+
+def restart_game(lang):
+    if lang == 'eng':
+        bn = 'Battle.net'
+        hs = 'Hearthstone'
+    elif lang == 'chs':
+        bn = "战网"
+        hs = "炉石传说"
+    else:
+        raise ValueError(f"Language {lang} not supported")
+
+    icon_path = os.path.join(f'imgs_{lang}', 'icons', 'start_game_icon.png')
+    icon = cv2.imread(icon_path)
+    icon = cv2.cvtColor(np.array(icon), cv2.COLOR_BGR2GRAY)
+    for p in psutil.process_iter():
+        if p.name() == 'Hearthstone.exe':
+            p.kill()
+            print("hearthstone killed")
+    time.sleep(10)
+    bn_found = set_top_window(bn)
+    if bn_found:
+        while True:
+            image = ImageGrab.grab()
+            image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+            success, x, y, conf = find_icon_location(image, icon, 0.9)
+            if success:
+                pyautogui.click(x, y)
+                time.sleep(5)
+                set_top_window(hs)
+                break
+
+if __name__ == "__main__":
+    restart_game("chs")

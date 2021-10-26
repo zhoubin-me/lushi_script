@@ -3,63 +3,13 @@ import pyautogui
 import cv2
 import time
 import numpy as np
-
+import argparse
 import os
 import yaml
-
 from types import SimpleNamespace
-from PIL import ImageGrab, Image
-import platform
-import argparse
-# import pytesseract
-
-if platform.system() == 'Windows':
-    import win32gui
-    from winguiauto import findTopWindow
-
-    def find_lushi_window(title):
-        hwnd = findTopWindow(title)
-        rect = win32gui.GetWindowPlacement(hwnd)[-1]
-        image = ImageGrab.grab(rect)
-        image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
-        return rect, image
-# elif platform.system() == 'Darwin':
-#     import psutil
-#     from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
-#
-#     def find_lushi_window(title):
-#         for p in psutil.process_iter():
-#             if p.name == title:
-#                 pid = p.pid
-#                 app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
-#                 app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
-#         else:
-#             raise ValueError("Hearthstone is not running")
-else:
-    raise ValueError(f"Plafform {platform.platform()} is not supported yet")
 
 
-def find_icon_location(lushi, icon, confidence):
-    result = cv2.matchTemplate(lushi, icon, cv2.TM_CCOEFF_NORMED)
-    (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
-    if maxVal > confidence:
-        (startX, startY) = maxLoc
-        endX = startX + icon.shape[1]
-        endY = startY + icon.shape[0]
-        return True, (startX+endX)//2, (startY+endY)//2, maxVal
-    else:
-        return False, None, None, maxVal
-
-def find_relative_loc(title='炉石传说'):
-    pos = pyautogui.position()
-    rect, _ = find_lushi_window(title)
-    print((pos[0]-rect[0], pos[1]-rect[1]))
-
-
-def move2loc(x, y, title='炉石传说'):
-    rect, _ = find_lushi_window(title)
-    loc = (x + rect[0], y + rect[1])
-    pyautogui.moveTo(loc)
+from util import find_lushi_window, find_icon_location, restart_game, set_top_window
 
 
 class Agent:
@@ -108,6 +58,7 @@ class Agent:
             v = cv2.cvtColor(cv2.imread(os.path.join(img_folder, 'heros_whitelist', img)), cv2.COLOR_BGR2GRAY)
             self.heros_whitelist[k] = v
 
+        set_top_window(self.title)
 
     def check_state(self):
         lushi, image = find_lushi_window(self.title)
@@ -184,17 +135,36 @@ class Agent:
 
     def run_pvp(self):
         self.basic.reward_count = 5
+        state = ""
+        tic = time.time()
         while True:
             time.sleep(self.basic.delay + np.random.rand())
             states, rect, screen = self.check_state()
             print(states)
 
+            if time.time() - tic > self.basic.longest_waiting:
+                restart_game(self.lang)
+                tic = time.time()
+            if 'mercenaries' in states:
+                pyautogui.click(states['mercenaries'][0])
+                if state != "mercenaries":
+                    state = "mercenaries"
+                    tic = time.time()
+                continue
+
             if 'pvp' in states:
                 pyautogui.click(states['pvp'][0])
+                if state != "pvp":
+                    state = "pvp"
+                    tic = time.time()
                 continue
 
             if 'pvp_team' in states:
+                tic = time.time()
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
+                if state != "pvp_team":
+                    state = "pvp_team"
+                    tic = time.time()
                 continue
             
             if 'pvp_ready' in states or 'member_not_ready' in states:
@@ -209,6 +179,10 @@ class Agent:
                         pyautogui.click(states['surrender'][0])
                 for _ in range(5):
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+
+                if state != "pvp_ready":
+                    state = "pvp_ready"
+                    tic = time.time()
                 continue
             
             if 'final_reward' in states or 'final_reward2' in states:
@@ -220,8 +194,15 @@ class Agent:
                 pyautogui.click()
                 for _ in range(5):
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+                if state != "final_reward":
+                    state = "final_reward"
+                    tic = time.time()
                 continue
-            
+
+            if state != "":
+                state = ""
+                tic = time.time()
+
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
     def run_pve(self):

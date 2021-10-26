@@ -19,13 +19,18 @@ Make sure you added python path into your ```$PATH``` system environment/variabl
 
 Run the following in your commandline/terminal for **requirements** installation
 
+
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 ```
-For Mac OS users:
-```bash
-pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
-```
+
+[comment]: <> (For Mac OS users:)
+
+[comment]: <> (```bash)
+
+[comment]: <> (pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa)
+
+[comment]: <> (```)
 
 
 ## Before Running
