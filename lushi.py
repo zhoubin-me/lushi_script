@@ -10,6 +10,7 @@ import yaml
 from types import SimpleNamespace
 from PIL import ImageGrab, Image
 import platform
+import argparse
 # import pytesseract
 
 if platform.system() == 'Windows':
