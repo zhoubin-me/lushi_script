@@ -17,8 +17,8 @@ def find_lushi_window():
     hwnd = findTopWindow("炉石传说")
     rect = win32gui.GetWindowPlacement(hwnd)[-1]
     image = ImageGrab.grab(rect)
-    image.save('out.png')
-    # image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+    # image.save('out.png')
+    image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
     return rect, image
 
 def find_icon_location(lushi, icon, confidence):
@@ -49,6 +49,7 @@ class Agent:
     def __init__(self):
         self.icons = {}
         self.treasure_blacklist = {}
+        self.heros_whitelist = {}
         imgs = [img for img in os.listdir(os.path.join('imgs', 'icons')) if img.endswith('.png')]
         for img in imgs:
             k = img.split('.')[0]
@@ -80,7 +81,7 @@ class Agent:
     
     def check_state(self):
         lushi, image = find_lushi_window()
-        output = {'screen': image}
+        output = {}
         for k, v in self.icons.items():
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
             if success:
@@ -96,7 +97,7 @@ class Agent:
             if success:
                 output[k] = (click_loc, conf)
         
-        return output, lushi
+        return output, lushi, image
     
     def analyse_battle_field(self, screen):
         x1, y1, x2, y2 = self.locs.enemy_region
@@ -115,7 +116,6 @@ class Agent:
                 img_copy[:, :, 2][mask] = 255
 
         img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
-        print(img_data)
         Image.fromarray(img_copy)
 
 
@@ -132,7 +132,7 @@ class Agent:
         print('Scanning surprise')
         pyautogui.moveTo(rect[0] + self.locs.scroll[0], rect[1] + self.locs.scroll[1])
         while True:
-            states, rect = self.check_state()
+            states, rect, screen = self.check_state()
             if 'surprise' in states:
                 loc = states['surprise'][0]
                 print(f"Found surprise at start {loc}")
@@ -141,7 +141,7 @@ class Agent:
                 break
 
         for _ in range(10):
-            states, rect = self.check_state()
+            states, rect, screen = self.check_state()
             pyautogui.scroll(60)
             if 'surprise' in states:
                 for _ in range(10):
@@ -156,7 +156,7 @@ class Agent:
     def run_pvp(self):
         while True:
             time.sleep(self.basic.delay)
-            states, rect = self.check_state()
+            states, rect, screen = self.check_state()
             print(states)
             if 'pvp' in states:
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
@@ -190,7 +190,7 @@ class Agent:
         battle_round_count = 0
         while True:
             time.sleep(np.random.rand()+0.5)
-            states, rect = self.check_state()
+            states, rect, screen = self.check_state()
             print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}, heros alive {heros_alive}")
 
             if 'mercenaries' in states:
@@ -363,7 +363,7 @@ class Agent:
                 pyautogui.mouseDown()
                 pyautogui.mouseUp()
                 time.sleep(self.basic.delay)
-                states, rect = self.check_state()
+                states, rect, screen = self.check_state()
                 if 'start_game' in states:
                     pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
                     continue
