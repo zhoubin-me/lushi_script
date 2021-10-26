@@ -22,7 +22,7 @@ pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 ```
 For Mac OS users:
 ```bash
-pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil PyCocoa
+pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
 ```
 ## Run
 If you need a stable version, goto Release to download.
