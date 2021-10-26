@@ -7,11 +7,9 @@ This script is to save your time from Mercenaries mode of Hearthstone.
 
 It is only for study purpose, you will take your own legal responsibility if you commercialize it or earn profit.
 
-For discussion, welcome to join our [Discord Group](https://discord.gg/g8gxdwJ4)
+For discussion, welcome to join our [Discord Group](https://discord.gg/g8gxdwJ4).
 
-欢迎中文用户加入我们的QQ群参加测试讨论：832946624
-
-For bug reporting, please go to [Issues](https://github.com/zhoubin-me/lushi_script/issues) page to submit
+For bug reporting, please go to [Issues](https://github.com/zhoubin-me/lushi_script/issues) page to submit.
 
 ## Installation
 
@@ -19,7 +17,7 @@ Make sure you installed python>=3.6.
 To install python, we recommand [Anaconda](https://www.anaconda.com/products/individual#windows).
 Make sure you added python path into your ```$PATH``` system environment/variables
 
-Run the following in your commandline/terminal for **Requirements** installation
+Run the following in your commandline/terminal for **requirements** installation
 
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
@@ -33,8 +31,8 @@ pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa
 ## Before Running
 
 - Make sure your Hearthstone is set to **windows mode**
-- For English language users, please set your resolution to **1024x768**
-- For Chinese language users, please set your resolution to **1600x900**
+- For English language users, please set your Hearthstone resolution to **1024x768**
+- For Chinese language users, please set your Hearthstone resolution to **1600x900**
 - For more resolutions, change locations in ```config.yaml```, use ```find_coordinates.py``` to record button locations;
 - Please read carefully about **basic section and skill section** in  ```conig.yaml``` before you start your game
 - If you wanna blacklist some treasures during selection, put their screenshot into ```imgs_eng/treasure_blacklist``` folder
