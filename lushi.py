@@ -155,7 +155,7 @@ class Agent:
     
     def run_pvp(self):
         while True:
-            time.sleep(self.basic.delay)
+            time.sleep(self.basic.delay + np.random.rand())
             states, rect, screen = self.check_state()
             print(states)
             if 'pvp' in states:
