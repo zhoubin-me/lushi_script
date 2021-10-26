@@ -180,7 +180,12 @@ class Agent:
             time.sleep(self.basic.delay + np.random.rand())
             states, rect, screen = self.check_state()
             print(states)
+
             if 'pvp' in states:
+                pyautogui.click(states['pvp'][0])
+                continue
+
+            if 'pvp_team' in states:
                 pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
                 continue
             
