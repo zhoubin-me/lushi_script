@@ -66,7 +66,6 @@ def analyse_battle_field(region, screen):
             color = 'n'
 
         data[i] = (x + x1, y + y1-50, color, numbers[2*i], numbers[2*i+1])
-
         print(B, G, R)
     print(data)
     return data
