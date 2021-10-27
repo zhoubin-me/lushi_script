@@ -23,11 +23,11 @@ class Agent:
     def load_config(self):
         if self.lang == 'eng':
             cfg_file = 'config_eng.yaml'
-            img_folder = 'imgs_eng'
+            img_folder = 'imgs_eng_1024x768'
             self.title = 'hearthstone'
         elif self.lang == 'chs':
             cfg_file = 'config_chs.yaml'
-            img_folder = "imgs_chs"
+            img_folder = "imgs_chs_1600x900"
             self.title = "炉石传说"
         else:
             raise ValueError(f"Language {self.lang} is not supported yet")
@@ -143,7 +143,7 @@ class Agent:
             print(states)
 
             if time.time() - tic > self.basic.longest_waiting:
-                restart_game(self.lang)
+                restart_game(self.lang, self.basic.battle_net_path)
                 tic = time.time()
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])

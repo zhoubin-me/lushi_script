@@ -13,7 +13,7 @@ BUG提交请去 [此页面](https://github.com/zhoubin-me/lushi_script/issues)
 请确保你安装了python 3.6或以上版本。我们推荐使用 [Anaconda](https://www.anaconda.com/products/individual#windows) 安装python。
 请确保你已将python的路径加入到了系统环境变量。
 
-Windows用户请在command line里输入以下来安装需求包：
+Windows用户请在命令行里输入以下来安装需求包：
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 ```
@@ -41,7 +41,7 @@ pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
 
 ## 运行
 
-请在你的CMD或者terminal里，cd到```lushi.py```所在文件夹，并运行
+请在你的命令行里，cd到```lushi.py```所在文件夹，并运行
 ```bash
 python lushi.py --lang chs
 ```
