@@ -143,7 +143,7 @@ class Agent:
             print(states)
 
             if time.time() - tic > self.basic.longest_waiting:
-                restart_game(self.lang)
+                restart_game(self.lang, self.basic.battle_net_path)
                 tic = time.time()
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
