@@ -155,7 +155,7 @@ def restart_game(lang, battle_net_path):
                               '', 1)
         time.sleep(10)
     print('Hearthstone start success')
-    set_top_window(hs)
+    set_top_window(title)
     print('done')
 
 
