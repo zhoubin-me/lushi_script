@@ -210,6 +210,7 @@ class Agent:
         surprise_in_mid = False
         heros_alive = 0
         battle_round_count = 0
+        skill_selection_retry = 0
         while True:
             time.sleep(np.random.rand()+0.5)
             states, rect, screen = self.check_state()
@@ -250,6 +251,17 @@ class Agent:
                 pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                 pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                 continue
+            
+            if 'summoned_demon' in states:
+                # sometimes the opponent may summon an extra demon on their side or our side, check the coordinate
+                # if it's on our side, surrender
+                # this may not work if there's a demon on both sides
+                print('Found Summoned Demon, checking coordinates', states)
+                if states['summoned_demon'][0][1] > 450: # this will be a new parameter
+                    print("Surrendering", states)
+                    pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                    pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                continue;
 
             if 'member_not_ready' in states:
                 print("Selecting heros")
@@ -276,7 +288,13 @@ class Agent:
                 continue
 
             if 'not_ready_dots' in states:
-                print("Selecting skills")
+                if skill_selection_retry > self.skill.retry :
+                    print("Surrendering", states)
+                    pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                    pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                    
+                print("Selecting skills, attempt ", skill_selection_retry)
+                skill_selection_retry += 1
                 pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 pyautogui.click(rect[0]+self.locs.heros[0], rect[1]+self.locs.heros[-1])
 
@@ -299,6 +317,7 @@ class Agent:
             if 'battle_ready' in states:
                 pyautogui.click(states['battle_ready'][0])
                 battle_round_count += 1
+                skill_selection_retry = 0
                 continue
 
             if ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
