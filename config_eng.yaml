@@ -48,6 +48,9 @@ skill:
     0: [ -1, -1, 1 ] # first round battle skill target
     1: [ -1, -1, -1 ] # second round battle skill target
     # 2: [-1, -1, 1] # third round battle skill target
+    
+  # max number of retries to use skills, once reached, will surrender
+  max_retry: 6
 
 # coordinations of buttons etc.
 location:
@@ -132,3 +135,6 @@ location:
   #
   enemy_region: [ 400, 300, 1230, 400 ] # [x1, y1, x2, y2]
   hero_region: [ 400, 650, 1230, 750 ]
+  
+  # game resolution
+  resolution: [1024, 768]
