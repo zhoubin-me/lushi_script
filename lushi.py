@@ -212,7 +212,7 @@ class Agent:
         battle_round_count = 0
         skill_selection_retry = 0
         while True:
-            time.sleep(np.random.rand()+0.5)
+            time.sleep(np.random.rand()+self.basic.delay)
             states, rect, screen = self.check_state()
             print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}, heros alive {heros_alive}")
 
@@ -257,8 +257,8 @@ class Agent:
                 # if it's on our side, surrender
                 # this may not work if there's a demon on both sides
                 print('Found Summoned Demon, checking coordinates', states)
-                if states['summoned_demon'][0][1] > 450: # this will be a new parameter
-                    print("Surrendering", states)
+                if states['summoned_demon'][0][1] > self.locs.resolution[1]/2:  # if it's on enemy side
+                    print("Surrendering due to extra minion on our side", states)
                     pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                     pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                 continue;
@@ -288,7 +288,7 @@ class Agent:
                 continue
 
             if 'not_ready_dots' in states:
-                if skill_selection_retry > self.skill.retry :
+                if skill_selection_retry > self.skill.max_retry :
                     print("Surrendering", states)
                     pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                     pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])

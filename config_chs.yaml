@@ -50,8 +50,9 @@ skill:
     1: [1, -1, -1] # 第二回合的技能目标
 
     # 2: [1, 1, 1] # 第三回合的技能目标
-    
-  retry: 6
+   
+  # 最大重试技能次数，达到次数后如果依然不成功，认输
+  max_retry: 6
 
 # coordinations of buttons etc.
 location:
@@ -137,3 +138,6 @@ location:
   #
   enemy_region: [ 400, 300, 1230, 400 ] # [x1, y1, x2, y2]
   hero_region: [ 400, 650, 1230, 750 ]
+  
+  # game resolution
+  resolution: [1600, 900]
