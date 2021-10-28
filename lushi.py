@@ -104,6 +104,8 @@ class Agent:
         pyautogui.click(tuple_add(rect, self.locs.empty))
         rect, screen = find_lushi_window(self.title, to_gray=False)
         hero_info = analyse_battle_field(self.locs.hero_region, screen)
+        if len([x for x in hero_info if x[5] != 'n']) < 3:
+            raise ValueError("Hero Dead!")
         enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
         enemy_info.sort(key=lambda x: x[4])
         lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
@@ -149,7 +151,11 @@ class Agent:
 
     def run(self):
         if self.basic.mode == 'pve':
-            self.run_pve()
+            while True:
+                try:
+                    self.run_pve()
+                except:
+                    restart_game(self.lang, self.basic.bn_path)
         elif self.basic.mode == 'pvp':
             self.run_pvp()
         else:
@@ -254,7 +260,8 @@ class Agent:
             time.sleep(np.random.rand() + self.basic.delay)
 
             if time.time() - tic > self.basic.longest_waiting:
-                restart_game(self.lang, self.basic.bn_path)
+                if state == 'not_ready_dots':
+                    restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
                 print(f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
@@ -338,7 +345,7 @@ class Agent:
                         loc = (mid_x, y)
 
                     pyautogui.click(tuple_add(result[2], loc))
-                    pyautogui.click(tuple_add(result[2], self.locs.dragto))
+                    pyautogui.moveTo(tuple_add(result[2], self.locs.dragto))
                     pyautogui.click()
                 continue
 
@@ -364,7 +371,7 @@ class Agent:
                 if state != "destory_blue_portal_boom":
                     state = "destory_blue_portal_boom"
                     tic = time.time()
-                result = self.check_in_screen('destory')
+                result = self.check_in_screen('destroy')
                 pyautogui.click(tuple_add(result[2], self.locs.view_team))
                 pyautogui.click(tuple_add(result[2], self.locs.give_up))
                 pyautogui.click(tuple_add(result[2], self.locs.give_up_cfm))
@@ -506,7 +513,6 @@ def main():
 
     agent = Agent(lang=args.lang)
     agent.run()
-
 
 if __name__ == '__main__':
     main()

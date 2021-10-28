@@ -30,12 +30,13 @@ def analyse_battle_field(region, screen, digits=None):
             img_copy[:, :, 1][mask] = 255
             img_copy[:, :, 2][mask] = 255
             digit = img_copy[y-3:y+h, x-3:x+w]
-            cv2.imwrite(f'digit_{i}.png', digit)
+            # cv2.imwrite(f'digit_{i}.png', digit)
             success, x, y, conf = find_icon_location(digits, digit, 0.7)
             if success:
                 data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
                 print(i, data[-1])
     data.sort(key=lambda e: e[0])
+    cv2.imwrite('img_clean.png', img_copy)
     print(data)
     data_clean = []
     for i, entry in enumerate(data):
