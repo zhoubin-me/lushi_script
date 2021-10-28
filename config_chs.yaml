@@ -134,13 +134,23 @@ location:
   give_up: [ 929, 706 ]
   # give up confirm button
   give_up_cfm: [ 712, 560 ]
-
   pvp_reward: [ 804, 471 ]
 
 
-  #
-  enemy_region: [ 400, 300, 1230, 400 ] # [x1, y1, x2, y2]
+  # Region of cards on Battlefield
+  enemy_region: [ 400, 293, 1230, 393 ] # [x1, y1, x2, y2]
   hero_region: [ 400, 650, 1230, 750 ]
-  
+  hero_center_y_offset: 70
+  hero_image_size: [50, 35]
+
+  color_thresh: 250
+  hero_color_thresh: 100
+  color_y_offset: 28
+  color_region_offset: [5, 10]
+
+  digit_size: [17, 30]
+  digit_conf: 0.7
+  digit_template_w: 28
+
   # game resolution
   resolution: [1600, 900]
