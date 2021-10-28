@@ -15,9 +15,9 @@ basic:
   confidence: 0.8
   # 战斗中佣兵的排序, 从0开始计数
   # 战斗开始时先上场的佣兵序号, 不是构筑队伍时的顺序,是战斗开始时在你手牌中的顺序
-  start_heros_id: [0, 3, 4]
+  start_heros_id: [1, 3, 5]
   # 如果任意场上佣兵阵亡, 替补佣兵的上场顺序
-  next_heros_id: [5, 1, 2]
+  next_heros_id: [0, 2, 4]
 
 
 
@@ -30,7 +30,7 @@ basic:
   # 如果界面卡住，最多等多久重启炉石
   longest_waiting: 60 # 秒计
   # 战网路径(注意路径要加双斜杠)
-  battle_net_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+  battle_net_path: 'C:\\Battle.net\\Battle.net.exe'
 
 skill:
   # battle round cycle
@@ -50,9 +50,12 @@ skill:
     1: [1, -1, -1] # 第二回合的技能目标
 
     # 2: [1, 1, 1] # 第三回合的技能目标
-   
+
+retry:
   # 最大重试技能次数，达到次数后如果依然不成功，认输
-  max_retry: 6
+  skill_selection: 6
+  # 最大重试选择英雄从手牌中打出的次数，达到次数后如果依然不成功，认输
+  hero_selection: 6
 
 # coordinations of buttons etc.
 location:

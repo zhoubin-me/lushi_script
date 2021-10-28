@@ -38,6 +38,7 @@ class Agent:
         self.basic = SimpleNamespace(**config['basic'])
         self.skill = SimpleNamespace(**config['skill'])
         self.locs = SimpleNamespace(**config['location'])
+        self.retry = SimpleNamespace(**config['retry'])
         pyautogui.PAUSE = self.basic.delay
 
         imgs = [img for img in os.listdir(os.path.join(img_folder, 'icons')) if img.endswith('.png')]
@@ -211,6 +212,7 @@ class Agent:
         heros_alive = 0
         battle_round_count = 0
         skill_selection_retry = 0
+        heroes_selection_retry = 0
         while True:
             time.sleep(np.random.rand()+self.basic.delay)
             states, rect, screen = self.check_state()
@@ -261,10 +263,17 @@ class Agent:
                     print("Surrendering due to extra minion on our side", states)
                     pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                     pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
-                continue;
+                continue
 
             if 'member_not_ready' in states:
-                print("Selecting heros")
+                if heroes_selection_retry > self.retry.hero_selection:
+                    print("Surrendering due to cannot select next hero", states)
+                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
+                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
+                    continue
+
+                print("Selecting heroes, attempt ,", heroes_selection_retry)
+                heroes_selection_retry += 1
                 first_x, last_x, y = self.locs.members
                 mid_x = (first_x + last_x) // 2
                 for i, idx in enumerate(self.basic.start_heros_id):
@@ -288,10 +297,11 @@ class Agent:
                 continue
 
             if 'not_ready_dots' in states:
-                if skill_selection_retry > self.skill.max_retry :
+                if skill_selection_retry > self.retry.skill_selection:
                     print("Surrendering", states)
                     pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                     pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                    continue
                     
                 print("Selecting skills, attempt ", skill_selection_retry)
                 skill_selection_retry += 1
@@ -318,6 +328,7 @@ class Agent:
                 pyautogui.click(states['battle_ready'][0])
                 battle_round_count += 1
                 skill_selection_retry = 0
+                heroes_selection_retry = 0
                 continue
 
             if ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
@@ -384,6 +395,8 @@ class Agent:
             if 'start_game' in states:
                 pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
                 battle_round_count = 0
+                skill_selection_retry = 0
+                heroes_selection_retry = 0
                 continue
 
             if 'final_reward' in states or 'final_reward2' in states:
