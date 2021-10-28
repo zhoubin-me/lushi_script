@@ -332,7 +332,7 @@ class Agent:
                     else:
                         side = 'right'
                     first_x, mid_x, last_x, y = self.locs.focus
-                    if np.abs(result[1][0] - mid_x) < 90:
+                    if np.abs(surprise_loc[0] - mid_x) < 100:
                         surprise_in_mid = True
                     else:
                         surprise_in_mid = False
