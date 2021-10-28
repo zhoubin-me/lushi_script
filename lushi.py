@@ -7,9 +7,10 @@ import argparse
 import os
 import yaml
 from types import SimpleNamespace
+from PIL import ImageGrab
 
-from util import find_lushi_window, find_icon_location, restart_game, set_top_window
-
+from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
+from img_proc import analyse_battle_field
 
 class Agent:
     def __init__(self, lang):
@@ -35,7 +36,7 @@ class Agent:
             config = yaml.safe_load(f)
 
         self.basic = SimpleNamespace(**config['basic'])
-        self.skill = SimpleNamespace(**config['skill'])
+        self.heros = SimpleNamespace(**config['heros'])
         self.locs = SimpleNamespace(**config['location'])
         self.retry = SimpleNamespace(**config['retry'])
         pyautogui.PAUSE = self.basic.delay
@@ -57,142 +58,159 @@ class Agent:
             k = img.split('.')[0]
             v = cv2.cvtColor(cv2.imread(os.path.join(img_folder, 'heros_whitelist', img)), cv2.COLOR_BGR2GRAY)
             self.heros_whitelist[k] = v
-
         set_top_window(self.title)
 
-    def check_state(self):
-        lushi, image = find_lushi_window(self.title)
-        output = {}
-        for k, v in self.icons.items():
-            success, click_loc, conf = self.find_icon_loc(v, lushi, image)
-            if success:
-                output[k] = (click_loc, conf)
-
-        for k, v in self.treasure_blacklist.items():
-            success, click_loc, conf = self.find_icon_loc(v, lushi, image)
-            if success:
-                output[k] = (click_loc, conf)
-
-        for k, v in self.heros_whitelist.items():
-            success, click_loc, conf = self.find_icon_loc(v, lushi, image)
-            if success:
-                output[k] = (click_loc, conf)
-
-        return output, lushi, image
-
-    def analyse_battle_field(self, screen):
-        x1, y1, x2, y2 = self.locs.enemy_region
-        img = screen[x1:x2, y1:y2]
-        img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-
-        ret, thresh = cv2.threshold(img_gray, 250, 255, 0)
-        num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
-        img_copy = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
-        # print(stats)
-        for i in range(1, num_labels):
-            mask = labels == i
-            if stats[i][-1] > 50:
-                img_copy[:, :, 0][mask] = 255
-                img_copy[:, :, 1][mask] = 255
-                img_copy[:, :, 2][mask] = 255
-
-        # img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
-        # Image.fromarray(img_copy)
-
-    def find_icon_loc(self, icon, lushi, image):
-        success, X, Y, conf = find_icon_location(image, icon, self.basic.confidence)
-        if success:
-            click_loc = (X + lushi[0], Y + lushi[1])
-        else:
-            click_loc = None
-        return success, click_loc, conf
+    def check_in_screen(self, icon_name):
+        icon = self.icons[icon_name]
+        rect, screen = find_lushi_window(self.title)
+        success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
+        loc = X, Y
+        return success, loc, rect, screen
 
     def scan_surprise_loc(self, rect):
         print('Scanning surprise')
-        pyautogui.moveTo(rect[0] + self.locs.scroll[0], rect[1] + self.locs.scroll[1])
+        pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         while True:
-            states, rect, screen = self.check_state()
-            if 'surprise' in states:
-                loc = states['surprise'][0]
+            result = self.check_in_screen('surprise')
+            if result[0]:
+                loc = result[1]
                 print(f"Found surprise at start {loc}")
                 return loc
-            if 'start_point' in states:
+            if self.check_in_screen('start_point')[0]:
                 break
 
         for _ in range(10):
-            states, rect, screen = self.check_state()
             pyautogui.scroll(60)
-            if 'surprise' in states:
+            result = self.check_in_screen('surprise')
+            if result[0]:
                 for _ in range(10):
                     pyautogui.scroll(-60)
-                loc = states['surprise'][0]
+                loc = result[1]
                 print(f"Found surprise during scrolling {loc}")
                 return loc
 
         print("Did not found any surprise")
         return None
 
+    def start_battle(self, rect):
+        time.sleep(5)
+        pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+        rect, screen = find_lushi_window(self.title, to_gray=False)
+        hero_info = analyse_battle_field(self.locs.hero_region, screen)
+        enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
+        enemy_info.sort(key=lambda x: x[4])
+        hero_info.sort(key=lambda x: x[4])
+
+        width, height = self.locs.skill_waiting
+
+        for hero_i, hero_x, hero_y, damage, health, color in hero_info:
+            pyautogui.moveTo(tuple_add((hero_x, hero_y), rect))
+            pyautogui.click()
+
+            skill_idx = 0
+            for skill_id in self.heros.skill_priority[hero_i]:
+                skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+
+                region = tuple_add(skill_loc, (-width//2, -height)) + tuple_add(skill_loc, (width//2, 0))
+                skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
+                found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
+                if not found:
+                    pyautogui.click(skill_loc)
+                    skill_idx = skill_id
+                    break
+
+            if self.heros.skill_basic_damage[hero_i][skill_idx] > 0:
+                target_i = 0
+                for enemy_i, (_, enemy_x, enemy_y, damage_e, health_e, color_e) in enumerate(enemy_info):
+                    if color == 'r' and color_e == 'g' or color == 'b' and color_e == 'r' or color == 'g' and color_e == 'b':
+                        target_i = enemy_i
+                        break
+                target_loc = tuple_add(rect, enemy_info[target_i][1:3])
+            else:
+                target_loc = tuple_add(rect, hero_info[0][1:3])
+            pyautogui.click(target_loc)
+
+
     def run_pvp(self):
         self.basic.reward_count = 5
         state = ""
         tic = time.time()
+        rect, screen = find_lushi_window(self.title)
         while True:
+            pyautogui.click(tuple_add(rect, self.locs.empty))
             time.sleep(self.basic.delay + np.random.rand())
-            states, rect, screen = self.check_state()
-            print(states)
 
             if time.time() - tic > self.basic.longest_waiting:
                 restart_game(self.lang, self.basic.battle_net_path)
                 tic = time.time()
-            if 'mercenaries' in states:
-                pyautogui.click(states['mercenaries'][0])
+<<<<<<< Updated upstream
+
+=======
+            
+>>>>>>> Stashed changes
+            result = self.check_in_screen('mercenaries')
+            if result[0]:
+                pyautogui.click(result[1])
                 if state != "mercenaries":
                     state = "mercenaries"
                     tic = time.time()
                 continue
 
-            if 'pvp' in states:
-                pyautogui.click(states['pvp'][0])
+            result = self.check_in_screen('pvp')
+            if result[0]:
+                pyautogui.click(result[1])
                 if state != "pvp":
                     state = "pvp"
                     tic = time.time()
                 continue
 
-            if 'pvp_team' in states:
-                tic = time.time()
-                pyautogui.click(rect[0] + self.locs.team_select[0], rect[1] + self.locs.team_select[1])
+            result = self.check_in_screen('pvp_team')
+            if result[0]:
+                pyautogui.click(tuple_add(result[2], self.locs.team_select))
                 if state != "pvp_team":
                     state = "pvp_team"
                     tic = time.time()
                 continue
+<<<<<<< Updated upstream
 
-            if 'pvp_ready' in states or 'member_not_ready' in states:
+=======
+            
+>>>>>>> Stashed changes
+            result1 = self.check_in_screen('pvp_ready')
+            result2 = self.check_in_screen('member_not_ready')
+            if result1[0] or result2[0]:
                 print("Surrendering")
-                pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
+                pyautogui.click(tuple_add(result1[2], self.locs.options))
                 time.sleep(self.basic.pvp_delay)
                 if self.basic.fast_surrender:
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
+                    pyautogui.click(tuple_add(result1[2], self.locs.surrender))
                 else:
-                    states, rect, screen = self.check_state()
-                    if 'surrender' in states:
-                        pyautogui.click(states['surrender'][0])
+                    result = self.check_in_screen('surrender')
+
+                    if result[0]:
+                        pyautogui.click(result[1])
+
                 for _ in range(5):
-                    pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+                    pyautogui.click(tuple_add(result1[0] + self.locs.empty))
 
                 if state != "pvp_ready":
                     state = "pvp_ready"
                     tic = time.time()
                 continue
 
-            if 'final_reward' in states or 'final_reward2' in states:
+            result1 = self.check_in_screen('final_reward')
+            result2 = self.check_in_screen('final_reward2')
+            if result1[0] or result2[0]:
                 reward_locs = eval(self.locs.rewards[self.basic.reward_count])
                 for loc in reward_locs:
-                    pyautogui.moveTo(rect[0] + loc[0], rect[1] + loc[1])
+                    pyautogui.moveTo(tuple_add(result1[1] + loc))
                     pyautogui.click()
-                pyautogui.moveTo(rect[0] + self.locs.rewards['confirm'][0], rect[1] + self.locs.rewards['confirm'][1])
+
+                pyautogui.moveTo(tuple_add(result1[1] + self.locs.rewards['final_confirm']))
                 pyautogui.click()
+
                 for _ in range(5):
-                    pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
+                    pyautogui.click(tuple_add(result1[1] + self.locs.empty))
                 if state != "final_reward":
                     state = "final_reward"
                     tic = time.time()
@@ -202,24 +220,21 @@ class Agent:
                 state = ""
                 tic = time.time()
 
-            pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
     def run_pve(self):
         side = None
         surprise_in_mid = False
-        heros_alive = 0
-        battle_round_count = 0
-        skill_selection_retry = 0
-        heroes_selection_retry = 0
-        find_map_entry_retry = 0
+        rect, screen = find_lushi_window(self.title)
         while True:
+            pyautogui.click(tuple_add(rect, self.locs.empty))
             time.sleep(np.random.rand() + self.basic.delay)
-            states, rect, screen = self.check_state()
-            print(
-                f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}, heros alive {heros_alive}")
 
-            if 'mercenaries' in states:
-                pyautogui.click(states['mercenaries'][0])
+            result = self.check_in_screen('mercenaries')
+            if result[0]:
+                pyautogui.click(result[1])
+                if state != "mercenaries":
+                    state = "mercenaries"
+                    tic = time.time()
                 continue
 
             if 'travel' in states:
@@ -254,29 +269,10 @@ class Agent:
                 pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
                 continue
 
-            if 'summoned_demon' in states:
-                # sometimes the opponent may summon an extra demon on their side or our side, check the coordinate
-                # if it's on our side, surrender
-                # this may not work if there's a demon on both sides
-                print('Found Summoned Demon, checking coordinates', states)
-                if states['summoned_demon'][0][1] > self.locs.resolution[1] / 2:  # if it's on enemy side
-                    print("Surrendering due to extra minion on our side", states)
-                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
-                continue
-
             if 'member_not_ready' in states:
-                if heroes_selection_retry > self.retry.hero_selection:
-                    print("Surrendering due to cannot select next hero", states)
-                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
-                    continue
-
-                print("Selecting heroes, attempt", heroes_selection_retry)
-                heroes_selection_retry += 1
                 first_x, last_x, y = self.locs.members
                 mid_x = (first_x + last_x) // 2
-                for i, idx in enumerate(self.basic.start_heros_id):
+                for i, idx in enumerate(self.heros.start_priority):
                     current_heros_left = self.basic.hero_count - i
                     if current_heros_left > 3:
                         dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
@@ -297,38 +293,11 @@ class Agent:
                 continue
 
             if 'not_ready_dots' in states:
-                if skill_selection_retry > self.retry.skill_selection:
-                    print("Surrendering", states)
-                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
-                    continue
-
-                print("Selecting skills, attempt", skill_selection_retry)
-                skill_selection_retry += 1
-                pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
-                pyautogui.click(rect[0] + self.locs.heros[0], rect[1] + self.locs.heros[-1])
-
-                skills = self.skill.ids[(battle_round_count - 1) % self.skill.cycle]
-                targets = self.skill.targets[(battle_round_count - 1) % self.skill.cycle]
-
-                for idx, skill_id, target_id in zip([0, 1, 2], skills, targets):
-                    hero_loc = (rect[0] + self.locs.heros[idx], rect[1] + self.locs.heros[-1])
-                    skill_loc = (rect[0] + self.locs.skills[skill_id], rect[1] + self.locs.skills[-1])
-
-                    pyautogui.moveTo(skill_loc)
-                    pyautogui.click()
-
-                    if target_id != -1:
-                        enemy_loc = (rect[0] + self.locs.enemies[1], rect[1] + self.locs.enemies[-1])
-                        pyautogui.moveTo(enemy_loc)
-                        pyautogui.click()
+                self.start_battle(rect)
                 continue
 
             if 'battle_ready' in states:
                 pyautogui.click(states['battle_ready'][0])
-                battle_round_count += 1
-                skill_selection_retry = 0
-                heroes_selection_retry = 0
                 continue
 
             if ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
@@ -448,8 +417,6 @@ class Agent:
                     pyautogui.moveTo(x + rect[0], y + rect[1])
                     pyautogui.mouseDown()
                     pyautogui.mouseUp()
-
-            pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
 
 
 def main():
