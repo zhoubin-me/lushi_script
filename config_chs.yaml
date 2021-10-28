@@ -25,7 +25,7 @@ basic:
   # 是否快速投降，因为官方的设置，有时候投降按钮位置会变化，快速投降会导致投降失败，
   fast_surrender: 0 # 1为快速投降，0为识别投降按钮再投降，当然投降速度会变慢
   # 如果界面卡住，最多等多久重启炉石
-  longest_waiting: 60 # 秒计
+  longest_waiting: 80 # 秒计
   # 战网路径(注意路径要加双斜杠)
   bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
 

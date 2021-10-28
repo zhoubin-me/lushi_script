@@ -185,6 +185,8 @@ class Agent:
                     pyautogui.click(tuple_add(result[2], self.locs.view_team))
                     pyautogui.click(tuple_add(result[2], self.locs.give_up))
                     pyautogui.click(tuple_add(result[2], self.locs.give_up_cfm))
+                else:
+                    restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
                 print(f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
