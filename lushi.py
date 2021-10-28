@@ -96,6 +96,7 @@ class Agent:
 
     def start_battle(self, rect):
         pyautogui.click(tuple_add(rect, self.locs.empty))
+        print("Scanning battlefield")
         time.sleep(3)
         rect, screen = find_lushi_window(self.title, to_gray=False)
         hero_info = analyse_battle_field(self.locs.hero_region, screen)
@@ -109,28 +110,35 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             pyautogui.click(tuple_add((hero_x, hero_y), rect))
 
-            hero_idx = self.heros.start_priority[hero_i]
-            skill_idx = 0
-            for skill_id in self.heros.skill_priority[hero_idx]:
-                skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+            if hero_i < len(self.heros.start_seq):
+                hero_idx = self.heros.start_seq[hero_i]
+                skill_idx = 0
+                for skill_id in self.heros.skill_priority[hero_idx]:
+                    skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
 
-                region = tuple_add(skill_loc, (-width//2, -height)) + tuple_add(skill_loc, (width//2, 0))
-                skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
-                found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
-                if not found:
-                    pyautogui.click(skill_loc)
-                    skill_idx = skill_id
-                    break
-
-            if self.heros.skill_basic_damage[hero_i][skill_idx] > 0:
-                target_i = 0
-                for enemy_i, (_, enemy_x, enemy_y, damage_e, health_e, color_e) in enumerate(enemy_info):
-                    if color == 'r' and color_e == 'g' or color == 'b' and color_e == 'r' or color == 'g' and color_e == 'b':
-                        target_i = enemy_i
+                    region = tuple_add(skill_loc, (-width//2, -height)) + tuple_add(skill_loc, (width//2, 0))
+                    skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
+                    found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
+                    if not found:
+                        pyautogui.click(skill_loc)
+                        skill_idx = skill_id
                         break
-                target_loc = tuple_add(rect, enemy_info[target_i][1:3])
+
+                if self.heros.skill_basic_damage[hero_i][skill_idx] > 0:
+                    target_i = 0
+                    for enemy_i, (_, enemy_x, enemy_y, damage_e, health_e, color_e) in enumerate(enemy_info):
+                        if color == 'r' and color_e == 'g' or color == 'b' and color_e == 'r' or color == 'g' and color_e == 'b':
+                            target_i = enemy_i
+                            break
+                    target_loc = tuple_add(rect, enemy_info[target_i][1:3])
+                else:
+                    target_loc = tuple_add(rect, hero_info[lowest_hp_hero_id][1:3])
             else:
-                target_loc = tuple_add(rect, hero_info[lowest_hp_hero_id][1:3])
+                skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
+                pyautogui.click(skill_loc)
+                target_loc = tuple_add(rect, enemy_info[0][1:3])
+
+
             pyautogui.click(target_loc)
 
         print('battle end')
@@ -312,7 +320,7 @@ class Agent:
 
                 first_x, last_x, y = self.locs.members
                 mid_x = (first_x + last_x) // 2
-                for i, idx in enumerate(self.heros.start_priority):
+                for i, idx in enumerate(self.heros.start_seq):
                     current_heros_left = self.basic.hero_count - i
                     if current_heros_left > 3:
                         dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
