@@ -74,5 +74,5 @@ def analyse_battle_field(region, screen):
 if __name__ == '__main__':
     time.sleep(1)
     rect, img = find_lushi_window("炉石传说", to_gray=False)
-    region = [ 355, 180, 1250, 374 ]
+    region = [ 355, 300, 1250, 374 ]
     analyse_battle_field(region, img)
