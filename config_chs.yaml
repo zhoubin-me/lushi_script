@@ -1,6 +1,7 @@
 basic:
   # 出战队伍的编号, 从0开始计数
-  team_id: 3
+  team_id: 1
+
   # 目标悬赏的编号, 从0开始计数
   boss_id: 5
   # 队伍中佣兵的数量，至少3人
@@ -26,7 +27,7 @@ basic:
   # 如果界面卡住，最多等多久重启炉石
   longest_waiting: 60 # 秒计
   # 战网路径(注意路径要加双斜杠)
-  battle_net_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+  bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
 
 
 heros:
