@@ -63,7 +63,7 @@ location:
   # hero skills locations
   skills: [ 390, 520, 650, 380 ] # [first_x, mid_x, last_x, y]
   # enemy battle field locations
-  enemies: [ 410, 520, 630, 240 ] # [first_x, mid_x, last_x, y]
+  enemies: [ 430, 550, 610, 240 ] # [first_x, mid_x, last_x, y]
 
   # boss list locations
   boss: [ 170, 400, 630, 300, 560 ] # [first_x, mid_x, last_x, upper_y, lower_y]
