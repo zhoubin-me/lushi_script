@@ -31,11 +31,14 @@ if PLATFORM:
             return False
 
 
-    def find_lushi_window(title):
+    def find_lushi_window(title, to_gray=True):
         hwnd = findTopWindow(title)
         rect = win32gui.GetWindowPlacement(hwnd)[-1]
         image = ImageGrab.grab(rect)
-        image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+        if to_gray:
+            image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+        else:
+            image = np.array(image)
         return rect, image
 
 
@@ -78,37 +81,6 @@ def move2loc(x, y, title='炉石传说'):
     rect, _ = find_lushi_window(title)
     loc = (x + rect[0], y + rect[1])
     pyautogui.moveTo(loc)
-
-
-def restart_game(lang):
-    if lang == 'eng':
-        bn = 'Battle.net'
-        hs = 'Hearthstone'
-    elif lang == 'chs':
-        bn = "战网"
-        hs = "炉石传说"
-    else:
-        raise ValueError(f"Language {lang} not supported")
-
-    icon_path = os.path.join(f'imgs_{lang}', 'icons', 'start_game_icon.png')
-    icon = cv2.imread(icon_path)
-    icon = cv2.cvtColor(np.array(icon), cv2.COLOR_BGR2GRAY)
-    for p in psutil.process_iter():
-        if p.name() == 'Hearthstone.exe':
-            p.kill()
-            print("hearthstone killed")
-    time.sleep(10)
-    bn_found = set_top_window(bn)
-    if bn_found:
-        while True:
-            image = ImageGrab.grab()
-            image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
-            success, x, y, conf = find_icon_location(image, icon, 0.9)
-            if success:
-                pyautogui.click(x, y)
-                time.sleep(5)
-                set_top_window(hs)
-                break
 
 
 def proc_exist(process_names):
