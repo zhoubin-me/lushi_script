@@ -8,6 +8,7 @@ import os
 import yaml
 from types import SimpleNamespace
 
+
 from util import find_lushi_window, find_icon_location, restart_game, set_top_window
 
 
@@ -37,6 +38,7 @@ class Agent:
         self.basic = SimpleNamespace(**config['basic'])
         self.skill = SimpleNamespace(**config['skill'])
         self.locs = SimpleNamespace(**config['location'])
+        self.retry = SimpleNamespace(**config['retry'])
         pyautogui.PAUSE = self.basic.delay
 
         imgs = [img for img in os.listdir(os.path.join(img_folder, 'icons')) if img.endswith('.png')]
@@ -71,14 +73,14 @@ class Agent:
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
             if success:
                 output[k] = (click_loc, conf)
-
+        
         for k, v in self.heros_whitelist.items():
             success, click_loc, conf = self.find_icon_loc(v, lushi, image)
             if success:
                 output[k] = (click_loc, conf)
-
+        
         return output, lushi, image
-
+    
     def analyse_battle_field(self, screen):
         x1, y1, x2, y2 = self.locs.enemy_region
         img = screen[x1:x2, y1:y2]
@@ -97,6 +99,7 @@ class Agent:
 
         # img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
         # Image.fromarray(img_copy)
+
 
     def find_icon_loc(self, icon, lushi, image):
         success, X, Y, conf = find_icon_location(image, icon, self.basic.confidence)
@@ -127,7 +130,7 @@ class Agent:
                 loc = states['surprise'][0]
                 print(f"Found surprise during scrolling {loc}")
                 return loc
-
+        
         print("Did not found any surprise")
         return None
 
@@ -164,13 +167,13 @@ class Agent:
                     state = "pvp_team"
                     tic = time.time()
                 continue
-
+            
             if 'pvp_ready' in states or 'member_not_ready' in states:
                 print("Surrendering")
-                pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
+                pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
                 time.sleep(self.basic.pvp_delay)
                 if self.basic.fast_surrender:
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
+                    pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                 else:
                     states, rect, screen = self.check_state()
                     if 'surrender' in states:
@@ -182,7 +185,7 @@ class Agent:
                     state = "pvp_ready"
                     tic = time.time()
                 continue
-
+            
             if 'final_reward' in states or 'final_reward2' in states:
                 reward_locs = eval(self.locs.rewards[self.basic.reward_count])
                 for loc in reward_locs:
@@ -209,11 +212,12 @@ class Agent:
         heros_alive = 0
         battle_round_count = 0
         skill_selection_retry = 0
+        heroes_selection_retry = 0
+        find_map_entry_retry = 0
         while True:
-            time.sleep(np.random.rand() + self.basic.delay)
+            time.sleep(np.random.rand()+self.basic.delay)
             states, rect, screen = self.check_state()
-            print(
-                f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}, heros alive {heros_alive}")
+            print(f"{states}, rect: {rect[:2]} surprise side: {side}, surprise in middle: {surprise_in_mid}, battle round count : {battle_round_count}, heros alive {heros_alive}")
 
             if 'mercenaries' in states:
                 pyautogui.click(states['mercenaries'][0])
@@ -236,34 +240,41 @@ class Agent:
                             if x_dis < 100:
                                 is_in_blacklilst = True
                                 break
-
+                    
                     if is_in_blacklilst:
                         continue
                     else:
                         break
-
+                
                 pyautogui.click(rect[0] + treasure_loc[0], rect[1] + treasure_loc[1])
                 pyautogui.click(rect[0] + self.locs.treasures_collect[0], rect[1] + self.locs.treasures_collect[1])
 
             if 'boom2' in states or 'ice_berg2' in states:
                 print("Surrendering", states)
-                pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
-                pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
+                pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                 continue
-
+            
             if 'summoned_demon' in states:
                 # sometimes the opponent may summon an extra demon on their side or our side, check the coordinate
                 # if it's on our side, surrender
                 # this may not work if there's a demon on both sides
                 print('Found Summoned Demon, checking coordinates', states)
-                if states['summoned_demon'][0][1] > self.locs.resolution[1] / 2:  # if it's on enemy side
+                if states['summoned_demon'][0][1] > self.locs.resolution[1]/2:  # if it's on enemy side
                     print("Surrendering due to extra minion on our side", states)
-                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
-                continue;
+                    pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                    pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                continue
 
             if 'member_not_ready' in states:
-                print("Selecting heros")
+                if heroes_selection_retry > self.retry.hero_selection:
+                    print("Surrendering due to cannot select next hero", states)
+                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
+                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
+                    continue
+
+                print("Selecting heroes, attempt", heroes_selection_retry)
+                heroes_selection_retry += 1
                 first_x, last_x, y = self.locs.members
                 mid_x = (first_x + last_x) // 2
                 for i, idx in enumerate(self.basic.start_heros_id):
@@ -287,18 +298,19 @@ class Agent:
                 continue
 
             if 'not_ready_dots' in states:
-                if skill_selection_retry > self.skill.max_retry:
+                if skill_selection_retry > self.retry.skill_selection:
                     print("Surrendering", states)
-                    pyautogui.click(rect[0] + self.locs.options[0], rect[1] + self.locs.options[1])
-                    pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
-
-                print("Selecting skills, attempt ", skill_selection_retry)
+                    pyautogui.click(rect[0]+self.locs.options[0], rect[1]+self.locs.options[1])
+                    pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
+                    continue
+                    
+                print("Selecting skills, attempt", skill_selection_retry)
                 skill_selection_retry += 1
                 pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
-                pyautogui.click(rect[0] + self.locs.heros[0], rect[1] + self.locs.heros[-1])
+                pyautogui.click(rect[0]+self.locs.heros[0], rect[1]+self.locs.heros[-1])
 
-                skills = self.skill.ids[(battle_round_count - 1) % self.skill.cycle]
-                targets = self.skill.targets[(battle_round_count - 1) % self.skill.cycle]
+                skills = self.skill.ids[(battle_round_count-1) % self.skill.cycle]
+                targets = self.skill.targets[(battle_round_count-1) % self.skill.cycle]
 
                 for idx, skill_id, target_id in zip([0, 1, 2], skills, targets):
                     hero_loc = (rect[0] + self.locs.heros[idx], rect[1] + self.locs.heros[-1])
@@ -306,7 +318,7 @@ class Agent:
 
                     pyautogui.moveTo(skill_loc)
                     pyautogui.click()
-
+                    
                     if target_id != -1:
                         enemy_loc = (rect[0] + self.locs.enemies[1], rect[1] + self.locs.enemies[-1])
                         pyautogui.moveTo(enemy_loc)
@@ -317,12 +329,13 @@ class Agent:
                 pyautogui.click(states['battle_ready'][0])
                 battle_round_count += 1
                 skill_selection_retry = 0
+                heroes_selection_retry = 0
                 continue
 
             if ('destroy' in states or 'blue_portal' in states or 'boom' in states) and self.basic.early_stop:
-                pyautogui.click(self.locs.view_team[0] + rect[0], self.locs.view_team[1] + rect[1])
-                pyautogui.click(self.locs.give_up[0] + rect[0], self.locs.give_up[1] + rect[1])
-                pyautogui.click(self.locs.give_up_cfm[0] + rect[0], self.locs.give_up_cfm[1] + rect[1])
+                pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
+                pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])
+                pyautogui.click(self.locs.give_up_cfm[0]+rect[0], self.locs.give_up_cfm[1]+rect[1])
                 continue
 
             if 'boss_list' in states:
@@ -357,32 +370,35 @@ class Agent:
                 for key in self.heros_whitelist.keys():
                     if key in states:
                         pyautogui.click(states[key][0])
-                        pyautogui.click(rect[0] + self.locs.visitors_confirm[0],
-                                        rect[1] + self.locs.visitors_confirm[1])
+                        pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
                         break
                 else:
                     visitor_id = np.random.randint(0, 3)
                     visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                     pyautogui.click(rect[0] + visitor_loc[0], rect[1] + visitor_loc[1])
                     pyautogui.click(rect[0] + self.locs.visitors_confirm[0], rect[1] + self.locs.visitors_confirm[1])
-
+                
                 for _ in range(5):
                     pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 print("Visitors Selected")
                 if self.basic.early_stop:
                     print("Early stopping")
-                    pyautogui.click(self.locs.view_team[0] + rect[0], self.locs.view_team[1] + rect[1])
-                    pyautogui.click(self.locs.give_up[0] + rect[0], self.locs.give_up[1] + rect[1])
-                    pyautogui.click(self.locs.give_up_cfm[0] + rect[0], self.locs.give_up_cfm[1] + rect[1])
+                    pyautogui.click(self.locs.view_team[0]+rect[0], self.locs.view_team[1]+rect[1])
+                    pyautogui.click(self.locs.give_up[0]+rect[0], self.locs.give_up[1]+rect[1])
+                    pyautogui.click(self.locs.give_up_cfm[0]+rect[0], self.locs.give_up_cfm[1]+rect[1])
                 continue
 
+            
             if 'goto' in states or 'show' in states or 'collect' in states or 'teleport' in states:
-                pyautogui.click(rect[0] + self.locs.start_game[0], rect[1] + self.locs.start_game[1])
+                pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
                 continue
 
             if 'start_game' in states:
-                pyautogui.click(rect[0] + self.locs.start_game[0], rect[1] + self.locs.start_game[1])
+                pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
                 battle_round_count = 0
+                skill_selection_retry = 0
+                heroes_selection_retry = 0
+                find_map_entry_retry = 0
                 continue
 
             if 'final_reward' in states or 'final_reward2' in states:
@@ -395,20 +411,29 @@ class Agent:
                 continue
 
             if 'final_confirm' in states:
-                pyautogui.click(rect[0] + self.locs.final_confirm[0], rect[1] + self.locs.final_confirm[1])
+                pyautogui.click(rect[0]+self.locs.final_confirm[0], rect[1]+self.locs.final_confirm[1])
                 continue
 
             if 'map_not_ready' in states and 'final_boss' in states:
-                pyautogui.moveTo(rect[0] + self.locs.final_boss[0], rect[1] + self.locs.final_boss[1])
+                pyautogui.moveTo(rect[0]+self.locs.final_boss[0], rect[1]+self.locs.final_boss[1])
                 pyautogui.mouseDown()
                 pyautogui.mouseUp()
                 time.sleep(self.basic.delay)
                 states, rect, screen = self.check_state()
                 if 'start_game' in states:
-                    pyautogui.click(rect[0] + self.locs.start_game[0], rect[1] + self.locs.start_game[1])
+                    pyautogui.click(rect[0]+self.locs.start_game[0], rect[1]+self.locs.start_game[1])
                     continue
 
             if 'map_not_ready' in states:
+                if find_map_entry_retry > self.retry.map_ready:
+                    # early stop
+                    pyautogui.click(self.locs.view_team[0] + rect[0], self.locs.view_team[1] + rect[1])
+                    pyautogui.click(self.locs.give_up[0] + rect[0], self.locs.give_up[1] + rect[1])
+                    pyautogui.click(self.locs.give_up_cfm[0] + rect[0], self.locs.give_up_cfm[1] + rect[1])
+                    find_map_entry_retry = 0
+                    continue
+                print('Looking for next fight, attempt', find_map_entry_retry)
+                find_map_entry_retry += 1
                 first_x, mid_x, last_x, y = self.locs.focus
                 if side is None:
                     side = 'left'
@@ -419,14 +444,13 @@ class Agent:
 
                 if surprise_in_mid:
                     x1, x3 = x3, x1
-
+                
                 for x in (x1, x2, x3):
-                    pyautogui.moveTo(x + rect[0], y + rect[1])
+                    pyautogui.moveTo(x+rect[0], y+rect[1])
                     pyautogui.mouseDown()
                     pyautogui.mouseUp()
 
             pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
-
 
 def main():
     parser = argparse.ArgumentParser()

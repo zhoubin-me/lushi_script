@@ -1,3 +1,4 @@
+
 import cv2
 import numpy as np
 from util import find_lushi_window
@@ -5,11 +6,10 @@ import time
 import pytesseract
 import os
 
-
 def analyse_battle_field(region, screen):
     pytesseract.pytesseract.tesseract_cmd = os.path.join("C:\\", "Program Files", "Tesseract-OCR", "tesseract.exe")
     x1, y1, x2, y2 = region
-    screen = cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
+    screen =  cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
     img = screen[y1:y2, x1:x2]
     gray = cv2.cvtColor(np.array(img), cv2.COLOR_BGR2GRAY)
     cv2.imwrite('gray.png', img)
@@ -29,7 +29,7 @@ def analyse_battle_field(region, screen):
     img_data = pytesseract.image_to_boxes(img_copy, config='--oem 3 -c tessedit_char_whitelist={0123456789}')
     img_data_lines = img_data.split('\n')[:-1]
     coords = sorted(coords, key=lambda x: x[0])
-    assert (len(img_data_lines) == len(coords))
+    assert(len(img_data_lines) == len(coords))
     out = []
     numbers = []
     for i, coor in enumerate(coords):
@@ -38,21 +38,20 @@ def analyse_battle_field(region, screen):
             out.append(coor)
             numbers.append(digit)
         else:
-            if np.abs(coor[0] - coords[i - 1][0]) < 30:
-                out[-1][2] = np.abs(coor[0] - coords[i - 1][0]) + coor[2]
+            if np.abs(coor[0] - coords[i-1][0]) < 30:
+                out[-1][2] = np.abs(coor[0] - coords[i-1][0]) + coor[2]
                 numbers[-1] = numbers[-1] * 10 + digit
             else:
                 out.append(coor)
                 numbers.append(digit)
     print(out)
-    assert (len(out) % 2 == 0)
+    assert(len(out) % 2 == 0)
     N = len(out) // 2
 
     data = {}
     for i in range(N):
-        x, y = (out[2 * i][0] + out[2 * i][2] // 2 + out[2 * i + 1][0] + out[2 * i + 1][2] // 2) // 2, out[2 * i][1] + \
-               out[2 * i][3] // 2 + 12
-        region = img[y - 5:y + 5, x - 10:x + 10]
+        x, y = (out[2*i][0] + out[2*i][2]//2 + out[2*i+1][0] + out[2*i+1][2]//2) // 2, out[2*i][1] + out[2*i][3] // 2 + 12
+        region = img[y-5:y+5, x-10:x+10]
         cv2.imwrite(f'digit{i}.png', region)
         B, G, R = region[:, :, 0].mean(), region[:, :, 1].mean(), region[:, :, 2].mean()
         maximum = max(B, G, R)
@@ -66,7 +65,7 @@ def analyse_battle_field(region, screen):
         else:
             color = 'n'
 
-        data[i] = (x + x1, y + y1 - 50, color, numbers[2 * i], numbers[2 * i + 1])
+        data[i] = (x + x1, y + y1-50, color, numbers[2*i], numbers[2*i+1])
         print(B, G, R)
     print(data)
     return data
@@ -75,5 +74,5 @@ def analyse_battle_field(region, screen):
 if __name__ == '__main__':
     time.sleep(1)
     rect, img = find_lushi_window("炉石传说", to_gray=False)
-    region = [355, 180, 1250, 374]
+    region = [ 355, 300, 1250, 374 ]
     analyse_battle_field(region, img)
