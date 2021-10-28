@@ -143,6 +143,7 @@ class Agent:
             if time.time() - tic > self.basic.longest_waiting:
                 restart_game(self.lang, self.basic.battle_net_path)
                 tic = time.time()
+<<<<<<< Updated upstream
 
 =======
             
@@ -170,6 +171,7 @@ class Agent:
                     state = "pvp_team"
                     tic = time.time()
                 continue
+<<<<<<< Updated upstream
 
 =======
             
