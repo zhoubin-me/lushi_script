@@ -4,7 +4,7 @@ if __name__ == '__main__':
     from hslog.export import EntityTreeExporter
 
     parser = LogParser()
-    with open("test.log", encoding='utf-8') as f:
+    with open("C:\\Program Files (x86)\\Hearthstone\\Logs\\Power.log", encoding='utf-8') as f:
         parser.read(f)
     parser.flush()
     # 最近一场战斗
@@ -24,6 +24,9 @@ if __name__ == '__main__':
             # INVALID = 0 施法者CASTER = 1 斗士FIGHTER = 2 TANK = 3 NEUTRAL = 4
             # GameTag.LETTUCE_ROLE   : INVALID = 0 施法者CASTER = 1 斗士FIGHTER = 2 护卫TANK = 3  无NEUTRAL = 4
             # GameTag.CARDRACE 种族
+            # GameTag.WINDFURY 风怒
+            # GameTag.DIVINE_SHIELD 圣盾
+            
             # 以下为技能
             # 查询技能主人
             # GameTag.LETTUCE_ABILITY_OWNER
@@ -31,9 +34,14 @@ if __name__ == '__main__':
             # GameTag.LETTUCE_ROLE 技能属性： 护卫 施法者 斗士
             # GameTag.SPELL_SCHOOL 法术种类： 神圣 火焰...
 
+            # 以下为游戏状态
+            # GameTag.ACTION_STEP_TYPE : 1为选择随从 0为战斗
+
             # print(e, e.type, e.zone, end='\n\n\n')
-            # 打印攻击力
-            print(e.tags.get(GameTag.ATK))
+            # 场上随从
+            # if e.tags.get(GameTag.ZONE) == Zone.PLAY:
+            #     print(e.tags, end='\n\n')
+            # print(e.tags.get(GameTag.ATK))
             pass
 
     pass
