@@ -131,7 +131,38 @@ def restart_game(lang, battle_net_path):
     print('done')
 
 
+# def start_battle(hero_info, enemy_info):
+#     hero_info = {
+#         # [x, y, color, damage, health, skill_id]
+#         0: [100, 100, 'r', 10, 20],
+#         1: [200, 100, 'g', 10, 11],
+#         2: [300, 100, 'b', 15, 2],
+#     }
+#
+#     enemy_info = {
+#         # [x, y, color, damage, health, skill_id]
+#         0: [100, 100, 'r', 10, 20],
+#         1: [200, 100, 'g', 10, 11],
+#         2: [300, 100, 'b', 15, 2],
+#         3: [400, 100, 'n', 3, 20],
+#     }
+#     for idx in list(itertools.product(range(len(hero_info)), repeat=len(hero_info))):
+#         hero = hero_info.copy()
+#         enemy = enemy_info.copy()
+#         min(hero)
+#         print(i)
+#
+#
+#     attack = {
+#         0: 0,  # first hero skill target towards first enemy
+#         1: 0,  # second hero skill target towards first enemy
+#         2: 2,  # ...
+#     }
+#     return attack
+
+
 if __name__ == "__main__":
     # restart_game("chs")
     a = 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
     restart_game('chs', a)
+    # BattleAi.battle(None, None)
