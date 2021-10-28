@@ -105,7 +105,8 @@ class Agent:
         rect, screen = find_lushi_window(self.title, to_gray=False)
         hero_info = analyse_battle_field(self.locs.hero_region, screen)
         if len([x for x in hero_info if x[5] != 'n']) < 3:
-            raise ValueError("Hero Dead!")
+            pyautogui.click(tuple_add(rect, self.locs.options))
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
         enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
         enemy_info.sort(key=lambda x: x[4])
         lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
@@ -157,93 +158,10 @@ class Agent:
                 except:
                     restart_game(self.lang, self.basic.bn_path)
         elif self.basic.mode == 'pvp':
-            self.run_pvp()
+            print("PVP is no longer supported")
         else:
             raise ValueError(f"Mode {self.basic.mode} is not supported yet")
 
-
-    def run_pvp(self):
-
-        self.basic.reward_count = 5
-        state = ""
-        tic = time.time()
-        rect, screen = find_lushi_window(self.title)
-        while True:
-            pyautogui.click(tuple_add(rect, self.locs.empty))
-            time.sleep(self.basic.delay + np.random.rand())
-
-            if time.time() - tic > self.basic.longest_waiting:
-                restart_game(self.lang, self.basic.bn_path)
-                tic = time.time()
-            else:
-                print(f"Last state {state}, time taken: {time.time() - tic}")
-
-            result = self.check_in_screen('mercenaries')
-            if result[0]:
-                pyautogui.click(tuple_add(result[1], result[2]))
-                if state != "mercenaries":
-                    state = "mercenaries"
-                    tic = time.time()
-                continue
-
-            result = self.check_in_screen('pvp')
-            if result[0]:
-                pyautogui.click(tuple_add(result[1], result[2]))
-                if state != "pvp":
-                    state = "pvp"
-                    tic = time.time()
-                continue
-
-            result = self.check_in_screen('pvp_team')
-            if result[0]:
-                pyautogui.click(tuple_add(result[2], self.locs.team_select))
-                if state != "pvp_team":
-                    state = "pvp_team"
-                    tic = time.time()
-                continue
-
-            result1 = self.check_in_screen('pvp_ready')
-            result2 = self.check_in_screen('member_not_ready')
-            if result1[0] or result2[0]:
-                print("Surrendering")
-                pyautogui.click(tuple_add(result1[2], self.locs.options))
-                time.sleep(self.basic.pvp_delay)
-                if self.basic.fast_surrender:
-                    pyautogui.click(tuple_add(result1[2], self.locs.surrender))
-                else:
-                    result = self.check_in_screen('surrender')
-                    if result[0]:
-                        pyautogui.click(tuple_add(result[1], result[2]))
-
-                for _ in range(5):
-                    pyautogui.click(tuple_add(result1[2], self.locs.empty))
-
-                if state != "pvp_ready":
-                    state = "pvp_ready"
-                    tic = time.time()
-                continue
-
-            result1 = self.check_in_screen('final_reward')
-            result2 = self.check_in_screen('final_reward2')
-            if result1[0] or result2[0]:
-                reward_locs = eval(self.locs.rewards[self.basic.reward_count])
-                for loc in reward_locs:
-                    pyautogui.moveTo(tuple_add(result1[1], loc))
-                    pyautogui.click()
-
-                pyautogui.moveTo(tuple_add(result1[1], self.locs.rewards['final_confirm']))
-                pyautogui.click()
-
-                for _ in range(5):
-                    pyautogui.click(tuple_add(result1[1], self.locs.empty))
-                if state != "final_reward":
-                    state = "final_reward"
-                    tic = time.time()
-                continue
-
-            if state != "":
-                state = ""
-                tic = time.time()
 
 
     def run_pve(self):
@@ -260,8 +178,13 @@ class Agent:
             time.sleep(np.random.rand() + self.basic.delay)
 
             if time.time() - tic > self.basic.longest_waiting:
-                if state == 'not_ready_dots':
-                    restart_game(self.lang, self.basic.bn_path)
+                if state == 'not_ready_dots' or state == 'member_not_ready':
+                    pyautogui.click(tuple_add(result1[2], self.locs.options))
+                    pyautogui.click(tuple_add(result1[2], self.locs.surrender))
+                elif state == 'map_not_ready':
+                    pyautogui.click(tuple_add(result[2], self.locs.view_team))
+                    pyautogui.click(tuple_add(result[2], self.locs.give_up))
+                    pyautogui.click(tuple_add(result[2], self.locs.give_up_cfm))
                 tic = time.time()
             else:
                 print(f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
@@ -470,7 +393,7 @@ class Agent:
                     pyautogui.moveTo(tuple_add(result1[2], loc))
                     pyautogui.click()
 
-                pyautogui.moveTo(tuple_add(result1[2], self.locs.rewards['final_confirm']))
+                pyautogui.moveTo(tuple_add(result1[2], self.locs.rewards['confirm']))
                 pyautogui.click()
                 continue
 
