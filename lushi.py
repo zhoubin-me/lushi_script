@@ -144,6 +144,9 @@ class Agent:
                 restart_game(self.lang, self.basic.battle_net_path)
                 tic = time.time()
 
+=======
+            
+>>>>>>> Stashed changes
             result = self.check_in_screen('mercenaries')
             if result[0]:
                 pyautogui.click(result[1])
@@ -168,6 +171,9 @@ class Agent:
                     tic = time.time()
                 continue
 
+=======
+            
+>>>>>>> Stashed changes
             result1 = self.check_in_screen('pvp_ready')
             result2 = self.check_in_screen('member_not_ready')
             if result1[0] or result2[0]:
