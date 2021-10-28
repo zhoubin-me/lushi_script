@@ -4,6 +4,7 @@ from PIL import ImageGrab, Image
 import numpy as np
 import platform
 import os
+import psutil
 import time
 import win32api
 
@@ -82,6 +83,19 @@ def move2loc(x, y, title='炉石传说'):
     pyautogui.moveTo(loc)
 
 
+def proc_exist(process_names):
+    for p in psutil.process_iter():
+        if p.name() in process_names:
+            print(f"find {p.name()} exists")
+            return True
+    return False
+
+
+def proc_kill(process_names):
+    for p in psutil.process_iter():
+        if p.name() in process_names:
+            p.kill()
+            print(f"{p.name()} killed")
 
 
 def restart_game(lang, battle_net_path):
