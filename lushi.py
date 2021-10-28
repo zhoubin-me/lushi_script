@@ -95,9 +95,13 @@ class Agent:
         return None
 
     def start_battle(self, rect):
-        for _ in range(3):
-            pyautogui.click(tuple_add(rect, self.locs.empty))
         print("Scanning battlefield")
+        for _ in range(5):
+            pyautogui.click(tuple_add(rect, self.locs.empty))
+            time.sleep(0.1)
+        print("Clicked")
+
+        pyautogui.click(tuple_add(rect, self.locs.empty))
         rect, screen = find_lushi_window(self.title, to_gray=False)
         hero_info = analyse_battle_field(self.locs.hero_region, screen)
         enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
@@ -107,7 +111,7 @@ class Agent:
         width, height = self.locs.skill_waiting
 
         for hero_i, hero_x, hero_y, damage, health, color in hero_info:
-            for _ in range(3):
+            for _ in range(2):
                 pyautogui.click(tuple_add(rect, self.locs.empty))
             pyautogui.click(tuple_add((hero_x, hero_y), rect))
 
@@ -138,15 +142,12 @@ class Agent:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
                 pyautogui.click(skill_loc)
                 target_loc = tuple_add(rect, enemy_info[0][1:3])
-
-
             pyautogui.click(target_loc)
 
-        print('battle end')
+
 
 
     def run(self):
-        # restart_game(self.lang, self.basic.bn_path)
         if self.basic.mode == 'pve':
             self.run_pve()
         elif self.basic.mode == 'pvp':
@@ -166,7 +167,7 @@ class Agent:
             time.sleep(self.basic.delay + np.random.rand())
 
             if time.time() - tic > self.basic.longest_waiting:
-                restart_game(self.lang, self.basic.battle_net_path)
+                restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
                 print(f"Last state {state}, time taken: {time.time() - tic}")
@@ -253,7 +254,7 @@ class Agent:
             time.sleep(np.random.rand() + self.basic.delay)
 
             if time.time() - tic > self.basic.longest_waiting:
-                restart_game(self.lang, self.basic.battle_net_path)
+                restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
                 print(f"Last state {state}, time taken: {time.time() - tic}")
@@ -288,7 +289,6 @@ class Agent:
                     is_in_blacklilst = False
                     for key in self.treasure_blacklist.keys():
                         result3 = self.check_in_screen(key, prefix='treasure_blacklist')
-                        rect = result3[2]
                         if result3[0]:
                             x_dis = np.abs(result3[1][0] - treasure_loc[0])
                             if x_dis < 100:
@@ -350,12 +350,12 @@ class Agent:
                 self.start_battle(result[2])
                 continue
 
-            result = self.check_in_screen('battle_ready')
+            result = self.check_in_screen('start_game')
             if result[0]:
-                if state != "battle_ready":
-                    state = "battle_ready"
+                if state != "start_battle":
+                    state = "start_battle"
                     tic = time.time()
-                pyautogui.click(tuple_add(result[1], result[2]))
+                pyautogui.click(tuple_add(result[2], self.locs.start_battle))
                 continue
 
             if self.basic.early_stop and (self.check_in_screen('destroy')[0] or

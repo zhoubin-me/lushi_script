@@ -16,6 +16,8 @@ def analyse_battle_field(region, screen, digits=None):
     thresh = cv2.bitwise_or(thresh1, thresh2)
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
     img_copy = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
+    cv2.imwrite('img_crop.png', img)
+    cv2.imwrite('img_thr.png', thresh)
     data = []
     for i in range(1, num_labels):
         mask = labels == i
@@ -28,11 +30,13 @@ def analyse_battle_field(region, screen, digits=None):
             img_copy[:, :, 1][mask] = 255
             img_copy[:, :, 2][mask] = 255
             digit = img_copy[y-3:y+h, x-3:x+w]
+            cv2.imwrite(f'digit_{i}.png', digit)
             success, x, y, conf = find_icon_location(digits, digit, 0.7)
             if success:
                 data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
                 print(i, data[-1])
     data.sort(key=lambda e: e[0])
+    print(data)
     data_clean = []
     for i, entry in enumerate(data):
         if i == 0:
