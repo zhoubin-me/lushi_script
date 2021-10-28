@@ -54,12 +54,11 @@ class BattleAi:
             # my = my_hero_list.copy()
             my = copy.deepcopy(my_hero_list)
             enemy = copy.deepcopy(enemy_hero_list)
-            my_min_health_hero = BattleAi.find_min_health(my)
-
             for i, target in enumerate(idx):
                 my[i].attack(enemy[target], my[i].atk)
             for i, e in enumerate(enemy):
                 if e.health > 0:
+                    my_min_health_hero = BattleAi.find_min_health(my)
                     e.attack(my_min_health_hero, e.atk)
 
             score = BattleAi.analyze_score(my, enemy)
