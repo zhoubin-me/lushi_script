@@ -344,16 +344,11 @@ class Agent:
                 if state != "visitor_list":
                     state = "visitor_list"
                     tic = time.time()
-                for key in self.heros_whitelist.keys():
-                    if self.check_in_screen(key, prefix='heros_whitelist'):
-                        pyautogui.click(tuple_add(result[1], result[2]))
-                        pyautogui.click(tuple_add(self.locs.visitors_confirm, result[2]))
-                        break
-                else:
-                    visitor_id = np.random.randint(0, 3)
-                    visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-                    pyautogui.click(tuple_add(result[2], visitor_loc))
-                    pyautogui.click(tuple_add(result[2], self.locs.visitors_confirm))
+
+                visitor_id = np.random.randint(0, 3)
+                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+                pyautogui.click(tuple_add(result[2], visitor_loc))
+                pyautogui.click(tuple_add(result[2], self.locs.visitors_confirm))
 
                 for _ in range(5):
                     pyautogui.click(tuple_add(result[2], self.locs.empty))
