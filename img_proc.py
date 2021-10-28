@@ -43,7 +43,7 @@ def analyse_battle_field(region, screen, digits=None):
             data_clean.append(entry)
         else:
             x_diff = entry[0] - data_clean[-1][0]
-            if np.abs(x_diff) < 30:
+            if np.abs(x_diff) < 40:
                 data_clean[-1][2] = x_diff + entry[2]
                 data_clean[-1][-1] = data_clean[-1][-1] * 10 + entry[-1]
             else:

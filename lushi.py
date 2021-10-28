@@ -460,10 +460,10 @@ class Agent:
                     tic = time.time()
                 reward_locs = eval(self.locs.rewards[self.basic.reward_count])
                 for loc in reward_locs:
-                    pyautogui.moveTo(tuple_add(result1[1], loc))
+                    pyautogui.moveTo(tuple_add(result1[2], loc))
                     pyautogui.click()
 
-                pyautogui.moveTo(tuple_add(result1[1], self.locs.rewards['final_confirm']))
+                pyautogui.moveTo(tuple_add(result1[2], self.locs.rewards['final_confirm']))
                 pyautogui.click()
                 continue
 
