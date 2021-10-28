@@ -95,9 +95,9 @@ class Agent:
         return None
 
     def start_battle(self, rect):
-        pyautogui.click(tuple_add(rect, self.locs.empty))
+        for _ in range(3):
+            pyautogui.click(tuple_add(rect, self.locs.empty))
         print("Scanning battlefield")
-        time.sleep(3)
         rect, screen = find_lushi_window(self.title, to_gray=False)
         hero_info = analyse_battle_field(self.locs.hero_region, screen)
         enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
@@ -107,7 +107,8 @@ class Agent:
         width, height = self.locs.skill_waiting
 
         for hero_i, hero_x, hero_y, damage, health, color in hero_info:
-            pyautogui.click(tuple_add(rect, self.locs.empty))
+            for _ in range(3):
+                pyautogui.click(tuple_add(rect, self.locs.empty))
             pyautogui.click(tuple_add((hero_x, hero_y), rect))
 
             if hero_i < len(self.heros.start_seq):
