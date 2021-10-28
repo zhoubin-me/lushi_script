@@ -179,8 +179,8 @@ class Agent:
 
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
-                    pyautogui.click(tuple_add(result1[2], self.locs.options))
-                    pyautogui.click(tuple_add(result1[2], self.locs.surrender))
+                    pyautogui.click(tuple_add(result[2], self.locs.options))
+                    pyautogui.click(tuple_add(result[2], self.locs.surrender))
                 elif state == 'map_not_ready':
                     pyautogui.click(tuple_add(result[2], self.locs.view_team))
                     pyautogui.click(tuple_add(result[2], self.locs.give_up))
