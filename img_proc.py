@@ -5,14 +5,16 @@ from util import find_lushi_window, find_icon_location
 import time
 
 
-def analyse_battle_field(region, screen):
+def analyse_battle_field(region, screen, digits=None):
     x1, y1, x2, y2 = region
     screen = cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
     img = screen[y1:y2, x1:x2]
-    digits = cv2.imread('digits.png')
+    if digits is None:
+        digits = cv2.imread('imgs_chs_1600x900\\icons\\digits.png')
     cv2.imwrite('gray.png', img)
-    _, thresh1 = cv2.threshold(img[:, :, 2], 250, 255, 0)
-    _, thresh2 = cv2.threshold(img[:, :, 1], 250, 255, 0)
+    print(screen.shape, region, digits.shape)
+    _, thresh1 = cv2.threshold(img[:, :, 2], 251, 255, 0)
+    _, thresh2 = cv2.threshold(img[:, :, 1], 251, 255, 0)
     thresh = cv2.bitwise_or(thresh1, thresh2)
     cv2.imwrite('gray_thr.png', thresh)
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
@@ -32,8 +34,9 @@ def analyse_battle_field(region, screen):
             digit = img_copy[y-3:y+h, x-3:x+w]
             cv2.imwrite(f'digit_{i}.png', digit)
             success, x, y, conf = find_icon_location(digits, digit, 0.7)
-            data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
-            print(i, data[-1])
+            if success:
+                data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
+                print(i, data[-1])
     cv2.imwrite('gray_copy.png', img_copy)
     data.sort(key=lambda e: e[0])
     data_clean = []
@@ -49,7 +52,7 @@ def analyse_battle_field(region, screen):
                 data_clean.append(entry)
     assert(len(data_clean) % 2 == 0)
     N = len(data_clean) // 2
-    output = {}
+    output = []
     for i in range(N):
         damage, health = data_clean[2*i], data_clean[2*i+1]
         center_x = (damage[0] + damage[2] // 2 + health[0] + health[2] // 2) // 2
@@ -69,8 +72,9 @@ def analyse_battle_field(region, screen):
             color = 'n'
 
         hero_x, hero_y = center_x + x1, center_y + y1 - 70
-        output[i] = (hero_x, hero_y, int(damage[-1]), int(health[-1]), color)
-        cv2.imwrite(f'hero_{i}.png', screen[hero_y-35:hero_y+35, hero_x-50:hero_x+50])
+        hero_img = screen[hero_y-35:hero_y+35, hero_x-50:hero_x+50]
+        output.append((i, hero_x, hero_y, int(damage[-1]), int(health[-1]), color))
+        cv2.imwrite(f'hero_{i}.png', hero_img)
         print(B, G, R)
     print(output)
     return output
@@ -81,4 +85,4 @@ if __name__ == '__main__':
     rect, img = find_lushi_window("炉石传说", to_gray=False)
     region = [ 400, 293, 1230, 393]
     region2 = [ 400, 650, 1230, 750]
-    analyse_battle_field(region, img)
+    analyse_battle_field(region2, img)
