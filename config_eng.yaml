@@ -55,6 +55,8 @@ retry:
   skill_selection: 6
   # max number of retries to play hero from hand, once reached, will surrender
   hero_selection: 6
+  # max number of retries to find the next map entry, once reached, will early stop
+  map_ready: 10
 
 # coordinations of buttons etc.
 location:
