@@ -257,7 +257,7 @@ class Agent:
                 restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
-                print(f"Last state {state}, time taken: {time.time() - tic}")
+                print(f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
 
             result = self.check_in_screen('mercenaries')
             if result[0]:
@@ -350,10 +350,10 @@ class Agent:
                 self.start_battle(result[2])
                 continue
 
-            result = self.check_in_screen('start_game')
+            result = self.check_in_screen('battle_ready')
             if result[0]:
-                if state != "start_battle":
-                    state = "start_battle"
+                if state != "battle_ready":
+                    state = "battle_ready"
                     tic = time.time()
                 pyautogui.click(tuple_add(result[2], self.locs.start_battle))
                 continue
@@ -495,7 +495,9 @@ class Agent:
                     pyautogui.moveTo(tuple_add(result[2], (x, y)))
                     pyautogui.mouseDown()
                     pyautogui.mouseUp()
+                continue
 
+            pyautogui.click(tuple_add(result[2], self.locs.empty))
 
 def main():
     parser = argparse.ArgumentParser()
