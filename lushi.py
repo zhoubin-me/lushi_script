@@ -213,6 +213,7 @@ class Agent:
         battle_round_count = 0
         skill_selection_retry = 0
         heroes_selection_retry = 0
+        find_map_entry_retry = 0
         while True:
             time.sleep(np.random.rand()+self.basic.delay)
             states, rect, screen = self.check_state()
@@ -272,7 +273,7 @@ class Agent:
                     pyautogui.click(rect[0] + self.locs.surrender[0], rect[1] + self.locs.surrender[1])
                     continue
 
-                print("Selecting heroes, attempt ,", heroes_selection_retry)
+                print("Selecting heroes, attempt", heroes_selection_retry)
                 heroes_selection_retry += 1
                 first_x, last_x, y = self.locs.members
                 mid_x = (first_x + last_x) // 2
@@ -303,7 +304,7 @@ class Agent:
                     pyautogui.click(rect[0]+self.locs.surrender[0], rect[1]+self.locs.surrender[1])
                     continue
                     
-                print("Selecting skills, attempt ", skill_selection_retry)
+                print("Selecting skills, attempt", skill_selection_retry)
                 skill_selection_retry += 1
                 pyautogui.click(rect[0] + self.locs.empty[0], rect[1] + self.locs.empty[1])
                 pyautogui.click(rect[0]+self.locs.heros[0], rect[1]+self.locs.heros[-1])
@@ -397,6 +398,7 @@ class Agent:
                 battle_round_count = 0
                 skill_selection_retry = 0
                 heroes_selection_retry = 0
+                find_map_entry_retry = 0
                 continue
 
             if 'final_reward' in states or 'final_reward2' in states:
@@ -423,6 +425,15 @@ class Agent:
                     continue
 
             if 'map_not_ready' in states:
+                if find_map_entry_retry > self.retry.map_ready:
+                    # early stop
+                    pyautogui.click(self.locs.view_team[0] + rect[0], self.locs.view_team[1] + rect[1])
+                    pyautogui.click(self.locs.give_up[0] + rect[0], self.locs.give_up[1] + rect[1])
+                    pyautogui.click(self.locs.give_up_cfm[0] + rect[0], self.locs.give_up_cfm[1] + rect[1])
+                    find_map_entry_retry = 0
+                    continue
+                print('Looking for next fight, attempt', find_map_entry_retry)
+                find_map_entry_retry += 1
                 first_x, mid_x, last_x, y = self.locs.focus
                 if side is None:
                     side = 'left'
