@@ -21,7 +21,7 @@ Run the following in your commandline/terminal for **requirements** installation
 
 
 ```bash
-pip install opencv-python numpy pyautogui pillow pywin32 pyyaml
+pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil
 ```
 
 [comment]: <> (For Mac OS users:)
