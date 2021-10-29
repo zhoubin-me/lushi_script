@@ -50,10 +50,10 @@ if __name__ == '__main__':
     path = 'D:\\Hearthstone\\Logs\\Power.log'
     hs_log = LogUtil(path)
     game_entity = hs_log.parse_game()
-    for i in range(1, 4):
+    for i in range(3):
         print(game_entity.my_hero[i])
 
-    for i in range(1, 4):
+    for i in range(3):
         print(game_entity.enemy_hero[i])
 
     pass
