@@ -139,14 +139,17 @@ class Agent:
                 for skill_id in self.heros.skill_priority[hero_idx]:
                     skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
 
-                    region = tuple_add(skill_loc, (-width//2, -height)) + tuple_add(skill_loc, (width//2, 0))
+                    region = tuple_add(skill_loc, (-width//2, -height+20)) + tuple_add(skill_loc, (width//2, 20))
                     skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
                     found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
                     if not found:
+                        print(f"hero {hero_idx} skill {skill_id} is ready")
                         pyautogui.click(skill_loc)
                         time.sleep(0.1)
                         skill_idx = skill_id
                         break
+                    else:
+                        print(f"hero {hero_idx} skill {skill_id} is not ready")
 
                 if self.heros.skill_basic_damage[hero_i][skill_idx] > 0:
                     target_i = 0
