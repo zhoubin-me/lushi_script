@@ -30,7 +30,7 @@ basic:
   # longest_waiting time to restart Hearthstone
   longest_waiting: 60 # second
   # Battle.net path
-  battle_net_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+  bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
 
 skill:
   # battle round cycle
