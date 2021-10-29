@@ -188,7 +188,9 @@ class Agent:
                 pass
             else:
                 pyautogui.click(tuple_add(rect, self.locs.options))
-                pyautogui.click(tuple_add(rect, self.locs.surrender))
+                time.sleep(0.1)
+                result = self.check_in_screen('surrender')
+                pyautogui.click(tuple_add(result[1], result[2]))
                 return
 
         first_x, last_x, y = self.locs.members

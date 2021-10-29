@@ -1,6 +1,9 @@
 import itertools
 import copy
+from typing import List
+
 from entity.hero_entity import HeroEntity
+from log_util.log_util import LogUtil
 
 
 class BattleAi:
@@ -41,25 +44,19 @@ class BattleAi:
         return score
 
     @staticmethod
-    def battle(my_heroes_info, enemy_heroes_info):
-        my_hero_list = []
-        enemy_hero_list = []
-        for idx, item in my_heroes_info.items():
-            my_hero_list.append(HeroEntity.basic(*item))
-        for idx, item in enemy_heroes_info.items():
-            enemy_hero_list.append(HeroEntity.basic(*item))
+    def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity]):
 
         optimal_strategy = ((-1 << 25), [1, 1, 1])
-        for idx in list(itertools.product(range(len(enemy_hero_list)), repeat=len(my_hero_list))):
+        for idx in list(itertools.product(range(len(my_hero)), repeat=len(enemy_hero))):
             # my = my_hero_list.copy()
-            my = copy.deepcopy(my_hero_list)
-            enemy = copy.deepcopy(enemy_hero_list)
+            my = copy.deepcopy(my_hero)
+            enemy = copy.deepcopy(enemy_hero)
             for i, target in enumerate(idx):
-                my[i].attack(enemy[target], my[i].atk)
+                my[i].basic_attack(enemy[target], my[i].atk)
             for i, e in enumerate(enemy):
                 if e.health > 0:
                     my_min_health_hero = BattleAi.find_min_health(my)
-                    e.attack(my_min_health_hero, e.atk)
+                    e.basic_attack(my_min_health_hero, e.atk)
 
             score = BattleAi.analyze_score(my, enemy)
             if score > optimal_strategy[0]:
@@ -69,18 +66,8 @@ class BattleAi:
 
 
 if __name__ == '__main__':
-    my_heroes = {
-        # [x, y, color, damage, health, skill_id]
-        0: [100, 100, 'r', 10, 20],
-        1: [200, 100, 'g', 10, 11],
-        2: [300, 100, 'b', 15, 2],
-    }
-    enemy_heroes = {
-        # [x, y, color, damage, health, skill_id]
-        0: [100, 100, 'r', 10, 20],
-        1: [200, 100, 'g', 10, 11],
-        2: [300, 100, 'b', 15, 2],
-        3: [400, 100, 'n', 3, 20],
-    }
-    a = BattleAi.battle(my_heroes, enemy_heroes)
+    path = 'D:\\Hearthstone\\Logs\\Power.log'
+    log = LogUtil(path)
+    game = log.parse_game()
+    a = BattleAi.battle(game.my_hero, game.enemy_hero)
     print(a)

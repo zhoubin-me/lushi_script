@@ -1,52 +1,59 @@
+from hearthstone.enums import CardType, Zone, GameTag
+from hslog import LogParser, packets
+from hslog.export import EntityTreeExporter
+
+from entity.game_entity import GameEntity
+from entity.hero_entity import HeroEntity
+from entity.spell_entity import SpellEntity
+
+
+class LogUtil:
+    def __init__(self, log_path):
+        self.log_path = log_path
+        self.parser = LogParser()
+        self.game = None
+        # parse 完后可直接拿来用
+        self.game_entity = None
+
+    def read_log(self):
+        with open(self.log_path, encoding='utf-8') as f:
+            self.parser.read(f)
+        self.parser.flush()
+        # 最近一场战斗
+        packet_tree = self.parser.games[-1]
+        exporter = EntityTreeExporter(packet_tree, player_manager=self.parser.player_manager)
+        ee = exporter.export()
+        self.game = ee.game
+
+    def parse_game(self) -> GameEntity:
+        self.read_log()
+        for e in self.game.initial_entities:
+            # 以下为游戏状态
+            if e.type == CardType.GAME:
+                self.game_entity = GameEntity(e)
+                pass
+            elif e.type == CardType.MINION:
+                minion = HeroEntity(e)
+                self.game_entity.add_hero(minion)
+                pass
+            # 佣兵技能信息
+            elif e.type == CardType.LETTUCE_ABILITY:
+                spell_entity = SpellEntity(e)
+                self.game_entity.hero_entities[spell_entity.lettuce_ability_owner].add_spell(spell_entity)
+                pass
+        return self.game_entity
+
+    pass
+
+
 if __name__ == '__main__':
-    from hearthstone.enums import CardType, Zone, GameTag
-    from hslog import LogParser, packets
-    from hslog.export import EntityTreeExporter
+    path = 'D:\\Hearthstone\\Logs\\Power.log'
+    hs_log = LogUtil(path)
+    game_entity = hs_log.parse_game()
+    for i in range(3):
+        print(game_entity.my_hero[i])
 
-    parser = LogParser()
-    with open("C:\\Program Files (x86)\\Hearthstone\\Logs\\Power.log", encoding='utf-8') as f:
-        parser.read(f)
-    parser.flush()
-    # 最近一场战斗
-    packet_tree = parser.games[-1]
-    exporter = EntityTreeExporter(packet_tree, player_manager=parser.player_manager)
-    a = exporter.export()
-    game = a.game
-    for e in game.initial_entities:
-        # 获取随从信息
+    for i in range(3):
+        print(game_entity.enemy_hero[i])
 
-        # 以下为游戏状态
-        if e.type == CardType.GAME:
-            # GameTag.ACTION_STEP_TYPE : 1为选择随从 0为战斗
-            pass
-        elif e.type == CardType.MINION:
-            # e.tags.get() 获取属性
-            # GameTag.ENTITY_ID 佣兵id
-            # GameTag.ATK 攻击力
-            # GameTag.HEALTH 血量
-            # GameTag.ZONE 是否上场，死亡
-            # GameTag.ZONE_POSITION  获取战场位置 从左往右1开始
-            # INVALID = 0 施法者CASTER = 1 斗士FIGHTER = 2 TANK = 3 NEUTRAL = 4
-            # GameTag.LETTUCE_ROLE   : INVALID = 0 施法者CASTER = 1 斗士FIGHTER = 2 护卫TANK = 3  无NEUTRAL = 4
-            # GameTag.CARDRACE 种族
-            # GameTag.WINDFURY 风怒
-            # GameTag.DIVINE_SHIELD 圣盾
-            # GameTag.LETTUCE_CONTROLLER 控制权
-
-            # 场上随从
-            # if e.tags.get(GameTag.ZONE) == Zone.PLAY:
-            #     print(e.tags, end='\n\n')
-            # print(e.tags.get(GameTag.ATK))
-            pass
-        # 佣兵技能信息
-        elif e.type == CardType.LETTUCE_ABILITY:
-            # 以下为技能
-            # GameTag.LETTUCE_ABILITY_OWNER 技能主人
-            # GameTag.COST 技能速度
-            # GameTag.LETTUCE_ROLE 技能属性： 护卫 施法者 斗士
-            # GameTag.SPELL_SCHOOL 法术种类： 神圣 火焰...
-            # GameTag.LETTUCE_COOLDOWN_CONFIG 冷却
-            # GameTag.LETTUCE_CURRENT_COOLDOWN 目前冷却
-            print()
-        print(e, e.tags, end='\n\n\n')
     pass
