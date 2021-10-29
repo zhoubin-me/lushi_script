@@ -135,11 +135,7 @@ class Agent:
                 skill_idx = 0
                 for skill_id in self.heros.skill_priority[hero_idx]:
                     skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
-
-                    if self.lang == 'eng':
-                        y_diff = 20
-                    else:
-                        y_diff = 0
+                    y_diff = self.locs.skill_color_offset
                     region = tuple_add(skill_loc, (-width//2, -height + y_diff)) + tuple_add(skill_loc, (width//2, y_diff))
                     skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
                     found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
@@ -174,7 +170,7 @@ class Agent:
     def select_members(self):
         rect, screen = find_lushi_window(self.title, to_gray=False)
         try:
-            hero_info = analyse_battle_field(self.locs.hero_nready_region, screen, self.icons['digits'])
+            hero_info = analyse_battle_field(self.locs.hero_nready_region, screen, self.icons['digits'], self.locs.offset[2])
         except Exception as e:
             print("Digit detection problem", e)
             pyautogui.click(tuple_add(rect, self.locs.options))

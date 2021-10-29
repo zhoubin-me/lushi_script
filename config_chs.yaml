@@ -158,5 +158,6 @@ location:
   enemy_region: [ 400, 293, 1230, 393 ] # [x1, y1, x2, y2]
   hero_region: [ 400, 650, 1230, 750 ]
   hero_nready_region: [ 400, 580, 1230, 680 ]
-  offset: [0, 0]
+  offset: [0, 0, 0]
+  skill_color_offset: 0
 

@@ -95,7 +95,7 @@ location:
   dragto: [ 780, 465 ] # [x, y]
 
   # focus area before battle
-  focus: [ 165, 385, 600, 400 ] # [first_x, mid_x, last_x, y]
+  focus: [ 165, 385, 600, 380 ] # [first_x, mid_x, last_x, y]
 
   # final boss reward locations, depending on rewards count
   rewards:
@@ -151,5 +151,6 @@ location:
   enemy_region: [ 200, 250, 888, 300 ] # [x1, y1, x2, y2]
   hero_region: [ 200, 560, 888, 610 ]
   hero_nready_region: [200, 470, 888, 520]
-  offset: [15, 10]
+  offset: [10, 5, 12]
+  skill_color_offset: 15
 

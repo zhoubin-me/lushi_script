@@ -89,8 +89,8 @@ if __name__ == '__main__':
     # concate()
     rect, img = find_lushi_window("hearthstone", to_gray=False)
     digits = cv2.cvtColor(cv2.imread('imgs_eng_1024x768\\icons\\digits.png'), cv2.COLOR_BGR2GRAY)
-    enemy_region = [200, 250, 888, 300]  # [x1, y1, x2, y2]
-    hero_region = [200, 560, 888, 610]
-    hero_nready_region = [200, 470, 888, 520]
+    enemy_region = [200, 250, 888, 300]  # [x1, y1, x2, y2], offset=5
+    hero_region = [200, 560, 888, 610] # offset = 10
+    hero_nready_region = [200, 490, 888, 540] # offset = 12
 
-    analyse_battle_field(hero_region, img, digits, 10)
+    analyse_battle_field(hero_nready_region, img, digits, 12)
