@@ -137,7 +137,7 @@ location:
   # option button
   options: [ 1580, 920 ] # [x, y]
   # surrender button
-  surrender: [ 815, 343 ] # [x, y]
+  surrender: [ 815, 350 ] # [x, y]
   # view team members button
   view_team: [ 647, 885 ]
   # give up button

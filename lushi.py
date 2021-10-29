@@ -106,7 +106,8 @@ class Agent:
         hero_info = analyse_battle_field(self.locs.hero_region, screen)
         if len([x for x in hero_info if x[5] != 'n']) < 3:
             pyautogui.click(tuple_add(rect, self.locs.options))
-            pyautogui.click(tuple_add(rect, self.locs.surrender))
+            result = self.check_in_screen('surrender')
+            pyautogui.click(tuple_add(result[1], result[2]))
         enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
         enemy_info.sort(key=lambda x: x[4])
         lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
@@ -179,8 +180,9 @@ class Agent:
 
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
-                    pyautogui.click(tuple_add(result[2], self.locs.options))
-                    pyautogui.click(tuple_add(result[2], self.locs.surrender))
+                    pyautogui.click(tuple_add(result[1], self.locs.options))
+                    result = self.check_in_screen('surrender')
+                    pyautogui.click(tuple_add(result[1], result[2]))
                 elif state == 'map_not_ready':
                     pyautogui.click(tuple_add(result[2], self.locs.view_team))
                     pyautogui.click(tuple_add(result[2], self.locs.give_up))
@@ -242,6 +244,7 @@ class Agent:
                     tic = time.time()
 
                 pyautogui.click(tuple_add(result1[2], self.locs.options))
+
                 pyautogui.click(tuple_add(result1[2], self.locs.surrender))
                 continue
 
