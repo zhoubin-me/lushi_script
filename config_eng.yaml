@@ -148,8 +148,8 @@ location:
 
   #
   # Region of cards on Battlefield
-  enemy_region: [ 200, 260, 888, 348 ] # [x1, y1, x2, y2]
-  hero_region: [ 200, 571, 888, 659 ]
-  hero_nready_region: [200, 480, 888, 568]
+  enemy_region: [ 200, 250, 888, 300 ] # [x1, y1, x2, y2]
+  hero_region: [ 200, 560, 888, 610 ]
+  hero_nready_region: [200, 470, 888, 520]
   offset: [15, 10]
 

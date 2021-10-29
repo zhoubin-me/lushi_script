@@ -21,7 +21,7 @@ def analyse_battle_field(region, screen, digits, y_offset=0):
     for i in range(1, num_labels):
         x, y, w, h, a = stats[i]
         w, h = 17, 30
-        if stats[i][-1] > 50:
+        if stats[i][-1] > 45:
             if x < 3 or y < 3:
                 continue
             img_ = np.zeros((img.shape[0], img.shape[1]), np.uint8)
@@ -59,7 +59,7 @@ def analyse_battle_field(region, screen, digits, y_offset=0):
         cv2.imwrite(f'color_hero_{i}.png', color_region)
         B, G, R = color_region.mean(axis=0).mean(axis=0).astype(np.int32)
         maximum = max(B, G, R)
-        if maximum > 100:
+        if maximum > 95:
             if maximum == B:
                 color = 'b'
             elif maximum == G:
@@ -89,8 +89,8 @@ if __name__ == '__main__':
     # concate()
     rect, img = find_lushi_window("hearthstone", to_gray=False)
     digits = cv2.cvtColor(cv2.imread('imgs_eng_1024x768\\icons\\digits.png'), cv2.COLOR_BGR2GRAY)
-    enemy_region = [200, 260, 888, 348]  # [x1, y1, x2, y2]
-    hero_region = [200, 571, 888, 659]
-    hero_nready_region = [200, 480, 888, 568]
+    enemy_region = [200, 250, 888, 300]  # [x1, y1, x2, y2]
+    hero_region = [200, 560, 888, 610]
+    hero_nready_region = [200, 470, 888, 520]
 
     analyse_battle_field(hero_region, img, digits, 10)
