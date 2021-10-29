@@ -5,36 +5,32 @@ from util import find_lushi_window, find_icon_location
 import time
 
 
-def analyse_battle_field(region, screen, digits=None):
+def analyse_battle_field(region, screen, digits):
     x1, y1, x2, y2 = region
     screen = cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
     img = screen[y1:y2, x1:x2]
-    if digits is None:
-        digits = cv2.imread('imgs_chs_1600x900\\icons\\digits.png')
     _, thresh1 = cv2.threshold(img[:, :, 2], 250, 255, 0)
     _, thresh2 = cv2.threshold(img[:, :, 1], 250, 255, 0)
     thresh = cv2.bitwise_or(thresh1, thresh2)
     num_labels, labels, stats, centroids = cv2.connectedComponentsWithStats(thresh)
-    img_copy = np.zeros((img.shape[0], img.shape[1], 3), np.uint8)
+    img_copy = np.zeros((img.shape[0], img.shape[1]), np.uint8)
     cv2.imwrite('img_crop.png', img)
     cv2.imwrite('img_thr.png', thresh)
     data = []
+    print(stats)
     for i in range(1, num_labels):
-        mask = labels == i
         x, y, w, h, a = stats[i]
         w, h = 17, 30
-        if stats[i][-1] > 100:
+        if stats[i][-1] > 45:
             if x < 3 or y < 3:
                 continue
-            img_copy[:, :, 0][mask] = 255
-            img_copy[:, :, 1][mask] = 255
-            img_copy[:, :, 2][mask] = 255
+            img_copy[labels == i] = 255
             digit = img_copy[y-3:y+h, x-3:x+w]
             # cv2.imwrite(f'digit_{i}.png', digit)
             success, x, y, conf = find_icon_location(digits, digit, 0.7)
             if success:
                 data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
-                print(i, data[-1])
+                # (i, data[-1])
     data.sort(key=lambda e: e[0])
     cv2.imwrite('img_clean.png', img_copy)
     print(data)
@@ -78,7 +74,10 @@ def analyse_battle_field(region, screen, digits=None):
 
 if __name__ == '__main__':
     time.sleep(1)
-    rect, img = find_lushi_window("炉石传说", to_gray=False)
-    region = [ 400, 293, 1230, 393]
-    region2 = [ 400, 650, 1230, 750]
-    analyse_battle_field(region2, img)
+    # concate()
+    rect, img = find_lushi_window("hearthstone", to_gray=False)
+    digits = cv2.cvtColor(cv2.imread('imgs_eng_1024x768\\icons\\digits.png'), cv2.COLOR_BGR2GRAY)
+    enemy_region = [200, 260, 888, 348]  # [x1, y1, x2, y2]
+    hero_region = [200, 571, 888, 659]
+    hero_nready_region = [200, 480, 888, 568]
+    analyse_battle_field(hero_region, img, digits)
