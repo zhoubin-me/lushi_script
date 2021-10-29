@@ -2,13 +2,13 @@ basic:
   # number of your team ID for battle, start counting from 0
   team_id: 4
   # number of the boss ID for battle, start counting from 0
-  boss_id: 1
+  boss_id: 5
   # total number of your heros
   hero_count: 6
   # total number of rewards after finishing the map
-  reward_count: 4
+  reward_count: 5
   # whether early stop battle once collected surprise option on map, 1 means early stop, 0 means continue
-  early_stop: 1
+  early_stop: 0
   # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
   delay: 0.5
   # confidence threshold for image template matching on screen

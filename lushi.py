@@ -105,13 +105,22 @@ class Agent:
 
         pyautogui.click(tuple_add(rect, self.locs.empty))
         rect, screen = find_lushi_window(self.title, to_gray=False)
-        hero_info = analyse_battle_field(self.locs.hero_region, screen, self.icons['digits'])
+        try:
+            hero_info = analyse_battle_field(self.locs.hero_region, screen, self.icons['digits'])
+            enemy_info = analyse_battle_field(self.locs.enemy_region, screen, self.icons['digits'])
+        except Exception as e:
+            print("Digit detection problem", e)
+            pyautogui.click(tuple_add(rect, self.locs.options))
+            time.sleep(0.1)
+            result = self.check_in_screen('surrender')
+            pyautogui.click(tuple_add(result[1], result[2]))
+            return
+
         if len([x for x in hero_info if x[5] != 'n']) < 3:
             pyautogui.click(tuple_add(rect, self.locs.options))
             result = self.check_in_screen('surrender')
             pyautogui.click(tuple_add(result[1], result[2]))
             return
-        enemy_info = analyse_battle_field(self.locs.enemy_region, screen, self.icons['digits'])
         enemy_info.sort(key=lambda x: x[4])
         lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
 
@@ -159,13 +168,23 @@ class Agent:
 
     def select_members(self):
         rect, screen = find_lushi_window(self.title, to_gray=False)
-        hero_info = analyse_battle_field(self.locs.hero_nready_region, screen, self.icons['digits'])
+        try:
+            hero_info = analyse_battle_field(self.locs.hero_nready_region, screen, self.icons['digits'])
+        except Exception as e:
+            print("Digit detection problem", e)
+            pyautogui.click(tuple_add(rect, self.locs.options))
+            time.sleep(0.1)
+            result = self.check_in_screen('surrender')
+            pyautogui.click(tuple_add(result[1], result[2]))
+            return
+
         heros_count = len([x for x in hero_info if x[5] != 'n'])
         if heros_count < 3:
             if heros_count == 0 and self.is_first_battle:
                 pass
             else:
                 pyautogui.click(tuple_add(rect, self.locs.options))
+                time.sleep(0.1)
                 result = self.check_in_screen('surrender')
                 pyautogui.click(tuple_add(result[1], result[2]))
                 return
