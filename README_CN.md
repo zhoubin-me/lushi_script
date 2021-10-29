@@ -17,6 +17,7 @@ Windows用户请在命令行里输入以下来安装需求包：
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil
 ```
+如果出现psutil相关的安装错误，请下载并安装[Microsoft Visual C++](https://aka.ms/vs/16/release/vc_redist.x64.exe)
 
 [comment]: <> (Mac OS 用户请在terminal里输入以下来安装需求包)
 
@@ -25,6 +26,8 @@ pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil
 [comment]: <> (pip install opencv-python numpy pyautogui pillow pyyaml psutil PyCocoa)
 
 [comment]: <> (```)
+
+
 
 
 ## 运行之前
