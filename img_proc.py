@@ -5,7 +5,7 @@ from util import find_lushi_window, find_icon_location
 import time
 
 
-def analyse_battle_field(region, screen, digits):
+def analyse_battle_field(region, screen, digits, y_offset=0):
     x1, y1, x2, y2 = region
     screen = cv2.cvtColor(np.array(screen), cv2.COLOR_RGB2BGR)
     img = screen[y1:y2, x1:x2]
@@ -54,8 +54,9 @@ def analyse_battle_field(region, screen, digits):
     for i in range(N):
         damage, health = data_clean[2*i], data_clean[2*i+1]
         center_x = (damage[0] + damage[2] // 2 + health[0] + health[2] // 2) // 2
-        center_y = (damage[1] + damage[3]) // 2 + 28
+        center_y = (damage[1] + damage[3]) // 2 + 28 - y_offset
         color_region = img[center_y-5:center_y+5, center_x-10:center_x+10]
+        cv2.imwrite(f'color_hero_{i}.png', color_region)
         B, G, R = color_region.mean(axis=0).mean(axis=0).astype(np.int32)
         maximum = max(B, G, R)
         if maximum > 100:
@@ -85,10 +86,11 @@ def concate():
 
 if __name__ == '__main__':
     time.sleep(1)
-    concate()
+    # concate()
     rect, img = find_lushi_window("hearthstone", to_gray=False)
     digits = cv2.cvtColor(cv2.imread('imgs_eng_1024x768\\icons\\digits.png'), cv2.COLOR_BGR2GRAY)
     enemy_region = [200, 260, 888, 348]  # [x1, y1, x2, y2]
     hero_region = [200, 571, 888, 659]
     hero_nready_region = [200, 480, 888, 568]
-    analyse_battle_field(enemy_region, img, digits)
+
+    analyse_battle_field(hero_region, img, digits, 10)

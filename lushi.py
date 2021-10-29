@@ -106,8 +106,8 @@ class Agent:
         pyautogui.click(tuple_add(rect, self.locs.empty))
         rect, screen = find_lushi_window(self.title, to_gray=False)
         try:
-            hero_info = analyse_battle_field(self.locs.hero_region, screen, self.icons['digits'])
-            enemy_info = analyse_battle_field(self.locs.enemy_region, screen, self.icons['digits'])
+            hero_info = analyse_battle_field(self.locs.hero_region, screen, self.icons['digits'], self.locs.offset[0])
+            enemy_info = analyse_battle_field(self.locs.enemy_region, screen, self.icons['digits'], self.locs.offset[1])
         except Exception as e:
             print("Digit detection problem", e)
             pyautogui.click(tuple_add(rect, self.locs.options))

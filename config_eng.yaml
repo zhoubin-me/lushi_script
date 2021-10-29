@@ -42,8 +42,8 @@ heros:
   # You should only care about heros in start_seq, the rest does not matter
   skill_priority:
     0: [1, 2, 0]
-    1: [2, 1, 0]
-    2: [2, 1, 0]
+    1: [1, 2, 0]
+    2: [1, 2, 0]
     3: [2, 1, 0]
     4: [0, 1, 2]
     5: [1, 0, 2]
@@ -151,6 +151,5 @@ location:
   enemy_region: [ 200, 260, 888, 348 ] # [x1, y1, x2, y2]
   hero_region: [ 200, 571, 888, 659 ]
   hero_nready_region: [200, 480, 888, 568]
-  
-  # game resolution
-  resolution: [1024, 768]
+  offset: [15, 10]
+
