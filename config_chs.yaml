@@ -28,7 +28,8 @@ basic:
   longest_waiting: 80 # 秒计
   # 战网路径(注意路径要加双斜杠)
   bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
-
+  # 遇到，掉线等是否自动重启
+  auto_restart: 0 # 1为自动重启，0为否
 
 heros:
   # 起始三个英雄的序号，从0开始数，是在手牌的位置而非队伍中的位置

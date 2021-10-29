@@ -98,7 +98,7 @@ class Agent:
 
     def start_battle(self, rect):
         print("Scanning battlefield")
-        for _ in range(5):
+        for _ in range(4):
             pyautogui.click(tuple_add(rect, self.locs.empty))
             time.sleep(0.1)
         print("Clicked")
@@ -119,7 +119,9 @@ class Agent:
         for hero_i, hero_x, hero_y, damage, health, color in hero_info:
             for _ in range(2):
                 pyautogui.click(tuple_add(rect, self.locs.empty))
+                time.sleep(0.1)
             pyautogui.click(tuple_add((hero_x, hero_y), rect))
+            time.sleep(0.1)
 
             if hero_i < len(self.heros.start_seq):
                 hero_idx = self.heros.start_seq[hero_i]
@@ -132,6 +134,7 @@ class Agent:
                     found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
                     if not found:
                         pyautogui.click(skill_loc)
+                        time.sleep(0.1)
                         skill_idx = skill_id
                         break
 
@@ -147,8 +150,10 @@ class Agent:
             else:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
                 pyautogui.click(skill_loc)
+                time.sleep(0.1)
                 target_loc = tuple_add(rect, enemy_info[0][1:3])
             pyautogui.click(target_loc)
+            time.sleep(0.1)
 
 
     def select_members(self):
@@ -189,11 +194,14 @@ class Agent:
 
     def run(self):
         if self.basic.mode == 'pve':
-            while True:
-                try:
-                    self.run_pve()
-                except:
-                    restart_game(self.lang, self.basic.bn_path)
+            if self.basic.auto_restart:
+                while True:
+                    try:
+                        self.run_pve()
+                    except:
+                        restart_game(self.lang, self.basic.bn_path)
+            else:
+                self.run_pve()
         elif self.basic.mode == 'pvp':
             print("PVP is no longer supported")
         else:
