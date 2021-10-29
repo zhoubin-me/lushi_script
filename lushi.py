@@ -111,9 +111,7 @@ class Agent:
         except Exception as e:
             print("Digit detection problem", e)
             pyautogui.click(tuple_add(rect, self.locs.options))
-            time.sleep(0.1)
-            result = self.check_in_screen('surrender')
-            pyautogui.click(tuple_add(result[1], result[2]))
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
             return
 
         if len([x for x in hero_info if x[5] != 'n']) < 3:
@@ -139,9 +137,14 @@ class Agent:
                 for skill_id in self.heros.skill_priority[hero_idx]:
                     skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
 
-                    region = tuple_add(skill_loc, (-width//2, -height+20)) + tuple_add(skill_loc, (width//2, 20))
+                    if self.lang == 'eng':
+                        y_diff = 20
+                    else:
+                        y_diff = 0
+                    region = tuple_add(skill_loc, (-width//2, -height + y_diff)) + tuple_add(skill_loc, (width//2, y_diff))
                     skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
                     found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
+                    cv2.imwrite(f'hero_{hero_idx}_skill_{skill_id}.png', skill_img)
                     if not found:
                         print(f"hero {hero_idx} skill {skill_id} is ready")
                         pyautogui.click(skill_loc)
@@ -176,9 +179,7 @@ class Agent:
         except Exception as e:
             print("Digit detection problem", e)
             pyautogui.click(tuple_add(rect, self.locs.options))
-            time.sleep(0.1)
-            result = self.check_in_screen('surrender')
-            pyautogui.click(tuple_add(result[1], result[2]))
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
             return
 
         heros_count = len([x for x in hero_info if x[5] != 'n'])
@@ -187,9 +188,7 @@ class Agent:
                 pass
             else:
                 pyautogui.click(tuple_add(rect, self.locs.options))
-                time.sleep(0.1)
-                result = self.check_in_screen('surrender')
-                pyautogui.click(tuple_add(result[1], result[2]))
+                pyautogui.click(tuple_add(rect, self.locs.surrender))
                 return
 
         first_x, last_x, y = self.locs.members
@@ -248,9 +247,8 @@ class Agent:
 
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
-                    pyautogui.click(tuple_add(result[1], self.locs.options))
-                    result = self.check_in_screen('surrender')
-                    pyautogui.click(tuple_add(result[1], result[2]))
+                    pyautogui.click(tuple_add(result[2], self.locs.options))
+                    pyautogui.click(tuple_add(result[2], self.locs.surrender))
                 elif state == 'map_not_ready':
                     pyautogui.click(tuple_add(result[2], self.locs.view_team))
                     pyautogui.click(tuple_add(result[2], self.locs.give_up))
