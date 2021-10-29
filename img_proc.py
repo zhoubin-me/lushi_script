@@ -21,15 +21,18 @@ def analyse_battle_field(region, screen, digits):
     for i in range(1, num_labels):
         x, y, w, h, a = stats[i]
         w, h = 17, 30
-        if stats[i][-1] > 45:
+        if stats[i][-1] > 50:
             if x < 3 or y < 3:
                 continue
-            img_copy[labels == i] = 255
-            digit = img_copy[y-3:y+h, x-3:x+w]
+            img_ = np.zeros((img.shape[0], img.shape[1]), np.uint8)
+            img_[labels == i] = 255
+            digit = img_[y-3:y+h, x-3:x+w]
             # cv2.imwrite(f'digit_{i}.png', digit)
             success, x, y, conf = find_icon_location(digits, digit, 0.7)
+            # print(i, list(stats[i][:-1]), conf, a)
             if success:
                 data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
+                img_copy[labels == i] = 255
                 # (i, data[-1])
     data.sort(key=lambda e: e[0])
     cv2.imwrite('img_clean.png', img_copy)
@@ -72,12 +75,20 @@ def analyse_battle_field(region, screen, digits):
     return output
 
 
+def concate():
+    img = np.zeros((33, 280), dtype=np.uint8)
+    for i in range(10):
+        im = cv2.cvtColor(cv2.imread(f'{i}.png'), cv2.COLOR_BGR2GRAY)
+        img[:, 4+i*28:24+i*28] = im
+
+    cv2.imwrite('digits.png', img)
+
 if __name__ == '__main__':
     time.sleep(1)
-    # concate()
+    concate()
     rect, img = find_lushi_window("hearthstone", to_gray=False)
     digits = cv2.cvtColor(cv2.imread('imgs_eng_1024x768\\icons\\digits.png'), cv2.COLOR_BGR2GRAY)
     enemy_region = [200, 260, 888, 348]  # [x1, y1, x2, y2]
     hero_region = [200, 571, 888, 659]
     hero_nready_region = [200, 480, 888, 568]
-    analyse_battle_field(hero_region, img, digits)
+    analyse_battle_field(enemy_region, img, digits)
