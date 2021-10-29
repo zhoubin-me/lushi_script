@@ -11,13 +11,13 @@ BUG提交请去 [此页面](https://github.com/zhoubin-me/lushi_script/issues)
 ## 安装
 
 请确保你安装了python 3.6或以上版本。我们推荐使用 [Anaconda](https://www.anaconda.com/products/individual#windows) 安装python。
-请确保你已将python的路径加入到了系统环境变量。
+请确保你已将python的路径加入到了系统环境变量(PATH)，Ananconda在安装过程中会有此选项，记得勾选。
 
 Windows用户请在命令行里输入以下来安装需求包：
 ```bash
 pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil
 ```
-如果出现psutil相关的安装错误，请下载并安装[Microsoft Visual C++](https://aka.ms/vs/16/release/vc_redist.x64.exe)
+如果出现psutil相关的安装错误，请下载并安装[Microsoft Visual C++](https://aka.ms/vs/16/release/vc_redist.x64.exe)，再执行以上命令
 
 [comment]: <> (Mac OS 用户请在terminal里输入以下来安装需求包)
 
