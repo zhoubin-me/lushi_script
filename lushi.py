@@ -26,9 +26,11 @@ class Agent:
             raise ValueError(f"Language {lang} is not supported yet")
 
         self.lang = lang
+        self.is_first_battle = False
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
+        self.heros_img_save = {}
         self.load_config()
 
     def load_config(self):
@@ -149,6 +151,40 @@ class Agent:
             pyautogui.click(target_loc)
 
 
+    def select_members(self):
+        rect, screen = find_lushi_window(self.title, to_gray=False)
+        hero_info = analyse_battle_field(self.locs.hero_nready_region, screen)
+        heros_count = len([x for x in hero_info if x[5] != 'n'])
+        if heros_count < 3:
+            if heros_count == 0 and self.is_first_battle:
+                pass
+            else:
+                pyautogui.click(tuple_add(rect, self.locs.options))
+                result = self.check_in_screen('surrender')
+                pyautogui.click(tuple_add(result[1], result[2]))
+
+        first_x, last_x, y = self.locs.members
+        mid_x = (first_x + last_x) // 2
+        for i, idx in enumerate(self.heros.start_seq):
+            current_heros_left = self.basic.hero_count - i
+            if current_heros_left > 3:
+                dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
+                loc = (first_x + dis * (idx - i), y)
+            elif current_heros_left == 3:
+                loc = (mid_x + self.locs.members_distance * (idx - i - 1), y)
+            elif current_heros_left == 2:
+                if idx - i - 1 == 0:
+                    factor = 1
+                else:
+                    factor = -1
+                loc = (mid_x + self.locs.members_distance // 2 * factor, y)
+            elif current_heros_left == 1:
+                loc = (mid_x, y)
+
+            pyautogui.click(tuple_add(rect, loc))
+            pyautogui.moveTo(tuple_add(rect, self.locs.dragto))
+            pyautogui.click()
+
 
 
     def run(self):
@@ -253,29 +289,9 @@ class Agent:
                 if state != "member_not_ready":
                     state = "member_not_ready"
                     tic = time.time()
-
-                first_x, last_x, y = self.locs.members
-                mid_x = (first_x + last_x) // 2
-                for i, idx in enumerate(self.heros.start_seq):
-                    current_heros_left = self.basic.hero_count - i
-                    if current_heros_left > 3:
-                        dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
-                        loc = (first_x + dis * (idx - i), y)
-                    elif current_heros_left == 3:
-                        loc = (mid_x + self.locs.members_distance * (idx - i - 1), y)
-                    elif current_heros_left == 2:
-                        if idx - i - 1 == 0:
-                            factor = 1
-                        else:
-                            factor = -1
-                        loc = (mid_x + self.locs.members_distance // 2 * factor, y)
-                    elif current_heros_left == 1:
-                        loc = (mid_x, y)
-
-                    pyautogui.click(tuple_add(result[2], loc))
-                    pyautogui.moveTo(tuple_add(result[2], self.locs.dragto))
-                    pyautogui.click()
+                self.select_members()
                 continue
+
 
             result = self.check_in_screen('not_ready_dots')
             if result[0]:
@@ -283,6 +299,7 @@ class Agent:
                     state = "not_ready_dots"
                     tic = time.time()
                 self.start_battle(result[2])
+                self.is_first_battle = False
                 continue
 
             result = self.check_in_screen('battle_ready')
@@ -380,6 +397,7 @@ class Agent:
                     state = "start_game"
                     tic = time.time()
                 pyautogui.click(tuple_add(result[2], self.locs.start_game))
+                self.is_first_battle = True
                 continue
 
             result1 = self.check_in_screen('final_reward')
