@@ -116,8 +116,7 @@ class Agent:
 
         if len([x for x in hero_info if x[5] != 'n']) < 3:
             pyautogui.click(tuple_add(rect, self.locs.options))
-            result = self.check_in_screen('surrender')
-            pyautogui.click(tuple_add(result[1], result[2]))
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
             return
         enemy_info.sort(key=lambda x: x[4])
         lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
