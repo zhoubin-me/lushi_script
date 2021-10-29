@@ -4,7 +4,7 @@ from hearthstone.enums import GameTag
 
 class BaseEntity:
     # INVALID = 0 施法者CASTER = 1 斗士FIGHTER = 2 TANK = 3 NEUTRAL = 4
-    damage_advantage = [[1, 1, 1, 1, 1], [1, 1, 1, 2, 1], [1, 2, 1, 1, 1], [1, 1, 2, 1, 1]]
+    damage_advantage = [[1, 1, 1, 1, 1], [1, 1, 1, 2, 1], [1, 2, 1, 1, 1], [1, 1, 2, 1, 1], [1, 1, 1, 1, 1]]
 
     def __init__(self, entity: Entity):
         self.entity_id = 0

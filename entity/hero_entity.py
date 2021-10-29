@@ -28,7 +28,7 @@ class HeroEntity(BaseEntity):
         self.windfury = 0
         self.spell_cnt = 1
         # 被动 一技能 二技能 三技能 ...
-        self.spell: List[SpellEntity] = [None, None, None, None]
+        self.spell: List[SpellEntity] = [None] * 4
         self.spellpower = 0
         self.deathrattle = 0
         # 技能选择的目标
@@ -70,7 +70,10 @@ class HeroEntity(BaseEntity):
         self.spell_cnt = (self.spell_cnt + 1) % 4
         pass
 
-    def attack(self, target, dmg):
+    def basic_attack(self, target, dmg):
         total_dmg = dmg * BaseEntity.damage_advantage[self.lettuce_role][target.lettuce_role]
         target.health -= total_dmg
         return total_dmg
+
+    def __str__(self):
+        return {'card_id': self.card_id, 'atk': self.atk, 'health': self.health, 'zone_pos': self.zone_position}.__str__()

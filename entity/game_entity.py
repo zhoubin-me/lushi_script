@@ -1,4 +1,4 @@
-from typing import Dict
+from typing import Dict, List
 
 from hearthstone.entities import Entity
 from hearthstone.enums import GameTag, Zone
@@ -14,12 +14,12 @@ class GameEntity(BaseEntity):
         self.players = []
         # 所有英雄
         self.hero_entities: Dict[int, HeroEntity] = {}
-        # 我方场上
-        self.my_hero: Dict[int, HeroEntity] = {}
-        # 敌方场上
-        self.enemy_hero: Dict[int, HeroEntity] = {}
-        # 手牌上
-        self.setaside_hero: Dict[int, HeroEntity] = {}
+        # 我方场上0, 1, 2号随从(只有战斗阶段才有数据)
+        self.my_hero: List[HeroEntity] = []
+        # 敌方场上0, 1, 2
+        self.enemy_hero: List[HeroEntity] = []
+        # 手牌上(从左往右按顺序)
+        self.setaside_hero: List[HeroEntity] = []
         # 1为选择随从 0为战斗
         self.action_step_type = 1
         self.turn = 0  # 回合数
@@ -42,8 +42,8 @@ class GameEntity(BaseEntity):
         self.hero_entities[hero.entity_id] = hero
         if hero.zone == Zone.PLAY:
             if hero.own():
-                self.my_hero[hero.entity_id] = hero
+                self.my_hero.append(hero)
             else:
-                self.enemy_hero[hero.entity_id] = hero
+                self.enemy_hero.append(hero)
         elif hero.zone == Zone.SETASIDE:
-            self.setaside_hero[hero.entity_id] = hero
+            self.setaside_hero.append(hero)
