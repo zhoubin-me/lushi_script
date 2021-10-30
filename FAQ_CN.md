@@ -41,3 +41,28 @@ A： lushi.py没有办法直接运行，需要通过cmd启动。如果你安装�
 
 Q: 成功启动脚本后该如何设置脚本？  
 A: 脚本的设置文件是config_chs.yaml和config_eng.yaml这两个文件，根据你炉石客户端的语言设置对应的配置文件即可。  
+
+
+
+### 4.Power.log相关问题
+Q: 我没有找到Power.log文件怎么办
+
+A: 如果你在Logs/目录下没有找到Power.log（指对战开始后），那稍微有一些麻烦。你需要到C:\Users\你的用户\AppData\Local\Blizzard\Hearthstone目录下新建一个叫log.config的文件（如果已经有就不用新建了），然后把下面这段代码放进去（如果已经有[Power]相关则更改相关设置）:
+``` yaml
+[Power]
+LogLevel=1
+FilePrinting=True
+ConsolePrinting=False
+ScreenPrinting=False
+Verbose=True
+```
+
+关于炉石log的更多信息可以查看这个 [Reddit帖子](https://www.reddit.com/r/hearthstone/comments/268fkk/simple_hearthstone_logging_see_your_complete_play/) 。
+
+Q: 我设置了日志路径，但还是提示找不到文件（FileNotFoundError）
+A: 请确保config.yaml文件中的路径正确(盘符后面需要添加双斜杠)
+
+```
+示例：
+hs_log: [ "D:\\", "Hearthstone", "Logs", "Power.log" ]
+```
