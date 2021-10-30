@@ -6,7 +6,9 @@ A:完全没问题，英语不要太差，善用百度能解决大部分问题。
 
 ### 1.运行pip intall指令时的常见问题
  Q:在cmd中运行pip install指令时跳出黄字警告怎么办？
+ 
  A:这个是正常现象不需要管。
+ 
  Q:在cmd中运行pip install指令时出现一长串的红色字符怎么办？
  A：说明下载失败了，尝试多运行几次pip install指令，直到全部显示Requirement already satisfied既可。
  Q：这些东西下载来有什么用？
