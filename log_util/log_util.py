@@ -42,7 +42,8 @@ class LogUtil:
             elif e.type == CardType.LETTUCE_ABILITY:
                 # print(e, e.tags, end='\n\n\n')
                 spell_entity = SpellEntity(e)
-                self.game_entity.hero_entities[spell_entity.lettuce_ability_owner].add_spell(spell_entity)
+                if spell_entity.lettuce_ability_owner in self.game_entity.hero_entities.keys():
+                    self.game_entity.hero_entities[spell_entity.lettuce_ability_owner].add_spell(spell_entity)
                 pass
             # 对战技能记录
             elif e.type == CardType.SPELL:
@@ -54,7 +55,7 @@ class LogUtil:
 
 
 if __name__ == '__main__':
-    path = 'D:\\Hearthstone\\Logs\\Power.log'
+    path = ["D:/", "Hearthstone", "Logs", "Power.log"]
     hs_log = LogUtil(path)
     game_entity = hs_log.parse_game()
     for i in game_entity.my_hero:
