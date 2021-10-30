@@ -18,13 +18,12 @@ class BattleAi:
         """
         my_health = [x.get_health() for x in my_list if x.get_health() > 0]
         enemy_health = [x.get_health() for x in enemy_list if x.get_health() > 0]
-        print(enemy_health, enemy_list, enemy_list[0].get_health())
         my_cnt = len(my_health)
-        my_min_health = min(my_health)
-        my_sum_health = sum(my_health)
+        my_min_health = min(my_health) if len(my_health) > 0 else 0
+        my_sum_health = sum(my_health) if len(my_health) > 0 else 0
         enemy_cnt = len(enemy_health)
-        enemy_max_health = max(enemy_health)
-        enemy_health = sum(enemy_health)
+        enemy_max_health = max(enemy_health) if len(enemy_health) > 0 else 0
+        enemy_health = sum(enemy_health) if len(enemy_health) > 0 else 0
         score = my_cnt * (my_min_health + my_sum_health) - (enemy_max_health + enemy_health) * enemy_cnt
         return score
 
@@ -32,7 +31,7 @@ class BattleAi:
     def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity]):
 
         optimal_strategy = ((-1 << 25), [1, 1, 1])
-        for idx in list(itertools.product(range(len(my_hero)), repeat=len(enemy_hero))):
+        for idx in list(itertools.product(range(len(enemy_hero)), repeat=len(my_hero))):
             # my = my_hero_list.copy()
             my = copy.deepcopy(my_hero)
             enemy = copy.deepcopy(enemy_hero)
@@ -43,7 +42,6 @@ class BattleAi:
                     my_min_health_hero = BattleAi.find_min_health(my)
                     e.basic_attack(my_min_health_hero, e.atk)
 
-            print(enemy)
             score = BattleAi.analyze_score(my, enemy)
             if score > optimal_strategy[0]:
                 optimal_strategy = (score, idx)

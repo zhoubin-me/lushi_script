@@ -146,7 +146,10 @@ class Agent:
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
 
-
+        if len(game.setaside_hero) == len(self.heros.battle_seq):
+            self.start_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
+            for i, h in enumerate(game.setaside_hero):
+                self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
 
         hero_in_battle = [x for x in game.my_hero if x.card_id in self.start_seq]
         hero_dead = [x for x in game.dead_hero if x.card_id in self.start_seq]
@@ -220,16 +223,7 @@ class Agent:
         tic = time.time()
         state = ""
         while True:
-
-
             pyautogui.click(tuple_add(result[2], self.locs.empty))
-            if os.path.exists(self.basic.hs_log):
-                game = self.log_util.parse_game()
-                if len(game.setaside_hero) == len(self.heros.battle_seq):
-                    self.start_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
-                    for i, h in enumerate(game.setaside_hero):
-                        self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
-
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
                     pyautogui.click(tuple_add(result[2], self.locs.options))
