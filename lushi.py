@@ -46,7 +46,6 @@ class Agent:
         self.basic = SimpleNamespace(**config['basic'])
         self.heros = SimpleNamespace(**config['heros'])
         self.locs = SimpleNamespace(**config['location'])
-        self.retry = SimpleNamespace(**config['retry'])
         pyautogui.PAUSE = self.basic.delay
 
         imgs = [img for img in os.listdir(os.path.join(self.img_folder, 'icons')) if img.endswith('.png')]
@@ -125,18 +124,26 @@ class Agent:
                 x_offset = (mid_x - first_x) * (0 - n_enemy_hero // 2 + i)
             game.enemy_hero[i].set_pos(mid_x+x_offset + rect[0], y + rect[1])
 
-
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
         pyautogui.click(tuple_add(rect, self.locs.empty))
+
+        for i, h in enumerate(game.hero_entities.values()):
+            if i < len(self.heros.battle_seq):
+                self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
 
         for hero_i, h in enumerate(game.my_hero):
             pyautogui.click(h.pos)
             skill_loc = None
             skill_seq = self.skill_seq_cache[h.card_id]
+            print(h.spell)
             for skill_id in skill_seq:
-                if h.spell[skill_id+1].lettuce_current_cooldown == 0:
+                skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
+                if skill_cooldown_round == 0:
                     skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+                    print(hero_i, skill_id, " is ready")
                     break
+                else:
+                    print(hero_i, skill_id, f" is cooling down, needs {skill_cooldown_round} rounds")
             pyautogui.click(skill_loc)
             enemy_id = strategy[hero_i]
             pyautogui.click(game.enemy_hero[enemy_id].pos)
@@ -146,10 +153,9 @@ class Agent:
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
 
-        if len(game.setaside_hero) == len(self.heros.battle_seq):
-            self.start_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
-            for i, h in enumerate(game.setaside_hero):
-                self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
+        for i, h in enumerate(game.hero_entities.values()):
+            if i < len(self.heros.battle_seq):
+                self.start_seq[h.card_id] = i
 
         hero_in_battle = [x for x in game.my_hero if x.card_id in self.start_seq]
         hero_dead = [x for x in game.dead_hero if x.card_id in self.start_seq]
@@ -160,10 +166,14 @@ class Agent:
         for k, v in current_seq.items():
             seq_map[self.start_seq[k]] = v
 
+        print(self.start_seq, current_seq, seq_map)
+
         if len(hero_in_battle) < 3:
             first_x, last_x, y = self.locs.members
             mid_x = (first_x + last_x) // 2
-            rest_seq = self.heros.battle_seq[len(hero_dead):]
+            # import ipdb
+            # ipdb.set_trace()
+            rest_seq = self.heros.battle_seq[len(hero_dead + hero_in_battle):]
             in_hand_left = len(current_seq)
 
             for i in range(3 - len(hero_in_battle)):

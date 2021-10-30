@@ -31,7 +31,7 @@ class HeroEntity(BaseEntity):
         self.windfury = 0
         self.spell_cnt = 1
         # 被动 一技能 二技能 三技能 ...
-        self.spell: List[SpellEntity] = [None] * 4
+        self.spell: List[SpellEntity] = []
         self.spellpower = 0
         self.deathrattle = 0
         # 是否选择了技能
@@ -80,9 +80,7 @@ class HeroEntity(BaseEntity):
         return self.controller == 3
 
     def add_spell(self, spell: SpellEntity):
-        self.spell[self.spell_cnt] = spell
-        self.spell_cnt = (self.spell_cnt + 1) % 4
-        pass
+        self.spell.append(spell)
 
     def get_health(self):
         return self.max_health - self.damage

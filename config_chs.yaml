@@ -27,40 +27,11 @@ basic:
   # 如果界面卡住，最多等多久重启炉石
   longest_waiting: 80 # 秒计
   # 战网路径(注意路径要加双斜杠)
-  bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+  bn_path: ["C:", "Program Files (x86)", "Battle.net", "Battle.net.exe"] # 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
   # 炉石日志路径
-  hs_log: 'D:\\Hearthstone\\Logs\\Power.log'
+  hs_log: ["E:", "Games", "Hearthstone", "Logs", "Power.log"] # 'D:\\Hearthstone\\Logs\\Power.log'
   # 遇到，掉线等是否自动重启
   auto_restart: 0 # 1为自动重启，0为否
-
-heros:
-  #
-  start_seq:
-    [0, 1 ,4]
-
-  # 接着上场的英雄序号，目前只支持最初上场的三个，所以无用，可忽略
-  sub_seq:
-    [ 1，2，4 ]
-
-
-  skill_priority:
-    0: [1, 2, 0]
-    1: [2, 1, 0]
-    2: [2, 1, 0]
-    3: [2, 1, 0]
-    4: [0, 1, 2]
-    5: [1, 0, 2]
-    6: [1, 0, 2]
-
-  # 每个英雄的三个技能的基本伤害，目前用不上，可忽略;但是若你的英雄有指向性治疗技能，需将相应数值设为负数。
-  skill_basic_damage:
-    0: [ 8, 8, 8 ]
-    1: [ 8, 8, 8 ]
-    2: [ 8, 8, 8 ]
-    3: [ 8, 8, 8 ]
-    4: [ 8, 8, 8 ]
-    5: [ 8, 8, 8 ]
-    6: [ 8, 8, 8 ]
 
 
 heros:
@@ -69,7 +40,7 @@ heros:
   # 每个英雄的三个技能的优先顺序(而非优先级)
   # 比如 0: [2, 0, 1]意味着第一个英雄优先放第三个技能，如在CD中则放第一个技能，第一个也在CD中则放第三个技能
   # 再比如 5: [1, 2, 0] 意味着第六个英雄优先放第二个技能，如不能则放第三个，再不能则放第一个
-  # 英雄序号需要与start_seq里的序号对应，比如start_deq设置为[0, 3, 5]，那么我们需修改下面的0:[...], 3:[...], 5:[...]
+  # 英雄序号需要与battle_seq里的序号对应
   skill_seq:
     0: [1, 2, 0]
     1: [1, 2, 0]

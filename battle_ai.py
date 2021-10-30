@@ -32,7 +32,6 @@ class BattleAi:
 
         optimal_strategy = ((-1 << 25), [1, 1, 1])
         for idx in list(itertools.product(range(len(enemy_hero)), repeat=len(my_hero))):
-            # my = my_hero_list.copy()
             my = copy.deepcopy(my_hero)
             enemy = copy.deepcopy(enemy_hero)
             for i, target in enumerate(idx):
@@ -51,8 +50,6 @@ class BattleAi:
     @staticmethod
     def find_min_health(heros):
         return min(heros, key=lambda x: x.get_health())
-
-
 
 
 if __name__ == '__main__':

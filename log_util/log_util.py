@@ -1,7 +1,7 @@
 from hearthstone.enums import CardType, Zone, GameTag
 from hslog import LogParser, packets
 from hslog.export import EntityTreeExporter
-
+import os
 from entity.game_entity import GameEntity
 from entity.hero_entity import HeroEntity
 from entity.spell_entity import SpellEntity
@@ -16,7 +16,7 @@ class LogUtil:
         self.game_entity = None
 
     def read_log(self):
-        with open(self.log_path, encoding='utf-8') as f:
+        with open(os.path.join(*self.log_path), encoding='utf-8') as f:
             self.parser.read(f)
         self.parser.flush()
         # 最近一场战斗
@@ -48,7 +48,6 @@ class LogUtil:
             elif e.type == CardType.SPELL:
                 pass
             # print(e, e.tags, end='\n\n\n')
-
         return self.game_entity
 
     pass

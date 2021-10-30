@@ -101,6 +101,7 @@ def proc_kill(process_names):
 def restart_game(lang, battle_net_path):
     bn = 'Battle.net.exe'
     hs = 'Hearthstone.exe'
+    battle_net_path = os.path.join(*battle_net_path)
     if lang == 'eng':
         title = 'Hearthstone'
     elif lang == 'chs':

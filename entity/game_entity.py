@@ -52,3 +52,6 @@ class GameEntity(BaseEntity):
         elif hero.zone == Zone.GRAVEYARD:
             if hero.own():
                 self.dead_hero.append(hero)
+
+        self.my_hero.sort(key=lambda x: x.zone_position)
+        self.enemy_hero.sort(key=lambda x: x.zone_position)
