@@ -24,7 +24,7 @@ basic:
   # Battle.net path
   bn_path: ["C:", "Program Files (x86)", "Battle.net", "Battle.net.exe"] # 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
   # Path of Power.log
-  hs_log: ["E:", "Games", "Hearthstone", "Logs", "Power.log"] # 'D:\\Hearthstone\\Logs\\Power.log'
+  hs_log: ["E:", "Games", "Hearthstone", "Logs", "Power.log"] # 'E:\\Games\\Hearthstone\\Logs\\Power.log'
   auto_restart: 0
 
 heros:
