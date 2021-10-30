@@ -19,7 +19,7 @@ class BaseEntity:
         self.parse_entity()
 
     def get_tag(self, tag_name):
-        return self.entity.tags.get(tag_name)
+        return self.entity.tags.get(tag_name) or 0
 
     def parse_entity(self):
         if self.entity is None:

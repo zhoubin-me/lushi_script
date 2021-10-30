@@ -27,20 +27,28 @@ class LogUtil:
 
     def parse_game(self) -> GameEntity:
         self.read_log()
-        for e in self.game.initial_entities:
+        for e in self.game.entities:
             # 以下为游戏状态
             if e.type == CardType.GAME:
                 self.game_entity = GameEntity(e)
                 pass
             elif e.type == CardType.MINION:
                 minion = HeroEntity(e)
+
+                # print(e, e.tags, end='\n\n\n')
                 self.game_entity.add_hero(minion)
                 pass
             # 佣兵技能信息
             elif e.type == CardType.LETTUCE_ABILITY:
+                # print(e, e.tags, end='\n\n\n')
                 spell_entity = SpellEntity(e)
                 self.game_entity.hero_entities[spell_entity.lettuce_ability_owner].add_spell(spell_entity)
                 pass
+            # 对战技能记录
+            elif e.type == CardType.SPELL:
+                pass
+            # print(e, e.tags, end='\n\n\n')
+
         return self.game_entity
 
     pass
@@ -50,10 +58,10 @@ if __name__ == '__main__':
     path = 'D:\\Hearthstone\\Logs\\Power.log'
     hs_log = LogUtil(path)
     game_entity = hs_log.parse_game()
-    for i in range(3):
-        print(game_entity.my_hero[i])
+    for i in game_entity.my_hero:
+        print(i)
 
-    for i in range(3):
-        print(game_entity.enemy_hero[i])
+    for i in game_entity.enemy_hero:
+        print(i)
 
     pass
