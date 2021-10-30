@@ -37,13 +37,13 @@ heros:
   # The hero number should corresponds to numbers in start_seq
   # You should only care about heros in start_seq, the rest does not matter
   skill_seq:
-    0: [1, 2, 0]
-    1: [1, 2, 0]
-    2: [1, 2, 0]
+    0: [2, 1, 0]
+    1: [2, 1, 0]
+    2: [2, 1, 0]
     3: [2, 1, 0]
-    4: [0, 1, 2]
-    5: [1, 0, 2]
-    6: [1, 0, 2]
+    4: [2, 1, 0]
+    5: [2, 1, 0]
+    6: [2, 1, 0]
   # Basic damage of skills, currently leave it alone; but if you have any heros that can heal a target, then set that damage number to negative so that it will heal our side
   skill_basic_damage:
     0: [8, 8, 8]
