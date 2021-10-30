@@ -1,6 +1,6 @@
 basic:
   # number of your team ID for battle, start counting from 0
-  team_id: 4
+  team_id: 3
   # number of the boss ID for battle, start counting from 0
   boss_id: 5
   # total number of your heros
@@ -31,7 +31,7 @@ basic:
 heros:
   # First 3 heros' sequence number at start of the battle, it's sequence number of cards on hand, not in team buildup
   start_seq:
-    [1, 2, 5]
+    [0, 1, 4]
   # Subsequent hero's sequence number
   sub_seq:
     [1, 2, 4]
@@ -41,12 +41,12 @@ heros:
   # The hero number should corresponds to numbers in start_seq
   # You should only care about heros in start_seq, the rest does not matter
   skill_priority:
-    0: [2, 0, 1]
-    1: [0, 1, 2]
-    2: [2, 1, 0]
-    3: [0, 1, 2]
-    4: [1, 0, 2]
-    5: [0, 1, 2]
+    0: [1, 2, 0]
+    1: [1, 2, 0]
+    2: [1, 2, 0]
+    3: [2, 1, 0]
+    4: [0, 1, 2]
+    5: [1, 0, 2]
     6: [1, 0, 2]
   # Basic damage of skills, currently leave it alone; but if you have any heros that can heal a target, then set that damage number to negative so that it will heal our side
   skill_basic_damage:
@@ -95,7 +95,7 @@ location:
   dragto: [ 780, 465 ] # [x, y]
 
   # focus area before battle
-  focus: [ 165, 385, 600, 400 ] # [first_x, mid_x, last_x, y]
+  focus: [ 165, 385, 600, 380 ] # [first_x, mid_x, last_x, y]
 
   # final boss reward locations, depending on rewards count
   rewards:
@@ -148,9 +148,9 @@ location:
 
   #
   # Region of cards on Battlefield
-  enemy_region: [ 200, 260, 888, 348 ] # [x1, y1, x2, y2]
-  hero_region: [ 200, 571, 888, 659 ]
-  hero_nready_region: [200, 480, 888, 568]
-  
-  # game resolution
-  resolution: [1024, 768]
+  enemy_region: [ 200, 250, 888, 300 ] # [x1, y1, x2, y2]
+  hero_region: [ 200, 560, 888, 610 ]
+  hero_nready_region: [200, 470, 888, 520]
+  offset: [10, 5, 12]
+  skill_color_offset: 15
+
