@@ -21,8 +21,7 @@ Run the following in your commandline/terminal for **requirements** installation
 
 
 ```bash
-pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil
-```
+         c```
 If you have installation problem related to psutil, please download and install [Microsoft Visual C++](https://aka.ms/vs/16/release/vc_redist.x64.exe), then redo above
 
 [comment]: <> (For Mac OS users:)
