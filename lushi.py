@@ -9,8 +9,10 @@ import yaml
 from types import SimpleNamespace
 from PIL import ImageGrab
 
+from log_util.log_util import LogUtil
 from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
 from img_proc import analyse_battle_field
+
 
 class Agent:
     def __init__(self, lang):
@@ -32,9 +34,10 @@ class Agent:
         self.heros_whitelist = {}
         self.heros_img_save = {}
         self.load_config()
+        self.log_util = LogUtil(self.basic.hs_log)
+        self.game = None
 
     def load_config(self):
-
 
         with open(self.cfg_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
@@ -62,7 +65,6 @@ class Agent:
             k = img.split('.')[0]
             v = cv2.cvtColor(cv2.imread(os.path.join(self.img_folder, 'heros_whitelist', img)), cv2.COLOR_BGR2GRAY)
             self.heros_whitelist[k] = v
-
 
     def check_in_screen(self, name, prefix='icons'):
         icon = getattr(self, prefix)[name]
@@ -98,19 +100,29 @@ class Agent:
 
     def start_battle(self, rect):
         print("Scanning battlefield")
-        for _ in range(5):
+        for _ in range(4):
             pyautogui.click(tuple_add(rect, self.locs.empty))
             time.sleep(0.1)
         print("Clicked")
 
         pyautogui.click(tuple_add(rect, self.locs.empty))
         rect, screen = find_lushi_window(self.title, to_gray=False)
-        hero_info = analyse_battle_field(self.locs.hero_region, screen)
+        try:
+            hero_info = analyse_battle_field(self.locs.hero_region, screen, self.icons['digits'], self.locs.offset[0])
+            enemy_info = analyse_battle_field(self.locs.enemy_region, screen, self.icons['digits'], self.locs.offset[1])
+            # TODO
+            # hero_info = self.game.my_hero
+            # enemy_info = self.game.enemy_hero
+        except Exception as e:
+            print("Digit detection problem", e)
+            pyautogui.click(tuple_add(rect, self.locs.options))
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
+            return
+
         if len([x for x in hero_info if x[5] != 'n']) < 3:
             pyautogui.click(tuple_add(rect, self.locs.options))
-            result = self.check_in_screen('surrender')
-            pyautogui.click(tuple_add(result[1], result[2]))
-        enemy_info = analyse_battle_field(self.locs.enemy_region, screen)
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
+            return
         enemy_info.sort(key=lambda x: x[4])
         lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
 
@@ -119,21 +131,29 @@ class Agent:
         for hero_i, hero_x, hero_y, damage, health, color in hero_info:
             for _ in range(2):
                 pyautogui.click(tuple_add(rect, self.locs.empty))
+                time.sleep(0.1)
             pyautogui.click(tuple_add((hero_x, hero_y), rect))
+            time.sleep(0.1)
 
             if hero_i < len(self.heros.start_seq):
                 hero_idx = self.heros.start_seq[hero_i]
                 skill_idx = 0
                 for skill_id in self.heros.skill_priority[hero_idx]:
                     skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
-
-                    region = tuple_add(skill_loc, (-width//2, -height)) + tuple_add(skill_loc, (width//2, 0))
+                    y_diff = self.locs.skill_color_offset
+                    region = tuple_add(skill_loc, (-width // 2, -height + y_diff)) + tuple_add(skill_loc,
+                                                                                               (width // 2, y_diff))
                     skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
-                    found, _, _, _  = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
+                    found, _, _, _ = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
+                    cv2.imwrite(f'hero_{hero_idx}_skill_{skill_id}.png', skill_img)
                     if not found:
+                        print(f"hero {hero_idx} skill {skill_id} is ready")
                         pyautogui.click(skill_loc)
+                        time.sleep(0.1)
                         skill_idx = skill_id
                         break
+                    else:
+                        print(f"hero {hero_idx} skill {skill_id} is not ready")
 
                 if self.heros.skill_basic_damage[hero_i][skill_idx] > 0:
                     target_i = 0
@@ -147,21 +167,30 @@ class Agent:
             else:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
                 pyautogui.click(skill_loc)
+                time.sleep(0.1)
                 target_loc = tuple_add(rect, enemy_info[0][1:3])
             pyautogui.click(target_loc)
-
+            time.sleep(0.1)
 
     def select_members(self):
         rect, screen = find_lushi_window(self.title, to_gray=False)
-        hero_info = analyse_battle_field(self.locs.hero_nready_region, screen)
+        try:
+            hero_info = analyse_battle_field(self.locs.hero_nready_region, screen, self.icons['digits'],
+                                             self.locs.offset[2])
+        except Exception as e:
+            print("Digit detection problem", e)
+            pyautogui.click(tuple_add(rect, self.locs.options))
+            pyautogui.click(tuple_add(rect, self.locs.surrender))
+            return
+
         heros_count = len([x for x in hero_info if x[5] != 'n'])
         if heros_count < 3:
             if heros_count == 0 and self.is_first_battle:
                 pass
             else:
                 pyautogui.click(tuple_add(rect, self.locs.options))
-                result = self.check_in_screen('surrender')
-                pyautogui.click(tuple_add(result[1], result[2]))
+                pyautogui.click(tuple_add(rect, self.locs.surrender))
+                return
 
         first_x, last_x, y = self.locs.members
         mid_x = (first_x + last_x) // 2
@@ -185,21 +214,20 @@ class Agent:
             pyautogui.moveTo(tuple_add(rect, self.locs.dragto))
             pyautogui.click()
 
-
-
     def run(self):
         if self.basic.mode == 'pve':
-            while True:
-                try:
-                    self.run_pve()
-                except:
-                    restart_game(self.lang, self.basic.bn_path)
+            if self.basic.auto_restart:
+                while True:
+                    try:
+                        self.run_pve()
+                    except:
+                        restart_game(self.lang, self.basic.bn_path)
+            else:
+                self.run_pve()
         elif self.basic.mode == 'pvp':
             print("PVP is no longer supported")
         else:
             raise ValueError(f"Mode {self.basic.mode} is not supported yet")
-
-
 
     def run_pve(self):
         time.sleep(2)
@@ -209,16 +237,15 @@ class Agent:
         surprise_in_mid = False
         tic = time.time()
         state = ""
-
         while True:
             pyautogui.click(tuple_add(result[2], self.locs.empty))
+            self.game = self.log_util.parse_game()
             time.sleep(np.random.rand() + self.basic.delay)
 
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
-                    pyautogui.click(tuple_add(result[1], self.locs.options))
-                    result = self.check_in_screen('surrender')
-                    pyautogui.click(tuple_add(result[1], result[2]))
+                    pyautogui.click(tuple_add(result[2], self.locs.options))
+                    pyautogui.click(tuple_add(result[2], self.locs.surrender))
                 elif state == 'map_not_ready':
                     pyautogui.click(tuple_add(result[2], self.locs.view_team))
                     pyautogui.click(tuple_add(result[2], self.locs.give_up))
@@ -227,7 +254,8 @@ class Agent:
                     restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
-                print(f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
+                print(
+                    f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
 
             result = self.check_in_screen('mercenaries')
             if result[0]:
@@ -291,7 +319,6 @@ class Agent:
                     tic = time.time()
                 self.select_members()
                 continue
-
 
             result = self.check_in_screen('not_ready_dots')
             if result[0]:
@@ -447,6 +474,7 @@ class Agent:
 
             pyautogui.click(tuple_add(result[2], self.locs.empty))
 
+
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
@@ -454,6 +482,7 @@ def main():
 
     agent = Agent(lang=args.lang)
     agent.run()
+
 
 if __name__ == '__main__':
     main()

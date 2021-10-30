@@ -1,23 +1,18 @@
 basic:
   # number of your team ID for battle, start counting from 0
-  team_id: 4
+  team_id: 3
   # number of the boss ID for battle, start counting from 0
-  boss_id: 1
+  boss_id: 5
   # total number of your heros
   hero_count: 6
   # total number of rewards after finishing the map
-  reward_count: 4
+  reward_count: 5
   # whether early stop battle once collected surprise option on map, 1 means early stop, 0 means continue
-  early_stop: 1
+  early_stop: 0
   # delay between consecutive operations, if you always missing clicking some button, you may need to change the delay to > 1.0
   delay: 0.5
   # confidence threshold for image template matching on screen
   confidence: 0.8
-  # number of hero ID for battle, start counting from 0
-  # the numbering sequence is for hero cards on hand before each battle, not for team buildup
-  start_heros_id: [ 0, 1, 5 ]
-  # if any start heros died, use the following heros by order
-  next_heros_id: [ 0, 1, 4 ]
 
 
   # PVP Surrender Mode or PVE
@@ -26,36 +21,48 @@ basic:
   pvp_delay: 1.0 # in seconds
   # whether need fast surrender, since surrender button keeps changing position, fast surrender may fail to surrend
   fast_surrender: 1 # 1 means fast surrender, 0 means recognize surrender button first, which slows down surrrender speed
-
   # longest_waiting time to restart Hearthstone
-  longest_waiting: 60 # second
+  longest_waiting: 80 # second
   # Battle.net path
-  battle_net_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+  bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
 
-skill:
-  # battle round cycle
-  # skills will be repeated every N battles
-  cycle: 2
-  # battle skill number
-  ids:
-    0: [ 1, 1, 0 ] # first round battle skill number
-    1: [ 1, 1, 1 ] # second round battle skill number
-    # 2: [1, 1, 0] # third round battle skill number
+  auto_restart: 0
 
-  # battle skill target number, start counting from 0
-  # -1 means random or AOE skill with no targets, 1 means middle enemy
-  targets:
-    0: [ -1, -1, 1 ] # first round battle skill target
-    1: [ -1, -1, -1 ] # second round battle skill target
-    # 2: [-1, -1, 1] # third round battle skill target
+heros:
+  # First 3 heros' sequence number at start of the battle, it's sequence number of cards on hand, not in team buildup
+  start_seq:
+    [0, 1, 4]
+  # Subsequent hero's sequence number
+  sub_seq:
+    [1, 2, 4]
+  # Skill sequnce of all heros:
+  # For example: 0:[2, 0, 1] means the first hero will cast its third skill, if cannot (like in cooldown) then cast first skill, if also in CD then cast second skill
+  # Another example: 5:[0, 1, 2] means the sixth hero will cast its first skill, if cannot then cast its second skill, if also cannot then cast its third skill
+  # The hero number should corresponds to numbers in start_seq
+  # You should only care about heros in start_seq, the rest does not matter
+  skill_priority:
+    0: [1, 2, 0]
+    1: [1, 2, 0]
+    2: [1, 2, 0]
+    3: [2, 1, 0]
+    4: [0, 1, 2]
+    5: [1, 0, 2]
+    6: [1, 0, 2]
+  # Basic damage of skills, currently leave it alone; but if you have any heros that can heal a target, then set that damage number to negative so that it will heal our side
+  skill_basic_damage:
+    0: [8, 8, 8]
+    1: [8, 8, 8]
+    2: [8, 8, 8]
+    3: [8, 8, 8]
+    4: [8, 8, 8]
+    5: [8, 8, 8]
+    6: [8, 8, 8]
+
 
 
 retry:
-  # max number of retries to use skills, once reached, will surrender
   skill_selection: 6
-  # max number of retries to play hero from hand, once reached, will surrender
   hero_selection: 6
-  # max number of retries to find the next map entry, once reached, will early stop
   map_ready: 10
 
 # coordinations of buttons etc.
@@ -64,6 +71,7 @@ location:
   heros: [ 410, 520, 630, 545 ] #  [first_x, mid_x, last_x, y]
   # hero skills locations
   skills: [ 390, 520, 650, 380 ] # [first_x, mid_x, last_x, y]
+  skill_waiting: [ 100, 60 ]
   # enemy battle field locations
   enemies: [ 430, 550, 610, 240 ] # [first_x, mid_x, last_x, y]
 
@@ -87,7 +95,7 @@ location:
   dragto: [ 780, 465 ] # [x, y]
 
   # focus area before battle
-  focus: [ 165, 385, 600, 400 ] # [first_x, mid_x, last_x, y]
+  focus: [ 165, 385, 600, 380 ] # [first_x, mid_x, last_x, y]
 
   # final boss reward locations, depending on rewards count
   rewards:
@@ -123,7 +131,7 @@ location:
   # start game button, on boss selected or path selected
   start_game: [ 908, 632 ] # [x, y]
   # start battle button, on skill selection finished
-  start_battle: [ 925, 640 ] # [x, y]
+  start_battle: [ 925, 393 ] # [x, y]
 
   # option button
   options: [ 1007, 781 ] # [x, y]
@@ -139,8 +147,10 @@ location:
 
 
   #
-  enemy_region: [ 400, 300, 1230, 400 ] # [x1, y1, x2, y2]
-  hero_region: [ 400, 650, 1230, 750 ]
-  
-  # game resolution
-  resolution: [1024, 768]
+  # Region of cards on Battlefield
+  enemy_region: [ 200, 250, 888, 300 ] # [x1, y1, x2, y2]
+  hero_region: [ 200, 560, 888, 610 ]
+  hero_nready_region: [200, 470, 888, 520]
+  offset: [10, 5, 12]
+  skill_color_offset: 15
+

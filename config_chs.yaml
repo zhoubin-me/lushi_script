@@ -1,9 +1,9 @@
 basic:
   # 出战队伍的编号, 从0开始计数
-  team_id: 4
+  team_id: 3
 
   # 目标悬赏的编号, 从0开始计数
-  boss_id: 2
+  boss_id: 5
   # 队伍中佣兵的数量，至少3人
   hero_count: 6
   # 完成悬赏后的奖励数目
@@ -28,38 +28,43 @@ basic:
   longest_waiting: 80 # 秒计
   # 战网路径(注意路径要加双斜杠)
   bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
-
+  # 炉石日志路径
+  hs_log: 'D:\\Hearthstone\\Logs\\Power.log'
+  # 遇到，掉线等是否自动重启
+  auto_restart: 0 # 1为自动重启，0为否
 
 heros:
   # 起始三个英雄的序号，从0开始数，是在手牌的位置而非队伍中的位置
   start_seq:
-    [1, 2, 5]
+    [0, 1 ,4]
+
   # 接着上场的英雄序号，目前只支持最初上场的三个，所以无用，可忽略
   sub_seq:
-    [1，2，4]
-    
+    [ 1，2，4 ]
+
   # 每个英雄的三个技能的优先顺序(而非优先级)
   # 比如 0: [2, 0, 1]意味着第一个英雄优先放第三个技能，如在CD中则放第一个技能，第一个也在CD中则放第三个技能
   # 再比如 5: [1, 2, 0] 意味着第六个英雄优先放第二个技能，如不能则放第三个，再不能则放第一个
   # 英雄序号需要与start_seq里的序号对应，比如start_deq设置为[0, 3, 5]，那么我们需修改下面的0:[...], 3:[...], 5:[...]
   # 只需要管你start_seq里面的英雄序号就好了，其他的不用管
   skill_priority:
-    0: [2, 0, 1]
-    1: [1, 2, 0]
-    2: [1, 2, 0]
-    3: [1, 2, 0]
-    4: [1, 0, 2]
-    5: [0, 1, 2]
+    0: [1, 2, 0]
+    1: [2, 1, 0]
+    2: [2, 1, 0]
+    3: [2, 1, 0]
+    4: [0, 1, 2]
+    5: [1, 0, 2]
     6: [1, 0, 2]
-  # 每个英雄的三个技能的基本伤害，目前用不上，可忽略
+
+  # 每个英雄的三个技能的基本伤害，目前用不上，可忽略;但是若你的英雄有指向性治疗技能，需将相应数值设为负数。
   skill_basic_damage:
-    0: [8, 8, 8]
-    1: [8, 8, 8]
-    2: [8, 8, 8]
-    3: [8, 8, 8]
-    4: [8, 8, 8]
-    5: [8, 8, 8]
-    6: [8, 8, 8]
+    0: [ 8, 8, 8 ]
+    1: [ 8, 8, 8 ]
+    2: [ 8, 8, 8 ]
+    3: [ 8, 8, 8 ]
+    4: [ 8, 8, 8 ]
+    5: [ 8, 8, 8 ]
+    6: [ 8, 8, 8 ]
 
 retry:
   # 最大重试技能次数，达到次数后如果依然不成功，认输
@@ -75,7 +80,7 @@ location:
   heros: [ 677, 807, 943, 641 ] #  [first_x, mid_x, last_x, y]
   # hero skills locations
   skills: [ 653, 801, 963, 450 ] # [first_x, mid_x, last_x, y]
-  skill_waiting: [100, 60]
+  skill_waiting: [ 100, 60 ]
   # enemy battle field locations
   enemies: [ 677, 850, 943, 285 ] # [first_x, mid_x, last_x, y]
 
@@ -152,20 +157,7 @@ location:
   # Region of cards on Battlefield
   enemy_region: [ 400, 293, 1230, 393 ] # [x1, y1, x2, y2]
   hero_region: [ 400, 650, 1230, 750 ]
-  hero_nready_region: [400, 580, 1230, 680]
+  hero_nready_region: [ 400, 580, 1230, 680 ]
+  offset: [0, 0, 0]
+  skill_color_offset: 0
 
-cv:
-  hero_center_y_offset: 70
-  hero_image_size: [50, 35]
-
-  color_thresh: 250
-  hero_color_thresh: 100
-  color_y_offset: 28
-  color_region_offset: [5, 10]
-
-  digit_size: [17, 30]
-  digit_conf: 0.7
-  digit_template_w: 28
-
-  # game resolution
-  resolution: [1600, 900]
