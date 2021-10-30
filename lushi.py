@@ -11,8 +11,7 @@ from PIL import ImageGrab
 
 from log_util.log_util import LogUtil
 from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
-from img_proc import analyse_battle_field
-
+from battle_ai import BattleAi
 
 class Agent:
     def __init__(self, lang):
@@ -36,6 +35,8 @@ class Agent:
         self.load_config()
         self.log_util = LogUtil(self.basic.hs_log)
         self.game = None
+        self.skill_seq_cache = {}
+        self.start_seq = {}
 
     def load_config(self):
 
@@ -98,121 +99,102 @@ class Agent:
         print("Did not found any surprise")
         return None
 
-    def start_battle(self, rect):
+    def start_battle(self):
         print("Scanning battlefield")
-        for _ in range(4):
-            pyautogui.click(tuple_add(rect, self.locs.empty))
-            time.sleep(0.1)
-        print("Clicked")
 
-        pyautogui.click(tuple_add(rect, self.locs.empty))
         rect, screen = find_lushi_window(self.title, to_gray=False)
-        try:
-            hero_info = analyse_battle_field(self.locs.hero_region, screen, self.icons['digits'], self.locs.offset[0])
-            enemy_info = analyse_battle_field(self.locs.enemy_region, screen, self.icons['digits'], self.locs.offset[1])
-            # TODO
-            # hero_info = self.game.my_hero
-            # enemy_info = self.game.enemy_hero
-        except Exception as e:
-            print("Digit detection problem", e)
-            pyautogui.click(tuple_add(rect, self.locs.options))
-            pyautogui.click(tuple_add(rect, self.locs.surrender))
-            return
+        game = self.log_util.parse_game()
 
-        if len([x for x in hero_info if x[5] != 'n']) < 3:
-            pyautogui.click(tuple_add(rect, self.locs.options))
-            pyautogui.click(tuple_add(rect, self.locs.surrender))
-            return
-        enemy_info.sort(key=lambda x: x[4])
-        lowest_hp_hero_id = min(hero_info, key=lambda x: x[4])[0]
-
-        width, height = self.locs.skill_waiting
-
-        for hero_i, hero_x, hero_y, damage, health, color in hero_info:
-            for _ in range(2):
-                pyautogui.click(tuple_add(rect, self.locs.empty))
-                time.sleep(0.1)
-            pyautogui.click(tuple_add((hero_x, hero_y), rect))
-            time.sleep(0.1)
-
-            if hero_i < len(self.heros.start_seq):
-                hero_idx = self.heros.start_seq[hero_i]
-                skill_idx = 0
-                for skill_id in self.heros.skill_priority[hero_idx]:
-                    skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
-                    y_diff = self.locs.skill_color_offset
-                    region = tuple_add(skill_loc, (-width // 2, -height + y_diff)) + tuple_add(skill_loc,
-                                                                                               (width // 2, y_diff))
-                    skill_img = cv2.cvtColor(np.array(ImageGrab.grab(region)), cv2.COLOR_RGB2GRAY)
-                    found, _, _, _ = find_icon_location(skill_img, self.icons['skill_waiting'], self.basic.confidence)
-                    cv2.imwrite(f'hero_{hero_idx}_skill_{skill_id}.png', skill_img)
-                    if not found:
-                        print(f"hero {hero_idx} skill {skill_id} is ready")
-                        pyautogui.click(skill_loc)
-                        time.sleep(0.1)
-                        skill_idx = skill_id
-                        break
-                    else:
-                        print(f"hero {hero_idx} skill {skill_id} is not ready")
-
-                if self.heros.skill_basic_damage[hero_i][skill_idx] > 0:
-                    target_i = 0
-                    for enemy_i, (_, enemy_x, enemy_y, damage_e, health_e, color_e) in enumerate(enemy_info):
-                        if color == 'r' and color_e == 'g' or color == 'b' and color_e == 'r' or color == 'g' and color_e == 'b':
-                            target_i = enemy_i
-                            break
-                    target_loc = tuple_add(rect, enemy_info[target_i][1:3])
-                else:
-                    target_loc = tuple_add(rect, hero_info[lowest_hp_hero_id][1:3])
+        first_x, mid_x, last_x, y = self.locs.heros
+        n_my_hero = len(game.my_hero)
+        is_even = n_my_hero % 2 == 0
+        for i in range(n_my_hero):
+            if is_even:
+                x_offset = (mid_x - first_x) * (- 0.5 - n_my_hero // 2 + i + 1)
             else:
-                skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
-                pyautogui.click(skill_loc)
-                time.sleep(0.1)
-                target_loc = tuple_add(rect, enemy_info[0][1:3])
-            pyautogui.click(target_loc)
-            time.sleep(0.1)
+                x_offset = (mid_x - first_x) * (0 - n_my_hero // 2 + i)
+            game.my_hero[i].set_pos(mid_x+x_offset + rect[0], y + rect[1])
+
+        first_x, mid_x, last_x, y = self.locs.enemies
+        n_enemy_hero = len(game.enemy_hero)
+        is_even = n_enemy_hero % 2 == 0
+        for i in range(n_enemy_hero):
+            if is_even:
+                x_offset = (mid_x - first_x) * (- 0.5 - n_enemy_hero // 2 + i + 1)
+            else:
+                x_offset = (mid_x - first_x) * (0 - n_enemy_hero // 2 + i)
+            game.enemy_hero[i].set_pos(mid_x+x_offset + rect[0], y + rect[1])
+
+
+        strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
+        pyautogui.click(tuple_add(rect, self.locs.empty))
+
+        for hero_i, h in enumerate(game.my_hero):
+            pyautogui.click(h.pos)
+            skill_loc = None
+            skill_seq = self.skill_seq_cache[h.card_id]
+            for skill_id in skill_seq:
+                if h.spell[skill_id+1].lettuce_current_cooldown == 0:
+                    skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+                    break
+            pyautogui.click(skill_loc)
+            enemy_id = strategy[hero_i]
+            pyautogui.click(game.enemy_hero[enemy_id].pos)
+            pyautogui.click(tuple_add(rect, self.locs.empty))
 
     def select_members(self):
+        game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
-        try:
-            hero_info = analyse_battle_field(self.locs.hero_nready_region, screen, self.icons['digits'],
-                                             self.locs.offset[2])
-        except Exception as e:
-            print("Digit detection problem", e)
-            pyautogui.click(tuple_add(rect, self.locs.options))
-            pyautogui.click(tuple_add(rect, self.locs.surrender))
-            return
 
-        heros_count = len([x for x in hero_info if x[5] != 'n'])
-        if heros_count < 3:
-            if heros_count == 0 and self.is_first_battle:
-                pass
-            else:
-                pyautogui.click(tuple_add(rect, self.locs.options))
-                pyautogui.click(tuple_add(rect, self.locs.surrender))
-                return
 
-        first_x, last_x, y = self.locs.members
-        mid_x = (first_x + last_x) // 2
-        for i, idx in enumerate(self.heros.start_seq):
-            current_heros_left = self.basic.hero_count - i
-            if current_heros_left > 3:
-                dis = (last_x - first_x) // (self.basic.hero_count - i - 1)
-                loc = (first_x + dis * (idx - i), y)
-            elif current_heros_left == 3:
-                loc = (mid_x + self.locs.members_distance * (idx - i - 1), y)
-            elif current_heros_left == 2:
-                if idx - i - 1 == 0:
-                    factor = 1
-                else:
-                    factor = -1
-                loc = (mid_x + self.locs.members_distance // 2 * factor, y)
-            elif current_heros_left == 1:
-                loc = (mid_x, y)
 
-            pyautogui.click(tuple_add(rect, loc))
-            pyautogui.moveTo(tuple_add(rect, self.locs.dragto))
-            pyautogui.click()
+        hero_in_battle = [x for x in game.my_hero if x.card_id in self.start_seq]
+        hero_dead = [x for x in game.dead_hero if x.card_id in self.start_seq]
+        current_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
+
+        seq_map = {}
+
+        for k, v in current_seq.items():
+            seq_map[self.start_seq[k]] = v
+
+        if len(hero_in_battle) < 3:
+            first_x, last_x, y = self.locs.members
+            mid_x = (first_x + last_x) // 2
+            rest_seq = self.heros.battle_seq[len(hero_dead):]
+            in_hand_left = len(current_seq)
+
+            for i in range(3 - len(hero_in_battle)):
+                if i < len(rest_seq):
+                    current_pos = seq_map[rest_seq[i]]
+                    if in_hand_left > 3:
+                        dis = (last_x - first_x) // (in_hand_left - 1)
+                        loc = (first_x + dis * current_pos, y)
+                    elif in_hand_left == 3:
+                        loc = (mid_x + self.locs.members_distance * (current_pos - 1), y)
+                    elif in_hand_left == 2:
+                        if current_pos == 0:
+                            factor = -1
+                        elif current_pos == 1:
+                            factor = 1
+                        else:
+                            raise ValueError("Not possible")
+
+                        loc = (mid_x + self.locs.members_distance // 2 * factor, y)
+                    elif in_hand_left == 1:
+                        loc = (mid_x, y)
+                    else:
+                        raise ValueError("Not possible")
+
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.moveTo(tuple_add(rect, self.locs.dragto))
+                    pyautogui.click()
+
+                    in_hand_left -= 1
+                    del seq_map[rest_seq[i]]
+                    for k, v in seq_map.items():
+                        if v > current_pos:
+                            seq_map[k] = v - 1
+
 
     def run(self):
         if self.basic.mode == 'pve':
@@ -238,9 +220,15 @@ class Agent:
         tic = time.time()
         state = ""
         while True:
+
+
             pyautogui.click(tuple_add(result[2], self.locs.empty))
-            self.game = self.log_util.parse_game()
-            time.sleep(np.random.rand() + self.basic.delay)
+            if os.path.exists(self.basic.hs_log):
+                game = self.log_util.parse_game()
+                if len(game.setaside_hero) == len(self.heros.battle_seq):
+                    self.start_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
+                    for i, h in enumerate(game.setaside_hero):
+                        self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
 
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
@@ -325,7 +313,7 @@ class Agent:
                 if state != "not_ready_dots":
                     state = "not_ready_dots"
                     tic = time.time()
-                self.start_battle(result[2])
+                self.start_battle()
                 self.is_first_battle = False
                 continue
 

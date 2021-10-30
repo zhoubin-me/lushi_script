@@ -18,6 +18,7 @@ class BattleAi:
         """
         my_health = [x.get_health() for x in my_list if x.get_health() > 0]
         enemy_health = [x.get_health() for x in enemy_list if x.get_health() > 0]
+        print(enemy_health, enemy_list, enemy_list[0].get_health())
         my_cnt = len(my_health)
         my_min_health = min(my_health)
         my_sum_health = sum(my_health)
@@ -42,16 +43,23 @@ class BattleAi:
                     my_min_health_hero = BattleAi.find_min_health(my)
                     e.basic_attack(my_min_health_hero, e.atk)
 
+            print(enemy)
             score = BattleAi.analyze_score(my, enemy)
             if score > optimal_strategy[0]:
                 optimal_strategy = (score, idx)
 
         return {k: v for k, v in enumerate(optimal_strategy[1])}
 
+    @staticmethod
+    def find_min_health(heros):
+        return min(heros, key=lambda x: x.get_health())
+
+
+
 
 if __name__ == '__main__':
-    path = 'D:\\Hearthstone\\Logs\\Power.log'
+    path = 'E:\Games\Hearthstone\Logs\Power.log'
     log = LogUtil(path)
     game = log.parse_game()
     a = BattleAi.battle(game.my_hero, game.enemy_hero)
-    print(a)
+

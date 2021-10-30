@@ -21,6 +21,7 @@ class HeroEntity(BaseEntity):
         self.cardrace = None
         self.pos = [0, 0]  # 坐标[x, y]
         # 场上位置 从左往右1开始
+
         self.zone_position = 0
         # 意义不明
         self.cost = 0
@@ -41,6 +42,7 @@ class HeroEntity(BaseEntity):
         self.lettuce_selected_target = 0
         # 经验 55000满级
         self.lettuce_mercenary_experience = 0
+        self.skill_seq = None
         self.parse_entity()
 
     def parse_entity(self):
@@ -67,6 +69,9 @@ class HeroEntity(BaseEntity):
 
     def set_pos(self, x, y):
         self.pos = [x, y]
+
+    def set_skill_seq(self, skills):
+        self.skill_seq = skills
 
     def own(self):
         """

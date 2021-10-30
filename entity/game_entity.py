@@ -20,6 +20,8 @@ class GameEntity(BaseEntity):
         self.enemy_hero: List[HeroEntity] = []
         # 手牌上(从左往右按顺序)
         self.setaside_hero: List[HeroEntity] = []
+        # 死掉的
+        self.dead_hero: List[HeroEntity] = []
         # 1为选择随从 0为战斗
         self.action_step_type = 1
         self.turn = 0  # 回合数
@@ -47,3 +49,6 @@ class GameEntity(BaseEntity):
                 self.enemy_hero.append(hero)
         elif hero.zone == Zone.SETASIDE:
             self.setaside_hero.append(hero)
+        elif hero.zone == Zone.GRAVEYARD:
+            if hero.own():
+                self.dead_hero.append(hero)

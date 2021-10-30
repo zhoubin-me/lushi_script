@@ -3,8 +3,6 @@ basic:
   team_id: 3
   # number of the boss ID for battle, start counting from 0
   boss_id: 5
-  # total number of your heros
-  hero_count: 6
   # total number of rewards after finishing the map
   reward_count: 5
   # whether early stop battle once collected surprise option on map, 1 means early stop, 0 means continue
@@ -25,22 +23,19 @@ basic:
   longest_waiting: 80 # second
   # Battle.net path
   bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
-
+  hs_log: 'E:\Games\Hearthstone\Logs\Power.log'
   auto_restart: 0
 
 heros:
   # First 3 heros' sequence number at start of the battle, it's sequence number of cards on hand, not in team buildup
-  start_seq:
-    [0, 1, 4]
-  # Subsequent hero's sequence number
-  sub_seq:
-    [1, 2, 4]
+  battle_seq: [0, 1, 4, 5, 2, 3]
+
   # Skill sequnce of all heros:
   # For example: 0:[2, 0, 1] means the first hero will cast its third skill, if cannot (like in cooldown) then cast first skill, if also in CD then cast second skill
   # Another example: 5:[0, 1, 2] means the sixth hero will cast its first skill, if cannot then cast its second skill, if also cannot then cast its third skill
   # The hero number should corresponds to numbers in start_seq
   # You should only care about heros in start_seq, the rest does not matter
-  skill_priority:
+  skill_seq:
     0: [1, 2, 0]
     1: [1, 2, 0]
     2: [1, 2, 0]
@@ -71,7 +66,6 @@ location:
   heros: [ 410, 520, 630, 545 ] #  [first_x, mid_x, last_x, y]
   # hero skills locations
   skills: [ 390, 520, 650, 380 ] # [first_x, mid_x, last_x, y]
-  skill_waiting: [ 100, 60 ]
   # enemy battle field locations
   enemies: [ 430, 550, 610, 240 ] # [first_x, mid_x, last_x, y]
 
@@ -145,12 +139,4 @@ location:
   give_up_cfm: [ 434, 464 ] # [x, y]
 
 
-
-  #
-  # Region of cards on Battlefield
-  enemy_region: [ 200, 250, 888, 300 ] # [x1, y1, x2, y2]
-  hero_region: [ 200, 560, 888, 610 ]
-  hero_nready_region: [200, 470, 888, 520]
-  offset: [10, 5, 12]
-  skill_color_offset: 15
 
