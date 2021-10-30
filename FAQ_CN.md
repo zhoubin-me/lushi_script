@@ -27,16 +27,16 @@ A:可以尝试使用运行以下指令来运行
 
 
 ### 2.安装相关软件的注意事项-
-- Q: 安装Python时有什么要注意的？
-- A: 如果没有特殊需求强烈建议安装Python 3.7或者Python 3.8版本，建议使用微软商店或者去Python官网下载安装。
+Q: 安装Python时有什么要注意的？  
+A: 如果没有特殊需求强烈建议安装Python 3.7或者Python 3.8版本，建议使用微软商店或者去Python官网下载安装。  
 
-- Q: 安装[Anaconda3](https://www.anaconda.com/products/individual#windows)时有什么需要注意的？
-- A: 安装时请仔细看清每一步，确保在Advanced Options界面时勾选Add Anaconda3 to the system PATH environment variable选项（该选项默认是不勾选的）以确保脚本的正常运行。
+Q: 安装[Anaconda3](https://www.anaconda.com/products/individual#windows)时有什么需要注意的？  
+A: 安装时请仔细看清每一步，确保在Advanced Options界面时勾选Add Anaconda3 to the system PATH environment variable选项（该选项默认是不勾选的）以确保脚本的正常运行。  
 
 
 ### 3.如何运行脚本的相关问题
-- Q: 上面的这些步骤我已经全部完成了，脚本压缩包也下载并解压好了，为什么我双击lushi.py没有任何反应？
-- A： lushi.py没有办法直接运行，需要通过cmd启动，在cmd中通过python lushi.py指令启动启动脚本前，需要先将cmd CD到lushi.py所在路径，具体的操作方法为在cmd中输入CD加空格加lushi.py所在路径，详细可参照[命令提示符——CMD目录操作——cd命令](https://jingyan.baidu.com/article/73c3ce28480637e50343d992.html)。
+Q: 上面的这些步骤我已经全部完成了，脚本压缩包也下载并解压好了，为什么我双击lushi.py没有任何反应？  
+A： lushi.py没有办法直接运行，需要通过cmd启动，在cmd中通过python lushi.py指令启动启动脚本前，需要先将cmd CD到lushi.py所在路径，具体的操作方法为在cmd中输入CD加空格加lushi.py所在路径，详细可参照[命令提示符——CMD目录操作——cd命令](https://jingyan.baidu.com/article/73c3ce28480637e50343d992.html)。  
 
-- Q: 成功启动脚本后该如何设置脚本？
-- A: 脚本的设置文件是config_chs.yaml和config_eng.yaml这两个文件，根据你炉石客户端的语言设置对应的配置文件即可。
+Q: 成功启动脚本后该如何设置脚本？  
+A: 脚本的设置文件是config_chs.yaml和config_eng.yaml这两个文件，根据你炉石客户端的语言设置对应的配置文件即可。  
