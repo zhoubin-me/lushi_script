@@ -22,8 +22,9 @@ basic:
   # longest_waiting time to restart Hearthstone
   longest_waiting: 80 # second
   # Battle.net path
-  bn_path: 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
-  hs_log: 'E:\Games\Hearthstone\Logs\Power.log'
+  bn_path: ["C:", "Program Files (x86)", "Battle.net", "Battle.net.exe"] # 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+  # Path of Power.log
+  hs_log: ["E:", "Games", "Hearthstone", "Logs", "Power.log"] # 'D:\\Hearthstone\\Logs\\Power.log'
   auto_restart: 0
 
 heros:
