@@ -6,7 +6,7 @@
 
 欢迎加入我们的QQ群参加测试讨论: 832946624
 
-常见问题请查询 [此页面](https://github.com/zhoubin-me/lushi_script/blob/main/FAQ.md)
+常见问题请查询 [此页面](https://github.com/zhoubin-me/lushi_script/blob/main/FAQ_CN.md)
 
 BUG提交请去 [此页面](https://github.com/zhoubin-me/lushi_script/issues)
 
