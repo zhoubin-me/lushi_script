@@ -29,7 +29,7 @@ basic:
   # 战网路径(注意路径要加双斜杠)
   bn_path: ["C:", "Program Files (x86)", "Battle.net", "Battle.net.exe"] # 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
   # 炉石日志路径
-  hs_log: ["E:", "Games", "Hearthstone", "Logs", "Power.log"] # 'D:\\Hearthstone\\Logs\\Power.log'
+  hs_log: ["E:", "Games", "Hearthstone", "Logs", "Power.log"] # 'E:\\Games\\Hearthstone\\Logs\\Power.log'
   # 遇到，掉线等是否自动重启
   auto_restart: 0 # 1为自动重启，0为否
 
