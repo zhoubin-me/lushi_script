@@ -13,6 +13,9 @@
 ### A：说明你没安装Python，可以直接百度python官网或者去微软商店里面下载。
 ### Q: psutil依赖包下载完成后显示安装失败了,重试了好几次还是一样是为什么？
 ### A: 说明你安装的Python版本过高，可以下载[Micsoft Visaul C++](https://download.visualstudio.microsoft.com/download/pr/d3cbdace-2bb8-4dc5-a326-2c1c0f1ad5ae/9B9DD72C27AB1DB081DE56BB7B73BEE9A00F60D14ED8E6FDE45DAB3E619B5F04/VC_redist.x64.exe)后再次运行指令即可,也可以直接重新安装旧版的Python 3.7 或者Python 3.8
+### Q:下载速度实在是太慢了，有没有什么解决办法？
+### A:可以尝试使用运行以下指令来运行
+```pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil -i https://pypi.douban.com/simple/```
 ***
 ## 2.安装相关软件的注意事项
 ### Q: 安装Python时有什么要注意的？
