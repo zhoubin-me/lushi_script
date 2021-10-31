@@ -55,8 +55,9 @@ A: 脚本的设置文件是config_chs.yaml和config_eng.yaml这两个文件，�
 ### 4.Power.log相关问题
 Q: 我没有找到Power.log文件怎么办
 
-A: 如果你在Logs/目录下没有找到Power.log（指对战开始后），那稍微有一些麻烦。你需要到C:\Users\你的用户\AppData\Local\Blizzard\Hearthstone目录下新建一个叫log.config的文件（如果已经有就不用新建了），然后把下面这段代码放进去（如果已经有[Power]相关则更改相关设置）:
-``` yaml
+A1: Power.log一旦游戏战斗开始就会自动出现，所以只要你炉石路径填对了，脚本就能正常运行。
+A2: 如果你在Logs/目录下没有找到Power.log（指对战开始后），那稍微有一些麻烦。你需要到C:\Users\你的用户\AppData\Local\Blizzard\Hearthstone目录下新建一个叫log.config的文件（如果已经有就不用新建了），然后把下面这段代码放进去（如果已经有[Power]相关则更改相关设置）:
+```yaml
 [Power]
 LogLevel=1
 FilePrinting=True
