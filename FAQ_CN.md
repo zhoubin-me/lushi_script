@@ -23,7 +23,10 @@ A: 说明你安装的Python版本过高，可以下载[Micsoft Visaul C++](https
 
 Q:下载速度实在是太慢了，有没有什么解决办法？  
 A:可以尝试使用运行以下指令来运行  
-```pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil -i https://pypi.douban.com/simple/```
+```pip install -r requirements.txt -i https://pypi.douban.com/simple/```
+
+Q: 出现ModuleNotFoundError: No Module named 'hearthstone'怎么办
+A: 依赖包安装缺失，请运行文件夹下的install.bat
 
 
 ### 2.安装相关软件的注意事项-

@@ -17,7 +17,7 @@ BUG提交请去 [此页面](https://github.com/zhoubin-me/lushi_script/issues)
 
 Windows用户请在命令行里输入以下来安装需求包：
 ```bash
-pip install opencv-python numpy pyautogui pillow pywin32 pyyaml psutil
+pip install -r requirements.txt
 ```
 如果出现psutil相关的安装错误，请下载并安装[Microsoft Visual C++](https://aka.ms/vs/16/release/vc_redist.x64.exe)，再执行以上命令
 

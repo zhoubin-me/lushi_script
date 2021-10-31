@@ -1,1 +1,1 @@
-python -m pip install -r requirements.txt
+python -m pip install -r requirements.txt -i https://pypi.douban.com/simple/

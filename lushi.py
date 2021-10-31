@@ -14,6 +14,7 @@ from util import find_lushi_window, find_icon_location, restart_game, set_top_wi
 from battle_ai import BattleAi
 from hearthstone.enums import GameTag, Zone
 
+
 class Agent:
     def __init__(self, lang):
         if lang == 'eng':
@@ -113,7 +114,7 @@ class Agent:
                 x_offset = (mid_x - first_x) * (- 0.5 - n_my_hero // 2 + i + 1)
             else:
                 x_offset = (mid_x - first_x) * (0 - n_my_hero // 2 + i)
-            game.my_hero[i].set_pos(mid_x+x_offset + rect[0], y + rect[1])
+            game.my_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         first_x, mid_x, last_x, y = self.locs.enemies
         n_enemy_hero = len(game.enemy_hero)
@@ -123,7 +124,7 @@ class Agent:
                 x_offset = (mid_x - first_x) * (- 0.5 - n_enemy_hero // 2 + i + 1)
             else:
                 x_offset = (mid_x - first_x) * (0 - n_enemy_hero // 2 + i)
-            game.enemy_hero[i].set_pos(mid_x+x_offset + rect[0], y + rect[1])
+            game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
         pyautogui.click(tuple_add(rect, self.locs.empty))
@@ -155,7 +156,6 @@ class Agent:
     def select_members(self):
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
-
 
         for h, i in zip(game.hero_entities.values(), self.heros.battle_seq):
             self.start_seq[h.card_id] = i
@@ -204,9 +204,6 @@ class Agent:
                     for k, v in current_seq.items():
                         if v > current_pos:
                             current_seq[k] = v - 1
-
-
-
 
     def run(self):
         if self.basic.mode == 'pve':
