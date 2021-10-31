@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import re
 import sys
 
@@ -47,8 +48,7 @@ class Ui(QMainWindow):
             self.saveButtonPressed)  # Remember to pass the definition/method, not the return value!
 
         self.run = self.findChild(QPushButton, 'Run')  # Find the button
-        self.run.clicked.connect(
-            self.runButtonPressed)  # Remember to pass the definition/method, not the return value!
+        self.run.clicked.connect(self.runButtonPressed)
 
         with open('main.ui', 'r') as f:
             ui_xml = f.read().replace('\n', "")
@@ -66,12 +66,31 @@ class Ui(QMainWindow):
         self.bn.setGeometry(QtCore.QRect(*bn_rect))
         self.bn.setPlaceholderText("Please input Battle.net.exe path")
 
+        self.language = self.findChild(QSpinBox, 'language')
+        self.team_id = self.findChild(QSpinBox, 'team_id')
+        self.boss_id = self.findChild(QSpinBox, "boss_id")
+        self.hero_count = self.findChild(QSpinBox, "hero_count")
+        self.reward_count = self.findChild(QSpinBox, "reward_count")
+        self.delay = self.findChild(QDoubleSpinBox, "delay")
+        self.confidence = self.findChild(QDoubleSpinBox, "confidence")
+        self.longest_waiting = self.findChild(QDoubleSpinBox, "longest_waiting")
+        self.early_stop = self.findChild(QCheckBox, "early_stop")
+        self.auto_restart = self.findChild(QCheckBox, "auto_restart")
+
         self.show()
 
     def saveButtonPressed(self):
         # This is executed when the button is pressed
         print('Power.log:\t' + self.log.text())
         print('Battle.net:\t' + self.bn.text())
+        print("early_stop:\t", end="")
+        print(self.early_stop.isChecked())
+        print("auto_restart:\t", end="")
+        print(self.auto_restart.isChecked())
+        print("delay:\t", end="")
+        print(self.delay.value())
+        print("boss_id:\t", end="")
+        print(self.boss_id.value())
 
     def runButtonPressed(self):
         print('run')
@@ -80,4 +99,4 @@ class Ui(QMainWindow):
 if __name__ == "__main__":
     app = QApplication(sys.argv)
     window = Ui()
-    app.exec_()
+    sys.exit(app.exec_())
