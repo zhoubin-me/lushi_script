@@ -7,11 +7,12 @@ import argparse
 import os
 import yaml
 from types import SimpleNamespace
-from PIL import ImageGrab
+import copy
 
 from log_util.log_util import LogUtil
 from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
 from battle_ai import BattleAi
+from hearthstone.enums import GameTag, Zone
 
 class Agent:
     def __init__(self, lang):
@@ -132,18 +133,20 @@ class Agent:
                 self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
 
         for hero_i, h in enumerate(game.my_hero):
+            if h.lettuce_has_manually_selected_ability:
+                continue
+
             pyautogui.click(h.pos)
-            skill_loc = None
-            skill_seq = self.skill_seq_cache[h.card_id]
-            print(h.spell)
-            for skill_id in skill_seq:
-                skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
-                if skill_cooldown_round == 0:
-                    skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
-                    print(hero_i, skill_id, " is ready")
-                    break
-                else:
-                    print(hero_i, skill_id, f" is cooling down, needs {skill_cooldown_round} rounds")
+            if h.card_id not in self.start_seq:
+                skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
+            else:
+                skill_loc = None
+                skill_seq = self.skill_seq_cache[h.card_id]
+                for skill_id in skill_seq:
+                    skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
+                    if skill_cooldown_round == 0:
+                        skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+                        break
             pyautogui.click(skill_loc)
             enemy_id = strategy[hero_i]
             pyautogui.click(game.enemy_hero[enemy_id].pos)
@@ -153,38 +156,33 @@ class Agent:
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
 
-        for i, h in enumerate(game.hero_entities.values()):
-            if i < len(self.heros.battle_seq):
-                self.start_seq[h.card_id] = i
+
+        for h, i in zip(game.hero_entities.values(), self.heros.battle_seq):
+            self.start_seq[h.card_id] = i
 
         hero_in_battle = [x for x in game.my_hero if x.card_id in self.start_seq]
-        hero_dead = [x for x in game.dead_hero if x.card_id in self.start_seq]
-        current_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
-
-        seq_map = {}
-
-        for k, v in current_seq.items():
-            seq_map[self.start_seq[k]] = v
-
-        print(self.start_seq, current_seq, seq_map)
 
         if len(hero_in_battle) < 3:
-            first_x, last_x, y = self.locs.members
-            mid_x = (first_x + last_x) // 2
-            # import ipdb
-            # ipdb.set_trace()
-            rest_seq = self.heros.battle_seq[len(hero_dead + hero_in_battle):]
-            in_hand_left = len(current_seq)
+            current_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
+            card_id_seq = [list(game.hero_entities.values())[i].card_id for i in self.heros.battle_seq]
+            card_id_seq = [x for x in card_id_seq if x in current_seq]
 
             for i in range(3 - len(hero_in_battle)):
-                if i < len(rest_seq):
-                    current_pos = seq_map[rest_seq[i]]
-                    if in_hand_left > 3:
-                        dis = (last_x - first_x) // (in_hand_left - 1)
+                if len(card_id_seq) > 0:
+
+                    cards_in_hand = len(card_id_seq)
+                    card_id = card_id_seq.pop(0)
+
+                    first_x, last_x, y = self.locs.members
+                    mid_x = (first_x + last_x) // 2
+                    current_pos = current_seq[card_id]
+
+                    if cards_in_hand > 3:
+                        dis = (last_x - first_x) // (cards_in_hand - 1)
                         loc = (first_x + dis * current_pos, y)
-                    elif in_hand_left == 3:
+                    elif cards_in_hand == 3:
                         loc = (mid_x + self.locs.members_distance * (current_pos - 1), y)
-                    elif in_hand_left == 2:
+                    elif cards_in_hand == 2:
                         if current_pos == 0:
                             factor = -1
                         elif current_pos == 1:
@@ -193,7 +191,7 @@ class Agent:
                             raise ValueError("Not possible")
 
                         loc = (mid_x + self.locs.members_distance // 2 * factor, y)
-                    elif in_hand_left == 1:
+                    elif cards_in_hand == 1:
                         loc = (mid_x, y)
                     else:
                         raise ValueError("Not possible")
@@ -202,11 +200,12 @@ class Agent:
                     pyautogui.moveTo(tuple_add(rect, self.locs.dragto))
                     pyautogui.click()
 
-                    in_hand_left -= 1
-                    del seq_map[rest_seq[i]]
-                    for k, v in seq_map.items():
+                    del current_seq[card_id]
+                    for k, v in current_seq.items():
                         if v > current_pos:
-                            seq_map[k] = v - 1
+                            current_seq[k] = v - 1
+
+
 
 
     def run(self):
