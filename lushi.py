@@ -44,7 +44,7 @@ class Agent:
         imgs = [img for img in os.listdir(os.path.join(self.img_folder, sub)) if img.endswith('.png')]
         for img in imgs:
             k = img.split('.')[0]
-            v = cv2.cvtColor(cv2.imread(os.path.join(self.img_folder, 'icons', img)), cv2.COLOR_BGR2GRAY)
+            v = cv2.cvtColor(cv2.imread(os.path.join(self.img_folder, sub, img)), cv2.COLOR_BGR2GRAY)
             x = getattr(self, sub)
             x[k] = v
 
@@ -65,13 +65,13 @@ class Agent:
         rect, screen = find_lushi_window(self.title)
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
         loc = X, Y
-        return success, loc, rect, screen
+        return success, loc, rect
 
     def scan_surprise_loc(self, rect):
         print('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         while True:
-            success, loc, rect, screen = self.check_in_screen('surprise')
+            success, loc, rect = self.check_in_screen('surprise')
             if success:
                 print(f"Found surprise at start {loc}")
                 return loc
@@ -80,7 +80,7 @@ class Agent:
 
         for _ in range(10):
             pyautogui.scroll(60)
-            success, loc, rect, screen = self.check_in_screen('surprise')
+            success, loc, rect = self.check_in_screen('surprise')
             if success:
                 for _ in range(10):
                     pyautogui.scroll(-60)
@@ -93,7 +93,7 @@ class Agent:
     def start_battle(self):
         print("Scanning battlefield")
 
-        rect, screen = find_lushi_window(self.title, to_gray=False)
+        rect, screen = find_lushi_window(self.title)
         game = self.log_util.parse_game()
 
         first_x, mid_x, last_x, y = self.locs.heros
@@ -108,9 +108,8 @@ class Agent:
 
         first_x, mid_x, last_x, y = self.locs.enemies
         n_enemy_hero = len(game.enemy_hero)
-        is_even = n_enemy_hero % 2 == 0
         for i in range(n_enemy_hero):
-            if is_even:
+            if n_enemy_hero % 2 == 0:
                 x_offset = (mid_x - first_x) * (- 0.5 - n_enemy_hero // 2 + i + 1)
             else:
                 x_offset = (mid_x - first_x) * (0 - n_enemy_hero // 2 + i)
@@ -196,67 +195,30 @@ class Agent:
                             current_seq[k] = v - 1
 
     def state_handler(self, state, tic, text):
-        success, loc, rect, screen = self.check_in_screen(text)
+        success, loc, rect = self.check_in_screen(text)
         if success:
             if state != text:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'travel']:
+            if state in ['mercenaries', 'box', 'team_lock']:
                 pyautogui.click(tuple_add(rect, loc))
+
             if state == 'travel':
+                pyautogui.click(tuple_add(rect, loc))
                 pyautogui.click(tuple_add(rect, self.locs.travel))
-
-            if state in ['treasure_list', 'treasure_replace']:
-                while True:
-                    treasure_id = np.random.randint(0, 3)
-                    treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
-                    is_in_blacklilst = False
-                    for key in self.treasure_blacklist.keys():
-                        success, loc, rect, screen = self.check_in_screen(key, prefix='treasure_blacklist')
-                        if success:
-                            x_dis = np.abs(loc[0] - treasure_loc[0])
-                            if x_dis < 100:
-                                is_in_blacklilst = True
-                                break
-                    if is_in_blacklilst:
-                        continue
-                    else:
-                        break
-                pyautogui.click(tuple_add(rect, treasure_loc))
-                pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
-
-            if state in ['boom2', 'iceberg2']:
-                pyautogui.click(tuple_add(rect, self.locs.options))
-                pyautogui.click(tuple_add(rect, self.locs.surrender))
-
-            if state == 'member_not_ready':
-                self.select_members()
-
-            if state == 'not_ready_dots':
-                self.start_battle()
-
-            if state == 'battle_ready':
-                pyautogui.click(tuple_add(rect, self.locs.start_battle))
-
-            if state in ['destroy', 'blue_portal', 'boom']:
-                if self.basic.early_stop:
-                    pyautogui.click(tuple_add(rect, self.locs.view_team))
-                    pyautogui.click(tuple_add(rect, self.locs.give_up))
-                    pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state == 'boss_list':
                 x_id = self.basic.boss_id % 3
                 y_id = self.basic.boss_id // 3
                 loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
                 pyautogui.click(tuple_add(rect, loc))
+                pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'team_list':
                 x_id = self.basic.team_id % 3
                 y_id = self.basic.team_id // 3
-                if state != "team_list":
-                    state = "team_list"
-                    tic = time.time()
+
                 pyautogui.click(tuple_add(rect, (self.locs.teams[x_id], self.locs.teams[3 + y_id])))
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
@@ -272,37 +234,6 @@ class Agent:
                     else:
                         self.surprise_in_mid = False
                     print(f'Surprise side {self.side}, surprise in middile {self.surprise_in_mid}')
-
-            if state == 'visitor_list':
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-                pyautogui.click(tuple_add(rect, visitor_loc))
-                pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
-
-                for _ in range(4):
-                    pyautogui.click(tuple_add(rect, self.locs.empty))
-
-                print("Visitors Selected")
-                if self.basic.early_stop:
-                    print("Early stopping")
-                    pyautogui.click(tuple_add(rect, self.locs.view_team))
-                    pyautogui.click(tuple_add(rect, self.locs.give_up))
-                    pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
-
-            if state in ['goto', 'show', 'teleport', 'start_game']:
-                pyautogui.click(tuple_add(rect, self.locs.start_game))
-
-            if state in ['final_reward', 'final_reward2']:
-                reward_locs = eval(self.locs.rewards[self.basic.reward_count])
-                for loc in reward_locs:
-                    pyautogui.moveTo(tuple_add(rect, loc))
-                    pyautogui.click()
-
-                pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
-                pyautogui.click()
-
-            if state == 'final_confirm':
-                pyautogui.click(tuple_add(rect, self.locs.final_confirm))
 
             if state == 'map_not_ready':
                 first_x, mid_x, last_x, y = self.locs.focus
@@ -320,9 +251,72 @@ class Agent:
                     pyautogui.mouseDown()
                     pyautogui.mouseUp()
 
+            if state in ['goto', 'show', 'teleport', 'start_game']:
+                pyautogui.click(tuple_add(rect, self.locs.start_game))
+
+            if state == 'member_not_ready':
+                self.select_members()
+
+            if state == 'not_ready_dots':
+                self.start_battle()
+
+            if state == 'battle_ready':
+                pyautogui.click(tuple_add(rect, self.locs.start_battle))
+
+            if state in ['treasure_list', 'treasure_replace']:
+                while True:
+                    treasure_id = np.random.randint(0, 3)
+                    treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
+                    is_in_blacklilst = False
+                    for key in self.treasure_blacklist.keys():
+                        success, loc, rect = self.check_in_screen(key, prefix='treasure_blacklist')
+                        if success:
+                            x_dis = np.abs(loc[0] - treasure_loc[0])
+                            if x_dis < 100:
+                                is_in_blacklilst = True
+                                break
+                    if is_in_blacklilst:
+                        continue
+                    else:
+                        break
+                pyautogui.click(tuple_add(rect, treasure_loc))
+                pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
+
+            if state in ['destroy', 'blue_portal', 'boom']:
+                if self.basic.early_stop:
+                    pyautogui.click(tuple_add(rect, self.locs.view_team))
+                    pyautogui.click(tuple_add(rect, self.locs.give_up))
+                    pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
+
+            if state == 'visitor_list':
+                visitor_id = np.random.randint(0, 3)
+                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+                pyautogui.click(tuple_add(rect, visitor_loc))
+                pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
+
+                for _ in range(4):
+                    pyautogui.click(tuple_add(rect, self.locs.empty))
+
+                print("Visitors Selected")
+                if self.basic.early_stop:
+                    print("Early stopping")
+                    pyautogui.click(tuple_add(rect, self.locs.view_team))
+                    pyautogui.click(tuple_add(rect, self.locs.give_up))
+                    pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
+
+            if state in ['final_reward', 'final_reward2']:
+                reward_locs = eval(self.locs.rewards[self.basic.reward_count])
+                for loc in reward_locs:
+                    pyautogui.moveTo(tuple_add(rect, loc))
+                    pyautogui.click()
+
+                pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
+                pyautogui.click()
+
+            if state == 'final_confirm':
+                pyautogui.click(tuple_add(rect, self.locs.final_confirm))
+
         return success, tic, state, rect
-
-
 
     def run(self):
         if self.basic.mode == 'pve':
@@ -341,13 +335,16 @@ class Agent:
 
     def run_pve(self):
         time.sleep(2)
-        success, loc, rect, screen = self.check_in_screen('mercenaries')
+        success, loc, rect = self.check_in_screen('mercenaries')
 
         side = None
         surprise_in_mid = False
         tic = time.time()
         state = ""
-
+        states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
+                  'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
+                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                  'final_reward', 'final_reward2', 'final_confirm']
         while True:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
@@ -365,12 +362,10 @@ class Agent:
                 print(
                     f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
 
-            for key in ['mercenaries', 'travel']:
-                success, tic, state, rect = self.state_handler(state, tic, key)
+            for state_text in states:
+                success, tic, state, rect = self.state_handler(state, tic, state_text)
                 if success:
-                    break
-
-            pyautogui.click(tuple_add(rect, self.locs.empty))
+                    pyautogui.click(tuple_add(rect, self.locs.empty))
 
 
 def main():
