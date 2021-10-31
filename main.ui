@@ -48,6 +48,9 @@
     <property name="acceptDrops">
      <bool>true</bool>
     </property>
+    <property name="text">
+     <string>C:/Program Files (x86)/Battle.net/Battle.net.exe</string>
+    </property>
     <property name="placeholderText">
      <string/>
     </property>
@@ -66,6 +69,9 @@
     </property>
     <property name="acceptDrops">
      <bool>true</bool>
+    </property>
+    <property name="text">
+     <string>C:/Program Files (x86)/Hearthstone/Logs/Power.log</string>
     </property>
     <property name="placeholderText">
      <string/>
@@ -172,7 +178,7 @@
      <number>3</number>
     </property>
    </widget>
-   <widget class="QSpinBox" name="team_id_2">
+   <widget class="QSpinBox" name="reward_count">
     <property name="geometry">
      <rect>
       <x>190</x>
@@ -352,6 +358,15 @@
       <height>16</height>
      </size>
     </property>
+    <property name="checkable">
+     <bool>true</bool>
+    </property>
+    <property name="checked">
+     <bool>false</bool>
+    </property>
+    <property name="tristate">
+     <bool>false</bool>
+    </property>
    </widget>
    <widget class="QDoubleSpinBox" name="delay">
     <property name="geometry">
@@ -369,7 +384,7 @@
      <double>0.050000000000000</double>
     </property>
     <property name="value">
-     <double>0.500000000000000</double>
+     <double>0.5</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="confidence">
@@ -388,7 +403,7 @@
      <double>0.010000000000000</double>
     </property>
     <property name="value">
-     <double>0.800000000000000</double>
+     <double>0.79</double>
     </property>
    </widget>
    <widget class="QCheckBox" name="auto_restart">
@@ -418,7 +433,7 @@
      <bool>true</bool>
     </property>
     <property name="checked">
-     <bool>false</bool>
+     <bool>true</bool>
     </property>
     <property name="tristate">
      <bool>false</bool>
