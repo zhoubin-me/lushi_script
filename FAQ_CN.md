@@ -28,6 +28,11 @@ A:可以尝试使用运行以下指令来运行
 Q: 出现ModuleNotFoundError: No Module named 'hearthstone'怎么办
 A: 依赖包安装缺失，请运行文件夹下的install.bat
 
+Q: 出现 ImportError: DLL load failed while importing win32api: 找不到指定的模块怎么办
+A: [查看该回答](https://blog.csdn.net/qq_36834256/article/details/105870593)
+
+Q: 提示ModuleNotFoundError: No module named 'hearthstone'怎么办
+A: 在你当前的python环境中运行 `pip install -r requirements.txt -i https://pypi.douban.com/simple/` 
 
 ### 2.安装相关软件的注意事项-
 Q: 安装Python时有什么要注意的？  
