@@ -19,9 +19,9 @@ Make sure you added python path into your ```$PATH``` system environment/variabl
 
 Run the following in your commandline/terminal for **requirements** installation
 
-
 ```bash
-         c```
+pip install -r requirements.txt
+```
 If you have installation problem related to psutil, please download and install [Microsoft Visual C++](https://aka.ms/vs/16/release/vc_redist.x64.exe), then redo above
 
 [comment]: <> (For Mac OS users:)
