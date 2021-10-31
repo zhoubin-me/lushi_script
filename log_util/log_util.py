@@ -16,7 +16,7 @@ class LogUtil:
         self.game_entity = None
 
     def read_log(self):
-        with open(os.path.join(*self.log_path), encoding='utf-8') as f:
+        with open(self.log_path, encoding='utf-8') as f:
             self.parser.read(f)
         self.parser.flush()
         # 最近一场战斗
