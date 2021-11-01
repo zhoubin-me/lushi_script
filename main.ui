@@ -7,14 +7,19 @@
     <x>0</x>
     <y>0</y>
     <width>717</width>
-    <height>527</height>
+    <height>532</height>
    </rect>
+  </property>
+  <property name="font">
+   <font>
+    <family>Consolas</family>
+   </font>
   </property>
   <property name="acceptDrops">
    <bool>false</bool>
   </property>
   <property name="windowTitle">
-   <string>MainWindow</string>
+   <string>Script_GUI</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="acceptDrops">
@@ -23,7 +28,7 @@
    <widget class="QPushButton" name="Run">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>500</x>
       <y>450</y>
       <width>141</width>
       <height>41</height>
@@ -39,9 +44,9 @@
     </property>
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>180</x>
       <y>30</y>
-      <width>441</width>
+      <width>461</width>
       <height>41</height>
      </rect>
     </property>
@@ -55,15 +60,15 @@
      <string/>
     </property>
    </widget>
-   <widget class="QLineEdit" name="log_path">
+   <widget class="QLineEdit" name="hs_log">
     <property name="enabled">
      <bool>true</bool>
     </property>
     <property name="geometry">
      <rect>
-      <x>160</x>
+      <x>180</x>
       <y>90</y>
-      <width>441</width>
+      <width>461</width>
       <height>41</height>
      </rect>
     </property>
@@ -80,7 +85,7 @@
    <widget class="QPushButton" name="Save">
     <property name="geometry">
      <rect>
-      <x>460</x>
+      <x>500</x>
       <y>390</y>
       <width>141</width>
       <height>41</height>
@@ -90,17 +95,18 @@
      <string>Save</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label">
+   <widget class="QLabel" name="hs_log_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>90</y>
-      <width>111</width>
+      <width>131</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -108,17 +114,18 @@
      <string>Power.log</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_2">
+   <widget class="QLabel" name="bn_path_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>30</y>
-      <width>111</width>
+      <width>131</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -126,17 +133,18 @@
      <string>Battle.net</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_3">
+   <widget class="QLabel" name="team_id_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>150</y>
-      <width>81</width>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -144,17 +152,18 @@
      <string>team_id</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_4">
+   <widget class="QLabel" name="reward_count_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>300</y>
-      <width>141</width>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -165,7 +174,7 @@
    <widget class="QSpinBox" name="team_id">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>241</x>
       <y>150</y>
       <width>71</width>
       <height>41</height>
@@ -181,7 +190,7 @@
    <widget class="QSpinBox" name="reward_count">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>241</x>
       <y>300</y>
       <width>71</width>
       <height>41</height>
@@ -197,7 +206,7 @@
    <widget class="QSpinBox" name="hero_count">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>241</x>
       <y>250</y>
       <width>71</width>
       <height>41</height>
@@ -213,17 +222,18 @@
      <number>6</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_5">
+   <widget class="QLabel" name="hero_count_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>250</y>
-      <width>81</width>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -231,17 +241,18 @@
      <string>hero_count</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_6">
+   <widget class="QLabel" name="boss_id_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>200</y>
-      <width>111</width>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -252,7 +263,7 @@
    <widget class="QSpinBox" name="boss_id">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>241</x>
       <y>200</y>
       <width>71</width>
       <height>41</height>
@@ -265,17 +276,18 @@
      <number>5</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_7">
+   <widget class="QLabel" name="delay_2">
     <property name="geometry">
      <rect>
-      <x>39</x>
+      <x>40</x>
       <y>350</y>
-      <width>111</width>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -286,7 +298,7 @@
    <widget class="QSpinBox" name="longest_waiting">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>241</x>
       <y>450</y>
       <width>71</width>
       <height>41</height>
@@ -299,17 +311,18 @@
      <number>80</number>
     </property>
    </widget>
-   <widget class="QLabel" name="label_8">
+   <widget class="QLabel" name="longest_waiting_2">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>450</y>
-      <width>141</width>
+      <width>201</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -317,17 +330,18 @@
      <string>longest_waiting</string>
     </property>
    </widget>
-   <widget class="QLabel" name="label_9">
+   <widget class="QLabel" name="confidence_2">
     <property name="geometry">
      <rect>
-      <x>39</x>
+      <x>40</x>
       <y>400</y>
-      <width>131</width>
+      <width>171</width>
       <height>41</height>
      </rect>
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -338,7 +352,7 @@
    <widget class="QCheckBox" name="early_stop">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>470</x>
       <y>230</y>
       <width>171</width>
       <height>41</height>
@@ -346,6 +360,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -371,7 +386,7 @@
    <widget class="QDoubleSpinBox" name="delay">
     <property name="geometry">
      <rect>
-      <x>190</x>
+      <x>241</x>
       <y>350</y>
       <width>71</width>
       <height>41</height>
@@ -390,7 +405,7 @@
    <widget class="QDoubleSpinBox" name="confidence">
     <property name="geometry">
      <rect>
-      <x>189</x>
+      <x>240</x>
       <y>400</y>
       <width>71</width>
       <height>41</height>
@@ -403,13 +418,13 @@
      <double>0.010000000000000</double>
     </property>
     <property name="value">
-     <double>0.79</double>
+     <double>0.8</double>
     </property>
    </widget>
    <widget class="QCheckBox" name="auto_restart">
     <property name="geometry">
      <rect>
-      <x>430</x>
+      <x>470</x>
       <y>290</y>
       <width>171</width>
       <height>41</height>
@@ -417,6 +432,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -439,10 +455,10 @@
      <bool>false</bool>
     </property>
    </widget>
-   <widget class="QLabel" name="label_10">
+   <widget class="QLabel" name="language_2">
     <property name="geometry">
      <rect>
-      <x>380</x>
+      <x>420</x>
       <y>170</y>
       <width>131</width>
       <height>41</height>
@@ -450,6 +466,7 @@
     </property>
     <property name="font">
      <font>
+      <family>Consolas</family>
       <pointsize>11</pointsize>
      </font>
     </property>
@@ -460,14 +477,14 @@
    <widget class="QSpinBox" name="language">
     <property name="geometry">
      <rect>
-      <x>530</x>
+      <x>570</x>
       <y>170</y>
       <width>71</width>
       <height>41</height>
      </rect>
     </property>
     <property name="maximum">
-     <number>1</number>
+     <number>9</number>
     </property>
     <property name="value">
      <number>1</number>
