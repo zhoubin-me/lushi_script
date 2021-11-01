@@ -1,6 +1,9 @@
 # -*- coding: utf-8 -*-
 import re
 import sys
+import os
+import base64
+import json
 
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import *
@@ -18,10 +21,10 @@ def get_rect(strings="", name=""):  # to find QLineEdit location
 def save_config(config):
     with open('main.ui', 'r') as f:
         ui_config = f.read()
-    ui_config = re.sub(r'( name="bn_path">[\s\S]*?name="text">[\s\S]*?<string>).*?(</string>)', rf"\1{config['bn']}\2",
-                       ui_config)
-    ui_config = re.sub(r'( name="log_path">[\s\S]*?name="text">[\s\S]*?<string>).*?(</string>)',
-                       rf"\1{config['log']}\2", ui_config)
+    ui_config = re.sub(r'( name="bn_path">[\s\S]*?name="text">[\s\S]*?<string>).*?(</string>)',
+                       rf"\1{config['bn_path']}\2", ui_config)
+    ui_config = re.sub(r'( name="hs_log">[\s\S]*?name="text">[\s\S]*?<string>).*?(</string>)',
+                       rf"\1{config['hs_log']}\2", ui_config)
     ui_config = re.sub(r'( name="team_id">[\s\S]*?name="value">[\s\S]*?<number).*?(</number>)',
                        rf"\1>{config['team_id']}\2", ui_config)
     ui_config = re.sub(r'( name="reward_count">[\s\S]*?name="value">[\s\S]*?<number).*?(</number>)',
@@ -36,6 +39,8 @@ def save_config(config):
                        rf"\1>{config['longest_waiting']}\2", ui_config)
     ui_config = re.sub(r'( name="delay">[\s\S]*?name="value">[\s\S]*?<double).*?(</double>)',
                        rf"\1>{config['delay']}\2", ui_config)
+    ui_config = re.sub(r'( name="confidence">[\s\S]*?name="value">[\s\S]*?<double).*?(</double>)',
+                       rf"\1>{config['confidence']}\2", ui_config)
     ui_config = re.sub(r'( name="auto_restart">[\s\S]*?name="checked">[\s\S]*?<bool).*?(</bool>)',
                        rf"\1>{'true' if config['auto_restart'] else 'false'}\2", ui_config)
     ui_config = re.sub(r'( name="early_stop">[\s\S]*?name="checked">[\s\S]*?<bool).*?(</bool>)',
@@ -82,7 +87,7 @@ class Ui(QMainWindow):
         with open('main.ui', 'r') as f:
             ui_xml = f.read().replace('\n', "")
 
-        self.log = self.findChild(QLineEdit, 'log_path')
+        self.log = self.findChild(QLineEdit, 'hs_log')
         self.bn = self.findChild(QLineEdit, 'bn_path')
         self.language = self.findChild(QSpinBox, 'language')
         self.team_id = self.findChild(QSpinBox, 'team_id')
@@ -95,7 +100,7 @@ class Ui(QMainWindow):
         self.early_stop = self.findChild(QCheckBox, "early_stop")
         self.auto_restart = self.findChild(QCheckBox, "auto_restart")
 
-        log_rect = get_rect(ui_xml, "log_path")
+        log_rect = get_rect(ui_xml, "hs_log")
         # self.input.setAcceptDrops(True)
         default_log = self.log.text()
         if default_log:
@@ -122,9 +127,9 @@ class Ui(QMainWindow):
 
     def saveButtonPressed(self):
         # This is executed when the button is pressed
-        self.basic_config = {
-            'log': self.log.text(),
-            'bn': self.bn.text(),
+        basic_config = {
+            'hs_log': self.log.text(),
+            'bn_path': self.bn.text(),
             'early_stop': self.early_stop.isChecked(),
             'auto_restart': self.auto_restart.isChecked(),
             'team_id': self.team_id.value(),
@@ -136,12 +141,32 @@ class Ui(QMainWindow):
             'confidence': self.confidence.value(),
             'longest_waiting': self.longest_waiting.value()
         }
-        print(self.basic_config)
-        save_config(self.basic_config)
+        print(basic_config)
+        save_config(basic_config)
 
     def runButtonPressed(self):
-        print('run')
+        basic_config = {
+            'hs_log': self.log.text(),
+            'bn_path': self.bn.text(),
+            'early_stop': int(self.early_stop.isChecked()),
+            'auto_restart': int(self.auto_restart.isChecked()),
 
+            'pvp_delay': 0.5,
+            'fast_surrender': 0,
+            'mode': 'pve',
+
+            'team_id': self.team_id.value(),
+            'boss_id': self.boss_id.value(),
+            'hero_count': self.hero_count.value(),
+            'reward_count': self.reward_count.value(),
+            'delay': self.delay.value(),
+            'confidence': self.confidence.value(),
+            'longest_waiting': self.longest_waiting.value()
+        }
+        lang = 'chs' if self.language.value() else 'eng'
+
+        arg = base64.b64encode(json.dumps(basic_config).encode('utf-8')).decode('utf-8')
+        sys.exit(os.system(f'start cmd /K python lushi.py --lang {lang} {arg}'))
 
 if __name__ == "__main__":
     app = QApplication(sys.argv)
