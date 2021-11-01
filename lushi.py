@@ -8,6 +8,8 @@ import os
 import yaml
 from types import SimpleNamespace
 import copy
+import json
+import base64
 
 from log_util.log_util import LogUtil
 from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
