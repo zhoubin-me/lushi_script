@@ -45,7 +45,11 @@ class Agent:
         with open(self.cfg_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
 
-        self.basic = SimpleNamespace(**config['basic'])
+        if len(sys.argv[-1]) > 10:
+            basic_json = json.loads(base64.b64decode(sys.argv[-1].encode('utf-8')).decode('utf-8'))
+            self.basic = SimpleNamespace(**basic_json)
+        else:
+            self.basic = SimpleNamespace(**config['basic'])
         self.heros = SimpleNamespace(**config['heros'])
         self.locs = SimpleNamespace(**config['location'])
         pyautogui.PAUSE = self.basic.delay
