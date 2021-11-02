@@ -1,7 +1,7 @@
 from hearthstone.entities import Entity
 from hearthstone.enums import GameTag
 
-from .base_entity import BaseEntity 
+from .base_entity import BaseEntity
 
 
 class SpellEntity(BaseEntity):
@@ -32,6 +32,3 @@ class SpellEntity(BaseEntity):
         self.lettuce_current_cooldown = self.get_tag(GameTag.LETTUCE_CURRENT_COOLDOWN)
         self.lettuce_ability_owner = self.get_tag(GameTag.LETTUCE_ABILITY_OWNER)
         self.powered_up = self.get_tag(GameTag.POWERED_UP)
-
-    def play(self, own: bool, target: HeroEntity):
-        pass
