@@ -85,7 +85,7 @@ def move2loc(x, y, title='炉石传说'):
 
 def proc_exist(process_names):
     for p in psutil.process_iter():
-        if p.name() in process_names:
+        if len(p.name()) > 0 and p.name() in process_names:
             print(f"find {p.name()} exists")
             return True
     return False
@@ -93,7 +93,7 @@ def proc_exist(process_names):
 
 def proc_kill(process_names):
     for p in psutil.process_iter():
-        if p.name() in process_names:
+        if len(p.name()) > 0 and p.name() in process_names:
             p.kill()
             print(f"{p.name()} killed")
 
@@ -154,10 +154,10 @@ def analyse_battle_field(region, screen, digits):
             if x < 3 or y < 3:
                 continue
             img_copy[mask] = 255
-            digit = img_copy[y-3:y+h, x-3:x+w]
+            digit = img_copy[y - 3:y + h, x - 3:x + w]
             cv2.imwrite(f'digit_{i}.png', digit)
             success, x, y, conf = find_icon_location(digits, digit, 0.7)
-            data.append(list(stats[i][:-1]) + [conf, np.rint((x-14) / 28)])
+            data.append(list(stats[i][:-1]) + [conf, np.rint((x - 14) / 28)])
     cv2.imwrite('gray_copy.png', img_copy)
     data.sort(key=lambda e: e[0])
     print(data)
@@ -172,14 +172,14 @@ def analyse_battle_field(region, screen, digits):
                 data_clean[-1][-1] = data_clean[-1][-1] * 10 + entry[-1]
             else:
                 data_clean.append(entry)
-    assert(len(data_clean) % 2 == 0)
+    assert (len(data_clean) % 2 == 0)
     N = len(data_clean) // 2
     output = []
     for i in range(N):
-        damage, health = data_clean[2*i], data_clean[2*i+1]
+        damage, health = data_clean[2 * i], data_clean[2 * i + 1]
         center_x = (damage[0] + damage[2] // 2 + health[0] + health[2] // 2) // 2
         center_y = (damage[1] + damage[3]) // 2 + 28
-        color_region = img[center_y-5:center_y+5, center_x-10:center_x+10]
+        color_region = img[center_y - 5:center_y + 5, center_x - 10:center_x + 10]
         cv2.imwrite(f'color_{i}.png', color_region)
         B, G, R = color_region.mean(axis=0).mean(axis=0).astype(np.int32)
         maximum = max(B, G, R)
@@ -195,7 +195,7 @@ def analyse_battle_field(region, screen, digits):
 
         hero_x, hero_y = center_x + x1, center_y + y1 - 70
         output.append((hero_x, hero_y, int(damage[-1]), int(health[-1]), color))
-        cv2.imwrite(f'hero_{i}.png', screen[hero_y-35:hero_y+35, hero_x-50:hero_x+50])
+        cv2.imwrite(f'hero_{i}.png', screen[hero_y - 35:hero_y + 35, hero_x - 50:hero_x + 50])
         print(B, G, R)
     print(output)
     return output
@@ -203,6 +203,7 @@ def analyse_battle_field(region, screen, digits):
 
 def tuple_add(x, y):
     return x[0] + y[0], x[1] + y[1]
+
 
 # def start_battle(hero_info, enemy_info):
 #     hero_info = {
