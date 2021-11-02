@@ -85,8 +85,8 @@
    <widget class="QPushButton" name="Save">
     <property name="geometry">
      <rect>
-      <x>500</x>
-      <y>390</y>
+      <x>340</x>
+      <y>450</y>
       <width>141</width>
       <height>41</height>
      </rect>
@@ -399,7 +399,7 @@
      <double>0.050000000000000</double>
     </property>
     <property name="value">
-     <double>0.5</double>
+     <double>0.500000000000000</double>
     </property>
    </widget>
    <widget class="QDoubleSpinBox" name="confidence">
@@ -418,7 +418,7 @@
      <double>0.010000000000000</double>
     </property>
     <property name="value">
-     <double>0.8</double>
+     <double>0.800000000000000</double>
     </property>
    </widget>
    <widget class="QCheckBox" name="auto_restart">
@@ -488,6 +488,19 @@
     </property>
     <property name="value">
      <number>1</number>
+    </property>
+   </widget>
+   <widget class="QPushButton" name="Help">
+    <property name="geometry">
+     <rect>
+      <x>420</x>
+      <y>370</y>
+      <width>141</width>
+      <height>41</height>
+     </rect>
+    </property>
+    <property name="text">
+     <string>Help</string>
     </property>
    </widget>
   </widget>
