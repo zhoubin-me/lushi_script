@@ -22,9 +22,9 @@ def save_config(config):
     with open('main.ui', 'r') as f:
         ui_config = f.read()
     ui_config = re.sub(r'( name="bn_path">[\s\S]*?name="text">[\s\S]*?<string>).*?(</string>)',
-                       rf"\1{config['bn_path']}\2", ui_config)
+                       rf"\1{config['bn_path']}\2", ui_config) if config['bn_path'] else ui_config
     ui_config = re.sub(r'( name="hs_log">[\s\S]*?name="text">[\s\S]*?<string>).*?(</string>)',
-                       rf"\1{config['hs_log']}\2", ui_config)
+                       rf"\1{config['hs_log']}\2", ui_config) if config['hs_log'] else ui_config
     ui_config = re.sub(r'( name="team_id">[\s\S]*?name="value">[\s\S]*?<number).*?(</number>)',
                        rf"\1>{config['team_id']}\2", ui_config)
     ui_config = re.sub(r'( name="reward_count">[\s\S]*?name="value">[\s\S]*?<number).*?(</number>)',
@@ -78,11 +78,12 @@ class Ui(QMainWindow):
         uic.loadUi('main.ui', self)
 
         self.save = self.findChild(QPushButton, 'Save')  # Find the button
-        self.save.clicked.connect(
-            self.saveButtonPressed)  # Remember to pass the definition/method, not the return value!
+        self.save.clicked.connect(self.saveButtonPressed)  # Click event
 
-        self.run = self.findChild(QPushButton, 'Run')  # Find the button
+        self.run = self.findChild(QPushButton, 'Run')
         self.run.clicked.connect(self.runButtonPressed)
+        self.help = self.findChild(QPushButton, 'Help')
+        self.help.clicked.connect(self.helpButtonPressed)
 
         with open('main.ui', 'r') as f:
             ui_xml = f.read().replace('\n', "")
@@ -124,6 +125,45 @@ class Ui(QMainWindow):
             self.bn.setPlaceholderText("Please input Battle.net.exe path")
 
         self.show()
+
+    def helpButtonPressed(self):
+        help_text_eng = '''Run with the GUI, the config will covers the basic part of config.yaml,
+                            and the other config still read config.yaml
+                            language: Hearthstone Language. 0 means English, the others are Chinese simplified
+
+                            team_id: number of your team ID for battle, start counting from 0
+                            boss_id: number of the boss ID for battle, start counting from 0
+                            hero_count: Number of mercenaries in the team, at least 3
+                            reward_count: total number of rewards after finishing the map
+                            early_stop: whether early stop battle once collected surprise option on map
+                            delay: delay between consecutive operations, if you always missing clicking some button, 
+                            you may need to change the delay to > 1.0.
+                            confidence: confidence threshold for image template matching on screen
+                            longest_waiting: longest_waiting time to restart Hearthstone
+                            bn_path: Battle.net.exe path. Support drag.
+                            hs_log: Path of Power.log. Support drag.
+                            auto_restart: enable auto restart Hearthstone
+                            '''.strip().replace('  ', '')
+        help_text_chs = '''通过GUI运行，配置覆盖config.yaml的basic部分，其余配置仍读取config.yaml
+                            language: 0是英文模式，其他选项均为中文。
+
+                            team_id: 出战队伍的编号, 从0开始计数
+                            boss_id: 目标悬赏的编号, 从0开始计数
+                            hero_count: 队伍中佣兵的数量，至少3人
+                            reward_count: 完成悬赏后的奖励数目
+                            early_stop: 在拿到神秘选项后是否提前结束战斗
+                            delay: 连续操作之间的延迟, 如果脚本经常少点某些按钮, 你可能需要增加延迟使delay > 1.0
+                            confidence: 屏幕上图像模板匹配的置信阈值
+                            longest_waiting: 如果界面卡住，最多等多少秒重启炉石
+                            
+                            bn_path: 战网路径。支持拖拽Battle.net.exe获取路径
+                            hs_log: 炉石日志路径(在炉石游戏的安装目录里找Logs/Power.log)支持拖拽Power.log获取路径
+                            注意: bn_path和hs_log路径中包含中文字符会导致程序保存异常！
+                            
+                            auto_restart: 遇到，掉线等是否自动重启
+                            '''.strip().replace('  ', '')
+        QMessageBox.information(self, 'Help', help_text_eng, QMessageBox.Ok, QMessageBox.Ok)
+        QMessageBox.information(self, '帮助', help_text_chs, QMessageBox.Ok, QMessageBox.Ok)
 
     def saveButtonPressed(self):
         # This is executed when the button is pressed
