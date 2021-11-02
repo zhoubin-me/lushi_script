@@ -1,9 +1,9 @@
 # -*- coding: utf-8 -*-
-import re
-import sys
-import os
 import base64
 import json
+import os
+import re
+import sys
 
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import *
@@ -165,8 +165,8 @@ class Ui(QMainWindow):
         }
         lang = 'chs' if self.language.value() else 'eng'
 
-        arg = base64.b64encode(json.dumps(basic_config).encode('utf-8')).decode('utf-8')
-        sys.exit(os.system(f'start cmd /K python lushi.py --lang {lang} {arg}'))
+        basic_arg = base64.b64encode(json.dumps(basic_config).encode('utf-8')).decode('utf-8')
+        sys.exit(os.system(f'start cmd /K python lushi.py --lang {lang} --basic {basic_arg}'))
 
 
 if __name__ == "__main__":
