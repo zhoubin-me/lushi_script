@@ -16,3 +16,4 @@ PyScreeze
 pytweening
 pywin32
 PyYAML
+PyQt5

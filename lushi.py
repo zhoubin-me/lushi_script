@@ -16,7 +16,7 @@ from hearthstone.enums import GameTag, Zone
 
 
 class Agent:
-    def __init__(self, lang):
+    def __init__(self, lang, basic_cfg=''):
         if lang == 'eng':
             self.cfg_file = 'config_eng.yaml'
             self.img_folder = 'imgs_eng_1024x768'
@@ -32,7 +32,7 @@ class Agent:
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
-        self.load_config()
+        self.load_config(basic_cfg)
         self.log_util = LogUtil(self.basic.hs_log)
         self.game = None
         self.skill_seq_cache = {}
@@ -48,11 +48,18 @@ class Agent:
             x = getattr(self, sub)
             x[k] = v
 
-    def load_config(self):
+    def load_config(self, basic_cfg=''):
         with open(self.cfg_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
 
-        self.basic = SimpleNamespace(**config['basic'])
+        if basic_cfg:
+            import base64
+            import json
+            basic_json = json.loads(base64.b64decode(basic_cfg.encode('utf-8')).decode('utf-8'))
+            self.basic = SimpleNamespace(**basic_json)
+        else:
+            self.basic = SimpleNamespace(**config['basic'])
+
         self.heros = SimpleNamespace(**config['heros'])
         self.locs = SimpleNamespace(**config['location'])
         pyautogui.PAUSE = self.basic.delay
@@ -374,9 +381,10 @@ class Agent:
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
+    parser.add_argument('--basic', default='', help='base64 basic config')
     args = parser.parse_args()
 
-    agent = Agent(lang=args.lang)
+    agent = Agent(lang=args.lang, basic_cfg=args.basic)
     agent.run()
 
 
