@@ -287,6 +287,8 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.view_team))
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
+                else:
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'visitor_list':
                 visitor_id = np.random.randint(0, 3)
