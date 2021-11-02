@@ -324,7 +324,8 @@ class Agent:
                 while True:
                     try:
                         self.run_pve()
-                    except:
+                    except Exception as e:
+                        print('错误：', e)
                         restart_game(self.lang, self.basic.bn_path)
             else:
                 self.run_pve()

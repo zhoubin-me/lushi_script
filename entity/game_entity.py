@@ -11,7 +11,6 @@ class GameEntity(BaseEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.players = []
         # 所有英雄
         self.hero_entities: Dict[int, HeroEntity] = {}
         # 我方场上0, 1, 2号随从(只有战斗阶段才有数据)
@@ -33,7 +32,6 @@ class GameEntity(BaseEntity):
         if self.entity is None:
             return
         super(GameEntity, self).parse_entity()
-        self.players = self.entity.players
         self.action_step_type = self.get_tag(GameTag.ACTION_STEP_TYPE)
         self.turn = self.get_tag(GameTag.TURN)
         self.allow_move_minion = self.get_tag(GameTag.ALLOW_MOVE_MINION)
