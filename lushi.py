@@ -73,8 +73,11 @@ class Agent:
             self.read_sub_imgs(sub)
 
     def check_in_screen(self, name, prefix='icons'):
-        icon = getattr(self, prefix)[name]
         rect, screen = find_lushi_window(self.title)
+        try:
+            icon = getattr(self, prefix)[name]
+        except:
+            return False, 0, 0, 0
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
         loc = X, Y
         return success, loc, rect
