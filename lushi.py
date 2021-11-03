@@ -10,7 +10,7 @@ from types import SimpleNamespace
 import copy
 
 from log_util.log_util import LogUtil
-from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
+from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add, HEROS
 from battle_ai import BattleAi
 from hearthstone.enums import GameTag, Zone
 
@@ -37,6 +37,7 @@ class Agent:
         self.game = None
         self.skill_seq_cache = {}
         self.start_seq = {}
+        self.hero_info = {}
         self.side = None
         self.surprise_in_mid = False
 
@@ -125,20 +126,24 @@ class Agent:
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
-        for i, h in enumerate(game.hero_entities.values()):
-            if i < len(self.heros.battle_seq):
-                self.skill_seq_cache[h.card_id] = self.heros.skill_seq[i]
+        if len(self.hero_info) == 0:
+            for i, h in enumerate(game.hero_entities.values()):
+                if i < len(self.heros.battle_seq):
+                    self.skill_seq_cache[h.card_id[:-3]] = self.heros.skill_seq[i]
+        else:
+            for k, v in self.hero_info.items():
+                self.skill_seq_cache[k] = [int(x)-1 for x in v[-2].split('，')]
 
         for hero_i, h in enumerate(game.my_hero):
             if h.lettuce_has_manually_selected_ability:
                 continue
 
             pyautogui.click(h.pos)
-            if h.card_id not in self.start_seq:
+            if h.card_id[:-3] not in self.start_seq:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
             else:
                 skill_loc = None
-                skill_seq = self.skill_seq_cache[h.card_id]
+                skill_seq = self.skill_seq_cache[h.card_id[:-3]]
                 for skill_id in skill_seq:
                     skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
                     if skill_cooldown_round == 0:
@@ -153,14 +158,27 @@ class Agent:
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
 
-        for h, i in zip(game.hero_entities.values(), self.heros.battle_seq):
-            self.start_seq[h.card_id] = i
+        if len(self.hero_info) == 0:
+            for h, i in zip(game.hero_entities.values(), self.heros.battle_seq):
+                self.start_seq[h.card_id[:-3]] = i
+        else:
+            self.heros.battle_seq = []
+            hero_ids = [h.card_id[:-3] for h in game.hero_entities.values()]
+            print(hero_ids)
+            print(self.hero_info.keys())
+            for k, v in self.hero_info.items():
+                if k in hero_ids:
+                    self.start_seq[k] = v[-1]
+                else:
+                    raise ValueError("Hero Configuration Wrong")
+            for h, _ in zip(game.hero_entities.values(), self.hero_info.items()):
+                self.heros.battle_seq.append(self.hero_info[h.card_id[:-3]][-1])
 
-        hero_in_battle = [x for x in game.my_hero if x.card_id in self.start_seq]
+        hero_in_battle = [x for x in game.my_hero if x.card_id[:-3] in self.start_seq]
 
         if len(hero_in_battle) < 3:
-            current_seq = {h.card_id: i for i, h in enumerate(game.setaside_hero)}
-            card_id_seq = [list(game.hero_entities.values())[i].card_id for i in self.heros.battle_seq]
+            current_seq = {h.card_id[:-3]: i for i, h in enumerate(game.setaside_hero)}
+            card_id_seq = [list(game.hero_entities.values())[i].card_id[:-3] for i in self.heros.battle_seq]
             card_id_seq = [x for x in card_id_seq if x in current_seq]
 
             for i in range(3 - len(hero_in_battle)):
@@ -377,6 +395,28 @@ class Agent:
                 if success:
                     pyautogui.click(tuple_add(rect, self.locs.empty))
 
+
+def run_from_gui():
+    with open('last_config.yaml', 'r', encoding='utf-8') as f:
+        cfg = yaml.safe_load(f)
+
+    if cfg['lang'].startswith('EN'):
+        lang = 'eng'
+    else:
+        lang = 'chs'
+
+    agent = Agent(lang=lang)
+    agent.basic.boss_id = cfg['boss_id']
+    agent.basic.team_id = cfg['team_id']
+    agent.basic.reward_count = cfg['reward_count']
+    agent.basic.bn_path = cfg['bn_path']
+    agent.basic.hs_log_path = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
+    agent.basic.auto_restart = cfg['auto_restart']
+    agent.basic.early_stop = cfg['early_stop']
+    agent.hero_info = cfg['hero']
+    agent.run()
+
+    pass
 
 def main():
     parser = argparse.ArgumentParser()

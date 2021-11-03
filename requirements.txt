@@ -17,3 +17,4 @@ pytweening
 pywin32
 PyYAML
 PyQt5
+pinyin
