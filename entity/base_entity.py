@@ -16,7 +16,6 @@ class BaseEntity:
         # LETTUCE_CONTROLLER 2:bot  3:my
         self.controller = 2
         self.entity = entity
-        self.parse_entity()
 
     def get_tag(self, tag_name):
         return self.entity.tags.get(tag_name) or 0

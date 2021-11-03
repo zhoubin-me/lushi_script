@@ -1,7 +1,7 @@
 from typing import List, Any
 
 from hearthstone.entities import Entity
-from hearthstone.enums import GameTag
+from hearthstone.enums import GameTag, SpellSchool
 
 from .base_entity import BaseEntity
 from .spell_entity import SpellEntity
@@ -29,10 +29,21 @@ class HeroEntity(BaseEntity):
         # INVALID = 0 部落HORDE = 1  联盟ALLIANCE = 2 中立NEUTRAL = 3
         self.faction = 0
         self.windfury = 0
-        self.spell_cnt = 1
         # 被动 一技能 二技能 三技能 ...
         self.spell: List[SpellEntity] = []
-        self.spellpower = 0
+        # 法术伤害
+        self.spellpower = {
+            SpellSchool.NONE: 0,  # 无
+            SpellSchool.ARCANE: 0,  # 奥术
+            SpellSchool.FIRE: 0,  # 火焰
+            SpellSchool.FROST: 0,  # 冰霜
+            SpellSchool.NATURE: 0,  # 自然
+            SpellSchool.HOLY: 0,  # 神圣
+            SpellSchool.SHADOW: 0,  # 暗影
+            SpellSchool.FEL: 0,  # 邪能
+            SpellSchool.PHYSICAL_COMBAT: 0
+        }
+
         self.deathrattle = 0
         # 是否选择了技能
         self.lettuce_has_manually_selected_ability = 0
@@ -60,7 +71,15 @@ class HeroEntity(BaseEntity):
         self.divine_shield = self.get_tag(GameTag.DIVINE_SHIELD)
         self.faction = self.get_tag(GameTag.FACTION)
         self.windfury = self.get_tag(GameTag.WINDFURY)
-        self.spellpower = self.get_tag(GameTag.SPELLPOWER)
+
+        self.spellpower[SpellSchool.ARCANE] = self.get_tag(GameTag.SPELLPOWER_ARCANE)
+        self.spellpower[SpellSchool.FIRE] = self.get_tag(GameTag.SPELLPOWER_FIRE)
+        self.spellpower[SpellSchool.FROST] = self.get_tag(GameTag.SPELLPOWER_FROST)
+        self.spellpower[SpellSchool.NATURE] = self.get_tag(GameTag.SPELLPOWER_NATURE)
+        self.spellpower[SpellSchool.HOLY] = self.get_tag(GameTag.SPELLPOWER_HOLY)
+        self.spellpower[SpellSchool.SHADOW] = self.get_tag(GameTag.SPELLPOWER_SHADOW)
+        self.spellpower[SpellSchool.FEL] = self.get_tag(GameTag.SPELLPOWER_FEL)
+
         self.deathrattle = self.get_tag(GameTag.DEATHRATTLE)
         self.lettuce_has_manually_selected_ability = self.get_tag(GameTag.LETTUCE_HAS_MANUALLY_SELECTED_ABILITY)
         self.lettuce_ability_tile_visual_self_only = self.get_tag(GameTag.LETTUCE_ABILITY_TILE_VISUAL_SELF_ONLY)

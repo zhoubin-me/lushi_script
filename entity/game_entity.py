@@ -1,10 +1,11 @@
 from typing import Dict, List
 
 from hearthstone.entities import Entity
-from hearthstone.enums import GameTag, Zone
+from hearthstone.enums import GameTag, Zone, SpellSchool
 
 from .base_entity import BaseEntity
 from .hero_entity import HeroEntity
+from .spell_entity import SpellEntity
 
 
 class GameEntity(BaseEntity):
@@ -53,3 +54,12 @@ class GameEntity(BaseEntity):
 
         self.my_hero.sort(key=lambda x: x.zone_position)
         self.enemy_hero.sort(key=lambda x: x.zone_position)
+
+    def get_spell_power(self, spell_school: SpellSchool):
+        power = sum([h.spellpower[spell_school] for h in self.my_hero])
+        # 后续操作
+        return power
+
+    def play(self, spell: SpellEntity, target: HeroEntity, own: bool):
+        power = self.get_spell_power(spell.spell_school)
+        pass

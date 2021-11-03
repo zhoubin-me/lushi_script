@@ -18,6 +18,10 @@ class SpellEntity(BaseEntity):
         self.lettuce_ability_owner = 0  # 技能主人 entity_id
         # 强化状态 例子：集束暗影
         self.powered_up = 0
+        # 技能伤害
+        self.damage = 0
+        # 技能范围: -1随机，6全部
+        self.range = 0
         self.parse_entity()
 
     def parse_entity(self):
@@ -32,3 +36,7 @@ class SpellEntity(BaseEntity):
         self.lettuce_current_cooldown = self.get_tag(GameTag.LETTUCE_CURRENT_COOLDOWN)
         self.lettuce_ability_owner = self.get_tag(GameTag.LETTUCE_ABILITY_OWNER)
         self.powered_up = self.get_tag(GameTag.POWERED_UP)
+
+    def read_from_config(self):
+        # 从字典读取伤害等参数
+        pass
