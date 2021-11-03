@@ -46,8 +46,6 @@ class Ui(QMainWindow):
         super(Ui, self).__init__()
         uic.loadUi('main.ui', self)
 
-        self.settings = QtCore.QSettings('config.ini', QtCore.QSettings.IniFormat)
-
         self.save = self.findChild(QPushButton, 'Save')  # Find the button
         self.save.clicked.connect(self.saveButtonPressed)  # Click event
 
