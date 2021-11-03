@@ -2,23 +2,13 @@
 import base64
 import json
 import os
-import re
 import sys
 
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import *
 
 
-def get_rect(strings="", name=""):  # to find QLineEdit location
-    res = re.findall(rf'<widget class="QLineEdit" name="{name}">(.*?)</widget>', strings)[0]
-    x = re.findall(r'<x>(\d+)</x>', res)[0]
-    y = re.findall(r'<y>(\d+)</y>', res)[0]
-    width = re.findall(r'<width>(\d+)</width>', res)[0]
-    height = re.findall(r'<height>(\d+)</height>', res)[0]
-    return [int(x), int(y), int(width), int(height)]
-
-
-class DropLineEdit(QLineEdit):  # get file path by using mouse
+class DropLineEdit(QLineEdit):  # support drag
     def __init__(self, parent=None):
         super(DropLineEdit, self).__init__(parent)
         # self.setAcceptDrops(True)
@@ -71,25 +61,6 @@ class Ui(QMainWindow):
         self.auto_restart = self.findChild(QCheckBox, "auto_restart")
 
         self.load_config()
-
-        log_rect = get_rect(ui_xml, "hs_log")
-        # self.input.setAcceptDrops(True)
-        default_log = self.log.text()
-        self.log = DropLineEdit(self)
-        self.log.setGeometry(QtCore.QRect(*log_rect))
-        if default_log:
-            self.log.setText(default_log)
-        else:
-            self.log.setPlaceholderText("Please input Power.log path")
-
-        bn_rect = get_rect(ui_xml, "bn_path")
-        default_bn = self.bn.text()
-        self.bn = DropLineEdit(self)
-        self.bn.setGeometry(QtCore.QRect(*bn_rect))
-        if default_bn:
-            self.bn.setText(default_bn)
-        else:
-            self.bn.setPlaceholderText("Please input Battle.net.exe path")
 
         self.show()
 
@@ -190,6 +161,7 @@ class Ui(QMainWindow):
 
 
 if __name__ == "__main__":
+    QtCore.QCoreApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling)
     app = QApplication(sys.argv)
     window = Ui()
     sys.exit(app.exec_())

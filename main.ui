@@ -6,9 +6,21 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>717</width>
-    <height>532</height>
+    <width>441</width>
+    <height>283</height>
    </rect>
+  </property>
+  <property name="minimumSize">
+   <size>
+    <width>441</width>
+    <height>283</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>441</width>
+    <height>283</height>
+   </size>
   </property>
   <property name="font">
    <font>
@@ -25,486 +37,355 @@
    <property name="acceptDrops">
     <bool>false</bool>
    </property>
-   <widget class="QPushButton" name="Run">
-    <property name="geometry">
-     <rect>
-      <x>500</x>
-      <y>450</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Run</string>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="bn_path">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>30</y>
-      <width>461</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="acceptDrops">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string>C:/Program Files (x86)/Battle.net/Battle.net.exe</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QLineEdit" name="hs_log">
-    <property name="enabled">
-     <bool>true</bool>
-    </property>
-    <property name="geometry">
-     <rect>
-      <x>180</x>
-      <y>90</y>
-      <width>461</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="acceptDrops">
-     <bool>true</bool>
-    </property>
-    <property name="text">
-     <string>C:/Program Files (x86)/Hearthstone/Logs/Power.log</string>
-    </property>
-    <property name="placeholderText">
-     <string/>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Save">
-    <property name="geometry">
-     <rect>
-      <x>340</x>
-      <y>450</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Save</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="hs_log_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>90</y>
-      <width>131</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Power.log</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="bn_path_2">
+   <widget class="QWidget" name="">
     <property name="geometry">
      <rect>
       <x>40</x>
       <y>30</y>
-      <width>131</width>
-      <height>41</height>
+      <width>365</width>
+      <height>228</height>
      </rect>
     </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>Battle.net</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="team_id_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>150</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>team_id</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="reward_count_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>300</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>reward_count</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="team_id">
-    <property name="geometry">
-     <rect>
-      <x>241</x>
-      <y>150</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>8</number>
-    </property>
-    <property name="value">
-     <number>3</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="reward_count">
-    <property name="geometry">
-     <rect>
-      <x>241</x>
-      <y>300</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>9</number>
-    </property>
-    <property name="value">
-     <number>5</number>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="hero_count">
-    <property name="geometry">
-     <rect>
-      <x>241</x>
-      <y>250</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="minimum">
-     <number>3</number>
-    </property>
-    <property name="maximum">
-     <number>6</number>
-    </property>
-    <property name="value">
-     <number>6</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="hero_count_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>250</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>hero_count</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="boss_id_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>200</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>boss_id</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="boss_id">
-    <property name="geometry">
-     <rect>
-      <x>241</x>
-      <y>200</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>9</number>
-    </property>
-    <property name="value">
-     <number>5</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="delay_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>350</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>delay</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="longest_waiting">
-    <property name="geometry">
-     <rect>
-      <x>241</x>
-      <y>450</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>9999</number>
-    </property>
-    <property name="value">
-     <number>80</number>
-    </property>
-   </widget>
-   <widget class="QLabel" name="longest_waiting_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>450</y>
-      <width>201</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>longest_waiting</string>
-    </property>
-   </widget>
-   <widget class="QLabel" name="confidence_2">
-    <property name="geometry">
-     <rect>
-      <x>40</x>
-      <y>400</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>confidence</string>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="early_stop">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>230</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>early_stop</string>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>16</width>
-      <height>16</height>
-     </size>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>false</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="delay">
-    <property name="geometry">
-     <rect>
-      <x>241</x>
-      <y>350</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <double>1000.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>0.050000000000000</double>
-    </property>
-    <property name="value">
-     <double>0.500000000000000</double>
-    </property>
-   </widget>
-   <widget class="QDoubleSpinBox" name="confidence">
-    <property name="geometry">
-     <rect>
-      <x>240</x>
-      <y>400</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <double>1.000000000000000</double>
-    </property>
-    <property name="singleStep">
-     <double>0.010000000000000</double>
-    </property>
-    <property name="value">
-     <double>0.800000000000000</double>
-    </property>
-   </widget>
-   <widget class="QCheckBox" name="auto_restart">
-    <property name="geometry">
-     <rect>
-      <x>470</x>
-      <y>290</y>
-      <width>171</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>auto_restart</string>
-    </property>
-    <property name="iconSize">
-     <size>
-      <width>16</width>
-      <height>16</height>
-     </size>
-    </property>
-    <property name="checkable">
-     <bool>true</bool>
-    </property>
-    <property name="checked">
-     <bool>true</bool>
-    </property>
-    <property name="tristate">
-     <bool>false</bool>
-    </property>
-   </widget>
-   <widget class="QLabel" name="language_2">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>170</y>
-      <width>131</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="font">
-     <font>
-      <family>Consolas</family>
-      <pointsize>11</pointsize>
-     </font>
-    </property>
-    <property name="text">
-     <string>language</string>
-    </property>
-   </widget>
-   <widget class="QSpinBox" name="language">
-    <property name="geometry">
-     <rect>
-      <x>570</x>
-      <y>170</y>
-      <width>71</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="maximum">
-     <number>9</number>
-    </property>
-    <property name="value">
-     <number>1</number>
-    </property>
-   </widget>
-   <widget class="QPushButton" name="Help">
-    <property name="geometry">
-     <rect>
-      <x>420</x>
-      <y>370</y>
-      <width>141</width>
-      <height>41</height>
-     </rect>
-    </property>
-    <property name="text">
-     <string>Help</string>
-    </property>
+    <layout class="QGridLayout" name="gridLayout">
+     <item row="0" column="0">
+      <widget class="QLabel" name="bn_path_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Battle.net</string>
+       </property>
+      </widget>
+     </item>
+     <item row="0" column="1" colspan="5">
+      <widget class="DropLineEdit" name="bn_path">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>C:/Program Files (x86)/Battle.net/Battle.net.exe</string>
+       </property>
+       <property name="placeholderText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="0">
+      <widget class="QLabel" name="hs_log_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>Power.log</string>
+       </property>
+      </widget>
+     </item>
+     <item row="1" column="1" colspan="5">
+      <widget class="DropLineEdit" name="hs_log">
+       <property name="enabled">
+        <bool>true</bool>
+       </property>
+       <property name="acceptDrops">
+        <bool>true</bool>
+       </property>
+       <property name="text">
+        <string>C:/Program Files (x86)/Hearthstone/Logs/Power.log</string>
+       </property>
+       <property name="placeholderText">
+        <string/>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="0" colspan="2">
+      <widget class="QLabel" name="team_id_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>team_id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="2">
+      <widget class="QSpinBox" name="team_id">
+       <property name="maximum">
+        <number>8</number>
+       </property>
+       <property name="value">
+        <number>3</number>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="3" rowspan="2" colspan="2">
+      <widget class="QLabel" name="language_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>language</string>
+       </property>
+      </widget>
+     </item>
+     <item row="2" column="5" rowspan="2">
+      <widget class="QSpinBox" name="language">
+       <property name="maximum">
+        <number>9</number>
+       </property>
+       <property name="value">
+        <number>1</number>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="0" rowspan="2" colspan="2">
+      <widget class="QLabel" name="boss_id_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>boss_id</string>
+       </property>
+      </widget>
+     </item>
+     <item row="3" column="2" rowspan="2">
+      <widget class="QSpinBox" name="boss_id">
+       <property name="maximum">
+        <number>9</number>
+       </property>
+       <property name="value">
+        <number>5</number>
+       </property>
+      </widget>
+     </item>
+     <item row="4" column="3" rowspan="2" colspan="3">
+      <widget class="QCheckBox" name="early_stop">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>early_stop</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>false</bool>
+       </property>
+       <property name="tristate">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="0" colspan="2">
+      <widget class="QLabel" name="hero_count_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>hero_count</string>
+       </property>
+      </widget>
+     </item>
+     <item row="5" column="2">
+      <widget class="QSpinBox" name="hero_count">
+       <property name="minimum">
+        <number>3</number>
+       </property>
+       <property name="maximum">
+        <number>6</number>
+       </property>
+       <property name="value">
+        <number>6</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="0" colspan="2">
+      <widget class="QLabel" name="reward_count_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>reward_count</string>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="2">
+      <widget class="QSpinBox" name="reward_count">
+       <property name="maximum">
+        <number>9</number>
+       </property>
+       <property name="value">
+        <number>5</number>
+       </property>
+      </widget>
+     </item>
+     <item row="6" column="3" colspan="3">
+      <widget class="QCheckBox" name="auto_restart">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>auto_restart</string>
+       </property>
+       <property name="iconSize">
+        <size>
+         <width>16</width>
+         <height>16</height>
+        </size>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+       <property name="checked">
+        <bool>true</bool>
+       </property>
+       <property name="tristate">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="0" colspan="2">
+      <widget class="QLabel" name="delay_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>delay</string>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="2">
+      <widget class="QDoubleSpinBox" name="delay">
+       <property name="maximum">
+        <double>1000.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.050000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.500000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="7" column="3" rowspan="2" colspan="3">
+      <widget class="QPushButton" name="Help">
+       <property name="text">
+        <string>Help</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="0" colspan="2">
+      <widget class="QLabel" name="confidence_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>confidence</string>
+       </property>
+      </widget>
+     </item>
+     <item row="8" column="2">
+      <widget class="QDoubleSpinBox" name="confidence">
+       <property name="maximum">
+        <double>1.000000000000000</double>
+       </property>
+       <property name="singleStep">
+        <double>0.010000000000000</double>
+       </property>
+       <property name="value">
+        <double>0.800000000000000</double>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="0" colspan="2">
+      <widget class="QLabel" name="longest_waiting_2">
+       <property name="font">
+        <font>
+         <family>Consolas</family>
+         <pointsize>11</pointsize>
+        </font>
+       </property>
+       <property name="text">
+        <string>longest_waiting</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="2">
+      <widget class="QSpinBox" name="longest_waiting">
+       <property name="maximum">
+        <number>9999</number>
+       </property>
+       <property name="value">
+        <number>80</number>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="3">
+      <widget class="QPushButton" name="Save">
+       <property name="text">
+        <string>Save</string>
+       </property>
+      </widget>
+     </item>
+     <item row="9" column="4" colspan="2">
+      <widget class="QPushButton" name="Run">
+       <property name="text">
+        <string>Run</string>
+       </property>
+      </widget>
+     </item>
+    </layout>
    </widget>
   </widget>
  </widget>
+ <customwidgets>
+  <customwidget>
+   <class>DropLineEdit</class>
+   <extends>QLineEdit</extends>
+   <header>main_gui</header>
+  </customwidget>
+ </customwidgets>
  <resources/>
  <connections/>
 </ui>
