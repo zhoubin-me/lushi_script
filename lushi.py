@@ -40,6 +40,10 @@ class Agent:
         self.hero_info = {}
         self.side = None
         self.surprise_in_mid = False
+        self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
+                  'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
+                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close']
 
     def read_sub_imgs(self, sub):
         imgs = [img for img in os.listdir(os.path.join(self.img_folder, sub)) if img.endswith('.png')]
@@ -78,6 +82,7 @@ class Agent:
     def scan_surprise_loc(self, rect):
         print('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
+        tic = time.time()
         while True:
             success, loc, rect = self.check_in_screen('surprise')
             if success:
@@ -85,6 +90,8 @@ class Agent:
                 return loc
             if self.check_in_screen('start_point')[0]:
                 break
+            if time.time() - tic > 10:
+                return
 
         for _ in range(10):
             pyautogui.scroll(60)
@@ -164,8 +171,6 @@ class Agent:
         else:
             self.heros.battle_seq = []
             hero_ids = [h.card_id[:-3] for h in game.hero_entities.values()]
-            print(hero_ids)
-            print(self.hero_info.keys())
             for k, v in self.hero_info.items():
                 if k in hero_ids:
                     self.start_seq[k] = v[-1]
@@ -221,12 +226,18 @@ class Agent:
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
+        '''
+        self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
+                  'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
+                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close']
+        '''
         if success:
             if state != text:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock']:
+            if state in ['mercenaries', 'box', 'team_lock', 'ok', 'close']:
                 pyautogui.click(tuple_add(rect, loc))
 
             if state == 'travel':
@@ -369,10 +380,7 @@ class Agent:
         surprise_in_mid = False
         tic = time.time()
         state = ""
-        states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
-                  'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm']
+
         while True:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
@@ -390,7 +398,7 @@ class Agent:
                 print(
                     f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
 
-            for state_text in states:
+            for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)
                 if success:
                     pyautogui.click(tuple_add(rect, self.locs.empty))
