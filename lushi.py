@@ -141,6 +141,7 @@ class Agent:
                 if i < len(self.heros.battle_seq):
                     self.skill_seq_cache[h.card_id[:-3]] = self.heros.skill_seq[i]
         else:
+            print(self.hero_info)
             for k, v in self.hero_info.items():
                 self.skill_seq_cache[k] = v[-2]
 
@@ -174,6 +175,7 @@ class Agent:
         else:
             self.heros.battle_seq = []
             hero_ids = [h.card_id[:-3] for h in game.hero_entities.values()]
+            print(self.hero_info)
             for k, v in self.hero_info.items():
                 if k in hero_ids:
                     self.start_seq[k] = v[-1]
@@ -421,9 +423,11 @@ def run_from_gui(cfg):
     agent.basic.hs_log_path = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
     agent.basic.auto_restart = cfg['auto_restart']
     agent.basic.early_stop = cfg['early_stop']
-    agent.hero_info = cfg['hero']
-    for k, v in agent.hero_info.items():
-        agent.hero_info[k][2] = [int(x) for x in agent.hero_info[k][2].split(',')]
+    agent.hero_info = {}
+    for k, v in cfg['hero'].items():
+        key = k[:-3]
+        value = [int(x)-1 for x in v[2].split(',')]
+        agent.hero_info[key] = [v[0], v[1], value, v[3]]
     agent.run()
 
 def main():
