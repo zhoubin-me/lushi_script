@@ -183,6 +183,7 @@ class Ui(QMainWindow):
             for k, v in self.hero_info.items():
                 if v[0] == name_chs:
                     self.hero_info[k][-1] = self.skill_order
+                    self.current_order.setText(self.skill_order)
                     break
 
     def addButtonPressed(self):

@@ -545,16 +545,22 @@
        </widget>
       </item>
       <item row="6" column="3">
-       <widget class="QPushButton" name="pushButton">
+       <widget class="QPushButton" name="modify">
+        <property name="font">
+         <font>
+          <family>Microsoft YaHei UI</family>
+          <pointsize>9</pointsize>
+         </font>
+        </property>
         <property name="text">
-         <string>PushButton</string>
+         <string>修改</string>
         </property>
        </widget>
       </item>
       <item row="1" column="3">
-       <widget class="QPushButton" name="pushButton_2">
+       <widget class="QPushButton" name="empty">
         <property name="text">
-         <string>PushButton</string>
+         <string>...</string>
         </property>
        </widget>
       </item>
@@ -568,7 +574,7 @@
      <x>0</x>
      <y>0</y>
      <width>384</width>
-     <height>22</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">
@@ -596,7 +602,7 @@
   <customwidget>
    <class>DropLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>main_gui</header>
+   <header>util</header>
   </customwidget>
  </customwidgets>
  <resources/>
