@@ -564,7 +564,7 @@
      <x>0</x>
      <y>0</y>
      <width>428</width>
-     <height>22</height>
+     <height>18</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">
@@ -592,7 +592,7 @@
   <customwidget>
    <class>DropLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>main_gui</header>
+   <header>util</header>
   </customwidget>
  </customwidgets>
  <resources/>

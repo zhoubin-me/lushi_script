@@ -8,7 +8,6 @@ import yaml
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
-
 from util import HEROS
 
 if sys.executable.endswith("pythonw.exe"):
@@ -121,7 +120,7 @@ class Ui(QMainWindow):
                 hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][-1])}
                 self.hero_info = {}
                 for k, v in hero_ordered.items():
-                    self.hero_info[v[0]] = [k, v[1], v[2]]
+                    self.hero_info[k] = [v[0], v[1], v[2]]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.slm.setStringList(str_list)
 
@@ -131,15 +130,20 @@ class Ui(QMainWindow):
         str_list = self.slm.stringList()
         if 0 <= self.hero_index < len(str_list):
             hero_name = str_list[self.hero_index]
-            self.current_order.setText(self.hero_info[hero_name][-1])
+            for k, v in self.hero_info.items():
+                if v[0] == hero_name:
+                    self.current_order.setText(self.hero_info[k][-1])
+                    break
 
     def on_load_path_click_hs(self):
         self.hs_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Hearthstone.exe')[0]
-        self.hs_path.setText(self.hs_path_str)
+        if len(self.hs_path_str) > 0:
+            self.hs_path.setText(self.hs_path_str)
 
     def on_load_path_click_bn(self):
         self.bn_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Battle.net.exe')[0]
-        self.bn_path.setText(self.bn_path_str)
+        if len(self.bn_path_str) > 0:
+            self.bn_path.setText(self.bn_path_str)
 
     def on_radio_click(self):
         bt = self.sender()
@@ -165,7 +169,10 @@ class Ui(QMainWindow):
         if 0 <= self.hero_index < len(str_list):
             name_chs = str_list.pop(self.hero_index)
             self.slm.setStringList(str_list)
-            del self.hero_info[name_chs]
+            for k, v in self.hero_info.items():
+                if v[0] == name_chs:
+                    del self.hero_info[k]
+                    break
 
     def addButtonPressed(self):
         str_list = self.slm.stringList()
@@ -173,10 +180,10 @@ class Ui(QMainWindow):
             str_list.append(self.hero_dropdown.currentText())
             kv = [(k, v) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
             idx, (name_chs, name_eng) = kv[0]
-            self.hero_info[name_chs] = [idx, name_eng, self.skill_order]
+            self.hero_info[idx] = [name_chs, name_eng, self.skill_order]
             self.slm.setStringList(str_list)
 
-    def saveButtonPressed(self):
+    def save_cfg(self):
         self.config['boss_id'] = self.boss_id.value() - 1
         self.config['team_id'] = self.team_id.value() - 1
         self.config['reward_count'] = self.reward_count.value()
@@ -185,15 +192,19 @@ class Ui(QMainWindow):
         self.config['auto_restart'] = self.auto_restart.isChecked()
         self.config['early_stop'] = self.early_stop.isChecked()
         self.config['lang'] = self.lang.currentText()
-
+        self.config['delay'] = 0.5
+        self.config['confidence'] = 0.8
+        self.config['longest_waiting'] = 80
         new_hero_info = {}
         hero_order_list = self.slm.stringList()
         for k, v in self.hero_info.items():
-            hero_index = hero_order_list.index(k)
-            new_hero_info[v[0]] = [k, v[1], v[2], hero_index]
+            hero_index = hero_order_list.index(v[0])
+            new_hero_info[k] = [v[0], v[1], v[2], hero_index]
         self.config['hero'] = new_hero_info
-        save_path = QtWidgets.QFileDialog.getSaveFileName(self, 'Save To', "", "YAML Config (*.yaml)")[0]
 
+    def saveButtonPressed(self):
+        self.save_cfg()
+        save_path = QtWidgets.QFileDialog.getSaveFileName(self, 'Save To', "", "YAML Config (*.yaml)")[0]
         try:
             with open(save_path, 'w', encoding='utf-8') as f:
                 yaml.dump(self.config, f)
@@ -204,7 +215,7 @@ class Ui(QMainWindow):
     def runButtonPressed(self):
         hero_text = ""
         for k, v in self.hero_info.items():
-            hero_text += f"\t{k} Skill Order {v[-1]}\n"
+            hero_text += f"\t{v[0]}:\t{v[-1]}\n"
 
         cfm_text = f'''
             Current Setting:\n
@@ -223,7 +234,7 @@ class Ui(QMainWindow):
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             from lushi import run_from_gui
-            # self.saveButtonPressed()
+            self.save_cfg()
             run_from_gui(self.config)
         else:
             pass

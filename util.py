@@ -7,6 +7,7 @@ import os
 import psutil
 import time
 import win32api
+from PyQt5.QtWidgets import *
 
 PLATFORM = platform.system()
 
@@ -263,34 +264,28 @@ def tuple_add(x, y):
     return x[0] + y[0], x[1] + y[1]
 
 
-# def start_battle(hero_info, enemy_info):
-#     hero_info = {
-#         # [x, y, color, damage, health, skill_id]
-#         0: [100, 100, 'r', 10, 20],
-#         1: [200, 100, 'g', 10, 11],
-#         2: [300, 100, 'b', 15, 2],
-#     }
-#
-#     enemy_info = {
-#         # [x, y, color, damage, health, skill_id]
-#         0: [100, 100, 'r', 10, 20],
-#         1: [200, 100, 'g', 10, 11],
-#         2: [300, 100, 'b', 15, 2],
-#         3: [400, 100, 'n', 3, 20],
-#     }
-#     for idx in list(itertools.product(range(len(hero_info)), repeat=len(hero_info))):
-#         hero = hero_info.copy()
-#         enemy = enemy_info.copy()
-#         min(hero)
-#         print(i)
-#
-#
-#     attack = {
-#         0: 0,  # first hero skill target towards first enemy
-#         1: 0,  # second hero skill target towards first enemy
-#         2: 2,  # ...
-#     }
-#     return attack
+
+class DropLineEdit(QLineEdit):  # support drag
+    def __init__(self, parent=None):
+        super(DropLineEdit, self).__init__(parent)
+        # self.setAcceptDrops(True)
+        self.setDragEnabled(True)
+
+    def dragEnterEvent(self, e):
+        if e.mimeData().hasText():
+            e.accept()
+        else:
+            e.ignore()
+
+    def dropEvent(self, e):
+        if e.mimeData().hasText():
+            file_path = e.mimeData().text()
+            file_path = file_path.split('\n')
+            # print(filePath[0])  # only read the first file
+            file_path = file_path[0].split('///')  # remove file:///
+            self.setText(file_path[1])  # save file path into QLineEdit
+        else:
+            e.ignore()
 
 
 if __name__ == "__main__":
