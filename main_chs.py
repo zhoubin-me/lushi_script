@@ -98,7 +98,7 @@ class Ui(QMainWindow):
             with open(path, 'r', encoding='utf-8') as f:
                 self.config = yaml.safe_load(f)
         except:
-            raise ValueError("Load Path Fail")
+            return QMessageBox.critical(self, 'Error!', "Load Path Fail", QMessageBox.Ok, QMessageBox.Ok)
 
         for k, v in self.config.items():
             if k == 'boss_id':
@@ -199,7 +199,7 @@ class Ui(QMainWindow):
                 yaml.dump(self.config, f)
             print(self.config)
         except:
-            raise ValueError("Save Path Fail")
+            return QMessageBox.critical(self, 'Error!', "Save Path Fail", QMessageBox.Ok, QMessageBox.Ok)
 
     def runButtonPressed(self):
         hero_text = ""
@@ -218,7 +218,7 @@ class Ui(QMainWindow):
             Language & Resolution: {self.config['lang']}\n
             Heros:\n
             {hero_text}
-        '''
+        '''.strip().replace('    ', '')
 
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
