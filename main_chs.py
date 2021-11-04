@@ -68,6 +68,8 @@ class Ui(QMainWindow):
         self.go_up.clicked.connect(self.upButtonPressed)  # Click event
         self.delete = self.findChild(QPushButton, 'godown')
         self.delete.clicked.connect(self.downButtonPressed)  # Click event
+        self.modify = self.findChild(QPushButton, 'modify')
+        self.modify.clicked.connect(self.modifyButtonPressed)  # Click event
 
         self.radio_buttons = []
         for radio_text in ['321', '312', '213', '231', '123', '132']:
@@ -172,6 +174,15 @@ class Ui(QMainWindow):
             for k, v in self.hero_info.items():
                 if v[0] == name_chs:
                     del self.hero_info[k]
+                    break
+
+    def modifyButtonPressed(self):
+        str_list = self.slm.stringList()
+        if 0 <= self.hero_index < len(str_list):
+            name_chs = str_list[self.hero_index]
+            for k, v in self.hero_info.items():
+                if v[0] == name_chs:
+                    self.hero_info[k][-1] = self.skill_order
                     break
 
     def addButtonPressed(self):
