@@ -10,7 +10,7 @@ import win32api
 
 PLATFORM = platform.system()
 
-HEROS_ = {'LETL_009H_01': ['格罗玛什·地狱咆哮', 'Grommash Hellscream'],
+HEROS = {'LETL_009H_01': ['格罗玛什·地狱咆哮', 'Grommash Hellscream'],
          'LETL_006H_01': ['加拉克苏斯大王', 'Lord Jaraxxus'],
          'BARL_005H_02': ['沃金', "Vol'jin"],
          'LETL_012H_01': ['瓦里安·乌瑞恩', 'Varian Wrynn'],
@@ -67,7 +67,6 @@ HEROS_ = {'LETL_009H_01': ['格罗玛什·地狱咆哮', 'Grommash Hellscream'],
          'LETL_026H_01': ['老瞎眼', 'Old Murk-Eye']}
 
 
-HEROS = {k[:-3]: v for k, v in HEROS_.items()}
 
 if PLATFORM:
     import win32gui

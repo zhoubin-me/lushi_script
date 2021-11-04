@@ -10,7 +10,7 @@ from types import SimpleNamespace
 import copy
 
 from log_util.log_util import LogUtil
-from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add, HEROS
+from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
 from battle_ai import BattleAi
 from hearthstone.enums import GameTag, Zone
 
@@ -43,7 +43,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                   'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close']
+                  'final_reward', 'final_reward2', 'final_confirm']
 
     def read_sub_imgs(self, sub):
         imgs = [img for img in os.listdir(os.path.join(self.img_folder, sub)) if img.endswith('.png')]
@@ -77,7 +77,7 @@ class Agent:
         try:
             icon = getattr(self, prefix)[name]
         except:
-            return False, 0, 0, 0
+            return False, None, None
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
         loc = X, Y
         return success, loc, rect
@@ -142,7 +142,7 @@ class Agent:
                     self.skill_seq_cache[h.card_id[:-3]] = self.heros.skill_seq[i]
         else:
             for k, v in self.hero_info.items():
-                self.skill_seq_cache[k] = [int(x)-1 for x in v[-2].split('，')]
+                self.skill_seq_cache[k] = v[-2]
 
         for hero_i, h in enumerate(game.my_hero):
             if h.lettuce_has_manually_selected_ability:
@@ -240,7 +240,7 @@ class Agent:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock', 'ok', 'close']:
+            if state in ['mercenaries', 'box', 'team_lock']:
                 pyautogui.click(tuple_add(rect, loc))
 
             if state == 'travel':
@@ -407,10 +407,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.empty))
 
 
-def run_from_gui():
-    with open('last_config.yaml', 'r', encoding='utf-8') as f:
-        cfg = yaml.safe_load(f)
-
+def run_from_gui(cfg):
     if cfg['lang'].startswith('EN'):
         lang = 'eng'
     else:
@@ -424,10 +421,13 @@ def run_from_gui():
     agent.basic.hs_log_path = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
     agent.basic.auto_restart = cfg['auto_restart']
     agent.basic.early_stop = cfg['early_stop']
-    agent.hero_info = cfg['hero']
+    hero_info = {}
+    for k, v in cfg['hero'].items():
+        k_ = k[:-3]
+        hero_info[k_] = v
+        hero_info[k_][2] = [int(x)-1 for x in v[2].split('，')]
+    agent.hero_info = hero_info
     agent.run()
-
-    pass
 
 def main():
     parser = argparse.ArgumentParser()

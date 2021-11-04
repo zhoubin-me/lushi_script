@@ -41,7 +41,7 @@ class Ui(QMainWindow):
         self.run = self.findChild(QPushButton, 'run')  # Find the button
         self.run.clicked.connect(self.runButtonPressed)  # Click event
         self.load = self.findChild(QPushButton, 'load')  # Find the button
-        self.load.clicked.connect(self.load_config)  # Click event
+        self.load.clicked.connect(self.loadButtonPressed)  # Click event
 
         self.hero_dropdown = self.findChild(QComboBox, 'hero_list')
         heros_sorted = {k: v[0] for k, v in sorted(
@@ -75,17 +75,27 @@ class Ui(QMainWindow):
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
 
-        self.show()
 
         self.skill_order = "1，2，3"
         self.bn_path_str = ""
         self.hs_path_str = ""
         self.hero_info = {}
         self.config = {}
+        self.load_config('default.yaml')
+        self.show()
 
-    def load_config(self):
-        with open('last_config.yaml', 'r', encoding='utf-8') as f:
-            self.config = yaml.safe_load(f)
+    def loadButtonPressed(self):
+        load_path = QtWidgets.QFileDialog.getOpenFileName(self, "Load Config", "", "YAML Config(*.yaml)")[0]
+        if load_path == '':
+            load_path = 'default.yaml'
+        self.load_config(load_path)
+
+    def load_config(self, path):
+        try:
+            with open(path, 'r', encoding='utf-8') as f:
+                self.config = yaml.safe_load(f)
+        except:
+            raise ValueError("Load Path Fail")
 
         for k, v in self.config.items():
             if k == 'boss_id':
@@ -121,18 +131,17 @@ class Ui(QMainWindow):
             self.current_order.setText(self.hero_info[hero_name][-1])
 
     def on_load_path_click_hs(self):
-        self.hs_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Hearthstone')[0]
+        self.hs_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Hearthstone.exe')[0]
         self.hs_path.setText(self.hs_path_str)
 
     def on_load_path_click_bn(self):
-        self.bn_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of BattleNet')[0]
+        self.bn_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Battle.net.exe')[0]
         self.bn_path.setText(self.bn_path_str)
 
     def on_radio_click(self):
         bt = self.sender()
         if bt.isChecked():
             self.skill_order = bt.text()
-            print(self.skill_order.split('，'))
 
     def upButtonPressed(self):
         str_list = self.slm.stringList()
@@ -178,10 +187,14 @@ class Ui(QMainWindow):
             hero_index = hero_order_list.index(k)
             new_hero_info[v[0]] = [k, v[1], v[2], hero_index]
         self.config['hero'] = new_hero_info
+        save_path = QtWidgets.QFileDialog.getSaveFileName(self, 'Save To', "", "YAML Config (*.yaml)")[0]
 
-        with open('last_config.yaml', 'w', encoding='utf-8') as f:
-            yaml.dump(self.config, f)
-        print(self.config)
+        try:
+            with open(save_path, 'w', encoding='utf-8') as f:
+                yaml.dump(self.config, f)
+            print(self.config)
+        except:
+            raise ValueError("Save Path Fail")
 
     def runButtonPressed(self):
         hero_text = ""
@@ -206,8 +219,8 @@ class Ui(QMainWindow):
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             from lushi import run_from_gui
-            self.saveButtonPressed()
-            run_from_gui()
+            # self.saveButtonPressed()
+            run_from_gui(self.config)
         else:
             pass
 
