@@ -1,14 +1,19 @@
-
-
 # -*- coding: utf-8 -*-
+import os
 import sys
+
 import PyQt5
 import pinyin
-from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtWidgets import *
-from PyQt5.QtCore import QStringListModel
 import yaml
+from PyQt5 import uic, QtCore, QtWidgets
+from PyQt5.QtCore import QStringListModel
+from PyQt5.QtWidgets import *
+
 from util import HEROS
+
+if sys.executable.endswith("pythonw.exe"):
+    sys.stdout = open(os.devnull, "w")
+    sys.stderr = open(os.path.join(os.getenv("TEMP"), "stderr-" + os.path.basename(sys.argv[0])), "w")
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -71,10 +76,8 @@ class Ui(QMainWindow):
             radio.toggled.connect(self.on_radio_click)
             self.radio_buttons.append(radio)
 
-
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
-
 
         self.skill_order = "1, 2, 3"
         self.bn_path_str = ""
@@ -146,13 +149,15 @@ class Ui(QMainWindow):
     def upButtonPressed(self):
         str_list = self.slm.stringList()
         if 1 <= self.hero_index < len(str_list):
-            str_list[self.hero_index], str_list[self.hero_index-1] = str_list[self.hero_index-1], str_list[self.hero_index]
+            str_list[self.hero_index], str_list[self.hero_index - 1] = str_list[self.hero_index - 1], str_list[
+                self.hero_index]
             self.slm.setStringList(str_list)
 
     def downButtonPressed(self):
         str_list = self.slm.stringList()
-        if 0 <= self.hero_index < len(str_list)-1:
-            str_list[self.hero_index], str_list[self.hero_index+1] = str_list[self.hero_index+1], str_list[self.hero_index]
+        if 0 <= self.hero_index < len(str_list) - 1:
+            str_list[self.hero_index], str_list[self.hero_index + 1] = str_list[self.hero_index + 1], str_list[
+                self.hero_index]
             self.slm.setStringList(str_list)
 
     def delButtonPressed(self):
@@ -201,11 +206,10 @@ class Ui(QMainWindow):
         for k, v in self.hero_info.items():
             hero_text += f"\t{k} Skill Order {v[-1]}\n"
 
-
         cfm_text = f'''
             Current Setting:\n
-            Boss ID: {self.config['boss_id']+1}\n
-            Team ID: {self.config['team_id']+1}\n
+            Boss ID: {self.config['boss_id'] + 1}\n
+            Team ID: {self.config['team_id'] + 1}\n
             Boss Reward: {self.config['reward_count']}\n
             BattleNet Path: {self.config['bn_path']}\n
             HearthStone Path: {self.config['hs_path']}\n

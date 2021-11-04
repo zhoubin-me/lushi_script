@@ -12,11 +12,10 @@ import copy
 from log_util.log_util import LogUtil
 from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
 from battle_ai import BattleAi
-from hearthstone.enums import GameTag, Zone
 
 
 class Agent:
-    def __init__(self, lang, basic_cfg=''):
+    def __init__(self, lang):
         if lang == 'eng':
             self.cfg_file = 'config_eng.yaml'
             self.img_folder = 'imgs_eng_1024x768'
@@ -32,7 +31,7 @@ class Agent:
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
-        self.load_config(basic_cfg)
+        self.load_config()
         self.log_util = LogUtil(self.basic.hs_log)
         self.game = None
         self.skill_seq_cache = {}
@@ -41,9 +40,9 @@ class Agent:
         self.side = None
         self.surprise_in_mid = False
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
-                  'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm']
+                       'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
+                       'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                       'final_reward', 'final_reward2', 'final_confirm']
 
     def read_sub_imgs(self, sub):
         imgs = [img for img in os.listdir(os.path.join(self.img_folder, sub)) if img.endswith('.png')]
@@ -53,18 +52,10 @@ class Agent:
             x = getattr(self, sub)
             x[k] = v
 
-    def load_config(self, basic_cfg=''):
+    def load_config(self):
         with open(self.cfg_file, 'r', encoding='utf-8') as f:
             config = yaml.safe_load(f)
-
-        if basic_cfg:
-            import base64
-            import json
-            basic_json = json.loads(base64.b64decode(basic_cfg.encode('utf-8')).decode('utf-8'))
-            self.basic = SimpleNamespace(**basic_json)
-        else:
-            self.basic = SimpleNamespace(**config['basic'])
-
+        self.basic = SimpleNamespace(**config['basic'])
         self.heros = SimpleNamespace(**config['heros'])
         self.locs = SimpleNamespace(**config['location'])
         pyautogui.PAUSE = self.basic.delay
@@ -426,14 +417,15 @@ def run_from_gui(cfg):
     agent.hero_info = {}
     for k, v in cfg['hero'].items():
         key = k[:-3]
-        value = [int(x)-1 for x in v[2].split(',')]
+        value = [int(x) - 1 for x in v[2].split(',')]
         agent.hero_info[key] = [v[0], v[1], value, v[3]]
     agent.run()
+
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
-    parser.add_argument('--config', default='default.yaml', help='base64 basic config')
+    parser.add_argument('--config', default='default.yaml', help='launch config filename')
     args = parser.parse_args()
 
     with open(args.config, 'r', encoding='utf-8') as f:
@@ -441,7 +433,6 @@ def main():
 
     cfg['lang'] = args.lang
     run_from_gui(cfg)
-
 
 
 if __name__ == '__main__':
