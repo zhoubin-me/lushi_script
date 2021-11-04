@@ -258,7 +258,7 @@
        <number>15</number>
       </property>
       <property name="bottomMargin">
-       <number>5</number>
+       <number>0</number>
       </property>
       <item row="2" column="0" rowspan="7">
        <widget class="QGroupBox" name="skill_order">
@@ -519,6 +519,15 @@
     </item>
     <item row="2" column="0">
      <layout class="QHBoxLayout" name="horizontalLayout">
+      <property name="leftMargin">
+       <number>15</number>
+      </property>
+      <property name="rightMargin">
+       <number>15</number>
+      </property>
+      <property name="bottomMargin">
+       <number>5</number>
+      </property>
       <item>
        <widget class="QPushButton" name="load">
         <property name="font">
