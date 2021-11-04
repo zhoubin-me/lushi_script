@@ -200,19 +200,6 @@
           </property>
          </widget>
         </item>
-        <item row="2" column="3">
-         <widget class="QCheckBox" name="early_stop">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>拿完惊喜提前结束</string>
-          </property>
-         </widget>
-        </item>
         <item row="3" column="0">
          <widget class="QLabel" name="label_8">
           <property name="font">
@@ -239,7 +226,20 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="3">
+        <item row="2" column="2" colspan="3">
+         <widget class="QCheckBox" name="early_stop">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>拿完惊喜提前结束</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="2" colspan="3">
          <widget class="QCheckBox" name="auto_restart">
           <property name="font">
            <font>
