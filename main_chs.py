@@ -8,6 +8,7 @@ import yaml
 from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
+
 from util import HEROS
 
 if sys.executable.endswith("pythonw.exe"):
@@ -25,6 +26,8 @@ class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('main_chs.ui', self)
+
+        self.trans = QtCore.QTranslator()
 
         self.boss_id = self.findChild(QSpinBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
@@ -62,7 +65,7 @@ class Ui(QMainWindow):
 
         self.add = self.findChild(QPushButton, 'add')
         self.add.clicked.connect(self.addButtonPressed)  # Click event
-        self.delete = self.findChild(QPushButton, 'del')
+        self.delete = self.findChild(QPushButton, 'del_1')
         self.delete.clicked.connect(self.delButtonPressed)  # Click event
         self.go_up = self.findChild(QPushButton, 'goup')
         self.go_up.clicked.connect(self.upButtonPressed)  # Click event
@@ -87,6 +90,14 @@ class Ui(QMainWindow):
         self.config = {}
         self.load_config('default.yaml')
         self.show()
+
+    def _tigger_english(self):
+        # load qm file
+        self.trans.load("main_chs")
+        # get app instance and load trans
+        QApplication.instance().installTranslator(self.trans)
+        # translate
+        self.retranslateUi()
 
     def loadButtonPressed(self):
         load_path = QtWidgets.QFileDialog.getOpenFileName(self, "Load Config", "", "YAML Config(*.yaml)")[0]
@@ -239,7 +250,7 @@ class Ui(QMainWindow):
             Auto Restart: {self.config['auto_restart']}\n
             Early Stop: {self.config['early_stop']}\n
             Language & Resolution: {self.config['lang']}\n
-            Heros:\n
+            Heroes:\n
             {hero_text}
         '''.strip().replace('    ', '')
 
@@ -250,6 +261,42 @@ class Ui(QMainWindow):
             run_from_gui(self.config)
         else:
             pass
+
+    def retranslateUi(self):  # generate from python -m PyQt5.uic.pyuic main_chs.ui -o main_chs_ui.py
+        _translate = QtCore.QCoreApplication.translate
+        # MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        self.label.setText(_translate("MainWindow", "关卡选择序号"))
+        self.label_4.setText(_translate("MainWindow", "战网路径"))
+        self.load_path.setText(_translate("MainWindow", "..."))
+        self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
+        self.label_5.setText(_translate("MainWindow", "炉石路径"))
+        self.load_path2.setText(_translate("MainWindow", "..."))
+        self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
+        self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
+        self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
+        self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
+        self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
+        # self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))    # cannot translate
+        self.r321.setText(_translate("MainWindow", "3, 2, 1"))
+        self.r312.setText(_translate("MainWindow", "3, 1, 2"))
+        self.r213.setText(_translate("MainWindow", "2, 1, 3"))
+        self.r231.setText(_translate("MainWindow", "2, 3, 1"))
+        self.r123.setText(_translate("MainWindow", "1, 2, 3"))
+        self.r132.setText(_translate("MainWindow", "1, 3, 2"))
+        self.add.setText(_translate("MainWindow", "添加"))
+        self.empty.setText(_translate("MainWindow", "..."))
+        self.goup.setText(_translate("MainWindow", "上移"))
+        self.godown.setText(_translate("MainWindow", "下移"))
+        self.del_1.setText(_translate("MainWindow", "删除"))
+        self.modify.setText(_translate("MainWindow", "修改"))
+        self.label_9.setText(_translate("MainWindow", "当前英雄技能顺序:"))
+        self.label_6.setText(_translate("MainWindow", "英雄出场顺序"))
+        self.load.setText(_translate("MainWindow", "加载配置"))
+        self.save.setText(_translate("MainWindow", "保存配置"))
+        self.run.setText(_translate("MainWindow", "运行脚本"))
+        # self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
+        self.actionEnglish.setText(_translate("MainWindow", "English"))
+        self.actionChinese.setText(_translate("MainWindow", "Chinese"))
 
 
 if __name__ == '__main__':
