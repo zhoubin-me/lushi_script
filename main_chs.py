@@ -76,7 +76,7 @@ class Ui(QMainWindow):
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
 
 
-        self.skill_order = "1，2，3"
+        self.skill_order = "1, 2, 3"
         self.bn_path_str = ""
         self.hs_path_str = ""
         self.hero_info = {}

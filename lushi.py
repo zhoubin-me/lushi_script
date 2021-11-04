@@ -421,22 +421,23 @@ def run_from_gui(cfg):
     agent.basic.hs_log_path = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
     agent.basic.auto_restart = cfg['auto_restart']
     agent.basic.early_stop = cfg['early_stop']
-    hero_info = {}
-    for k, v in cfg['hero'].items():
-        k_ = k[:-3]
-        hero_info[k_] = v
-        hero_info[k_][2] = [int(x)-1 for x in v[2].split('，')]
-    agent.hero_info = hero_info
+    agent.hero_info = cfg['hero']
+    for k, v in agent.hero_info.items():
+        agent.hero_info[k][2] = [int(x) for x in agent.hero_info[k][2].split(',')]
     agent.run()
 
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
-    parser.add_argument('--basic', default='', help='base64 basic config')
+    parser.add_argument('--config', default='default.yaml', help='base64 basic config')
     args = parser.parse_args()
 
-    agent = Agent(lang=args.lang, basic_cfg=args.basic)
-    agent.run()
+    with open(args.config, 'r', encoding='utf-8') as f:
+        cfg = yaml.safe_load(f)
+
+    cfg['lang'] = args.lang
+    run_from_gui(cfg)
+
 
 
 if __name__ == '__main__':
