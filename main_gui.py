@@ -7,6 +7,10 @@ import sys
 from PyQt5 import uic, QtCore
 from PyQt5.QtWidgets import *
 
+if sys.executable.endswith("pythonw.exe"):
+    sys.stdout = open(os.devnull, "w")
+    sys.stderr = open(os.path.join(os.getenv("TEMP"), "stderr-" + os.path.basename(sys.argv[0])), "w")
+
 
 class DropLineEdit(QLineEdit):  # support drag
     def __init__(self, parent=None):
