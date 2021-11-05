@@ -1,8 +1,17 @@
 # -*- coding: utf-8 -*-
-from hearthstone.mercenaryxml import MercenaryXML, load
+from mercenaries import MERCENARIES
 
-a = load(locale='zhCN')
+if __name__ == '__main__':
+    m = MERCENARIES
+    for h in m:
+        id = h['skins'][0][:-3]
+        print(id)
+        for abl in h['abilities']:
+            print(abl['tiers'][0][:-3])
 
-for i, x in a[0].items():
-    print(x.specializations)
-    break
+        for equip in h['equipment']:
+            print(abl['tiers'][0][:-3])
+
+
+        break
+    pass
