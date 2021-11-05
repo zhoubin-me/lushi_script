@@ -1,4 +1,4 @@
-from util import find_relative_loc
+from utils.util import find_relative_loc
 import time
 
 if __name__ == '__main__':

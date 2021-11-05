@@ -9,7 +9,7 @@ from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
-from util import HEROS
+from utils.util import HEROS
 
 if sys.executable.endswith("pythonw.exe"):
     sys.stdout = open(os.devnull, "w")
@@ -88,7 +88,7 @@ class Ui(QMainWindow):
         self.hs_path_str = ""
         self.hero_info = {}
         self.config = {}
-        self.load_config('default.yaml')
+        self.load_config('config/default.yaml')
         self.show()
 
     def _tigger_english(self):
@@ -102,7 +102,7 @@ class Ui(QMainWindow):
     def loadButtonPressed(self):
         load_path = QtWidgets.QFileDialog.getOpenFileName(self, "Load Config", "", "YAML Config(*.yaml)")[0]
         if load_path == '':
-            load_path = 'default.yaml'
+            load_path = 'config/default.yaml'
         self.load_config(load_path)
 
     def load_config(self, path):

@@ -3,7 +3,7 @@ import copy
 from typing import List
 
 from entity.hero_entity import HeroEntity
-from log_util.log_util import LogUtil
+from utils.log_util import LogUtil
 
 
 class BattleAi:

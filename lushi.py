@@ -7,24 +7,23 @@ import argparse
 import os
 import yaml
 from types import SimpleNamespace
-import copy
 
-from log_util.log_util import LogUtil
-from util import find_lushi_window, find_icon_location, restart_game, tuple_add
-from battle_ai import BattleAi
+from utils.log_util import LogUtil
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add
+from utils.battle_ai import BattleAi
 
 
 class Agent:
     def __init__(self, cfg):
         if cfg['lang'].startswith('EN'):
             self.lang = 'eng'
-            self.loc_file = 'locs_eng.yaml'
-            self.img_folder = 'imgs_eng_1024x768'
+            self.loc_file = 'config/locs_eng.yaml'
+            self.img_folder = 'resource/imgs_eng_1024x768'
             self.title = 'hearthstone'
         elif cfg['lang'].startswith('ZH'):
             self.lang = 'chs'
-            self.loc_file = 'locs_chs.yaml'
-            self.img_folder = "imgs_chs_1600x900"
+            self.loc_file = 'config/locs_chs.yaml'
+            self.img_folder = "resource/imgs_chs_1600x900"
             self.title = "炉石传说"
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
