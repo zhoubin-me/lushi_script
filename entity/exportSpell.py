@@ -10,7 +10,7 @@ if __name__ == '__main__':
             print(abl['tiers'][0][:-3])
 
         for equip in h['equipment']:
-            print(abl['tiers'][0][:-3])
+            print(equip['tiers'][0][:-3])
 
 
         break

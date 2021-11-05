@@ -45,7 +45,7 @@ HEROS = read_hero_data()
 
 if PLATFORM:
     import win32gui
-    from utils.winguiauto import findTopWindow
+    from winguiauto import findTopWindow
 
 
     def windowEnumerationHandler(hwnd, top_windows):
