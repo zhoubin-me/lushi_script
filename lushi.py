@@ -392,7 +392,7 @@ def run_from_gui(cfg):
 def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['chs', 'eng'], default='chs', help='Choose Your Hearthstone Language')
-    parser.add_argument('--config', default='default.yaml', help='launch config filename')
+    parser.add_argument('--config', default='config/default.yaml', help='launch config filename')
     args = parser.parse_args()
 
     with open(args.config, 'r', encoding='utf-8') as f:
