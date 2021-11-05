@@ -1,1 +1,1 @@
-start pythonw main_chs.py
+start pythonw main_gui.py
