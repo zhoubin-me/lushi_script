@@ -226,7 +226,10 @@ class Ui(QMainWindow):
         str_list = self.slm.stringList()
         if self.hero_dropdown.currentText() not in str_list and len(str_list) < 6:
             str_list.append(self.hero_dropdown.currentText())
-            kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
+            if self.ui_lang == 'eng':
+                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
+            else:
+                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
             idx, name_chs, name_eng = kv[0]
             index = len(str_list) - 1
             if self.ui_lang == 'chs':
