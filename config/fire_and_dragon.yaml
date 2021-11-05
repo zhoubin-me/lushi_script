@@ -6,33 +6,33 @@ delay: 0.5
 early_stop: false
 hero:
   BARL_009H:
-  - War Master Voone
   - "\u6307\u6325\u5B98\u6C83\u6069"
+  - War Master Voone
   - 3, 2, 1
   - 5
   LETL_028H:
-  - Ragnaros
   - "\u62C9\u683C\u7EB3\u7F57\u65AF"
+  - Ragnaros
   - 2, 3, 1
   - 0
   LETL_030H:
-  - Baron Geddon
   - "\u8FE6\u987F\u7537\u7235"
+  - Baron Geddon
   - 2, 3, 1
   - 1
   LETL_031H:
-  - Alexstrasza
   - "\u963F\u83B1\u514B\u4E1D\u5854\u8428"
+  - Alexstrasza
   - 3, 2, 1
   - 4
   SWL_01H:
-  - Antonidas
   - "\u5B89\u4E1C\u5C3C\u8FBE\u65AF"
+  - Antonidas
   - 2, 1, 3
   - 2
   SWL_26H:
-  - Diablo
   - "\u8FEA\u4E9A\u6CE2\u7F57"
+  - Diablo
   - 3, 2, 1
   - 3
 hs_path: E:/Games/Hearthstone/Hearthstone.exe
@@ -40,4 +40,4 @@ lang: ZH-1600x900
 longest_waiting: 80
 reward_count: 5
 team_id: 4
-ui_lang: eng
+ui_lang: chs

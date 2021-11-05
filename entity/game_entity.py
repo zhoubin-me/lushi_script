@@ -60,6 +60,26 @@ class GameEntity(BaseEntity):
         # 后续操作
         return power
 
-    def play(self, spell: SpellEntity, target: HeroEntity, own: bool):
+    def get_enemy_action(self):
+        action = []
+        for h in self.enemy_hero:
+            spell = h.get_enemy_action()
+            action.append({'hero': h, 'target': self.find_min_health(), 'spell': spell})
+
+        return action
+
+    def find_min_health(self, own=True):
+        """
+        查找敌我场上生命值最低的佣兵
+        Args:
+            own: 是否是我方场上
+        """
+        hero_list = self.my_hero if own else self.enemy_hero
+        if len(hero_list) <= 0:
+            return None
+        return min(hero_list, key=lambda x: x.get_health())
+
+    def play(self, hero: HeroEntity, spell: SpellEntity, target: HeroEntity):
         power = self.get_spell_power(spell.spell_school)
+        spell.play(self, hero, target)
         pass

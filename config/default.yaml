@@ -1,5 +1,5 @@
 auto_restart: false
-bn_path: C:/Program Files (x86)/Battle.net/Battle.net.exe
+bn_path: F:\battle\Battle.net/Battle.net.exe
 boss_id: 5
 confidence: 0.8
 delay: 0.5
@@ -35,7 +35,7 @@ hero:
   - Diablo
   - 3, 2, 1
   - 3
-hs_path: E:/Games/Hearthstone/Hearthstone.exe
+hs_path: F:\battle\copy\Hearthstone/Hearthstone.exe
 lang: ZH-1600x900
 longest_waiting: 80
 reward_count: 5

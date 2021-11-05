@@ -7,7 +7,7 @@ import PyQt5
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtCore import QStringListModel
+from PyQt5.QtCore import QStringListModel, QThread, pyqtSignal
 from PyQt5.QtWidgets import *
 
 from utils.util import HEROS
@@ -22,7 +22,17 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
+class Thread_2(QThread):  
+    _signal =pyqtSignal()
+    def __init__(self,config):
+        super().__init__()
+        self.config = config
+    def run(self):
 
+        from lushi import run_from_gui
+        run_from_gui(self.config)
+        self._signal.emit()
+        
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
@@ -226,8 +236,11 @@ class Ui(QMainWindow):
         str_list = self.slm.stringList()
         if self.hero_dropdown.currentText() not in str_list and len(str_list) < 6:
             str_list.append(self.hero_dropdown.currentText())
-            kv = [(k, v) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
-            idx, (name_chs, name_eng) = kv[0]
+            if self.ui_lang == 'eng':
+                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
+            else:
+                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
+            idx, name_chs, name_eng = kv[0]
             index = len(str_list) - 1
             if self.ui_lang == 'chs':
                 self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index]
@@ -324,9 +337,10 @@ class Ui(QMainWindow):
 
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            from lushi import run_from_gui
+            
             self.save_config()
-            run_from_gui(self.config)
+            self.thread_2 =Thread_2(self.config)
+            self.thread_2.start()
         else:
             pass
 

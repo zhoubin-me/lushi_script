@@ -12,6 +12,7 @@ import csv
 
 PLATFORM = platform.system()
 
+
 def read_hero_data():
     main_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
     path = os.path.join(main_path, 'resource', 'hero_data.csv')
@@ -22,22 +23,25 @@ def read_hero_data():
         for row in reader:
             if count > 0:
                 # print(row)
-                num_id, name_eng, race, name_chs, sn_id, damage1, target1, speed1, type1, others1,\
-                    damage2, target2, speed2, type2, others2, \
-                    damage3, target3, speed3, type3, others3 = row
+                num_id, name_eng, race, name_chs, sn_id, damage1, target1, speed1, type1, others1, \
+                damage2, target2, speed2, type2, others2, \
+                damage3, target3, speed3, type3, others3 = row
 
                 spells = {
-                    0: {'damage': damage1, 'range': target1, 'speed': speed1, 'type': type1, 'others': others1},
-                    1: {'damage': damage2, 'range': target2, 'speed': speed2, 'type': type2, 'others': others2},
-                    2: {'damage': damage3, 'range': target3, 'speed': speed3, 'type': type3, 'others': others3},
+                    0: {'damage': int(damage1) if len(damage1) else 0, 'range': target1, 'speed': speed1, 'type': type1,
+                        'others': others1},
+                    1: {'damage': int(damage2) if len(damage2) else 0, 'range': target2, 'speed': speed2, 'type': type2,
+                        'others': others2},
+                    2: {'damage': int(damage3) if len(damage3) else 0, 'range': target3, 'speed': speed3, 'type': type3,
+                        'others': others3},
                 }
 
                 heros[sn_id[:-3]] = [name_chs, name_eng[1:-1], race[1:-1], spells]
             count += 1
     return heros
 
-HEROS = read_hero_data()
 
+HEROS = read_hero_data()
 
 if PLATFORM:
     import win32gui
@@ -234,7 +238,6 @@ def tuple_add(x, y):
     return x[0] + y[0], x[1] + y[1]
 
 
-
 class DropLineEdit(QLineEdit):  # support drag
     def __init__(self, parent=None):
         super(DropLineEdit, self).__init__(parent)
@@ -260,6 +263,7 @@ class DropLineEdit(QLineEdit):  # support drag
 
 if __name__ == "__main__":
     # restart_game("chs")
-    a = 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
-    restart_game('chs', a)
+    # a = 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
+    # restart_game('chs', a)
     # BattleAi.battle(None, None)
+    print(read_hero_data())

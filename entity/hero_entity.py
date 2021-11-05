@@ -49,6 +49,8 @@ class HeroEntity(BaseEntity):
         self.lettuce_has_manually_selected_ability = 0
         # 选了什么技能
         self.lettuce_ability_tile_visual_self_only = 0
+        # 敌方选择的技能entity_id
+        self.lettuce_ability_tile_visual_all_visible = 0
         # 技能选择的目标
         self.lettuce_selected_target = 0
         # 经验 55000满级
@@ -85,6 +87,7 @@ class HeroEntity(BaseEntity):
         self.lettuce_ability_tile_visual_self_only = self.get_tag(GameTag.LETTUCE_ABILITY_TILE_VISUAL_SELF_ONLY)
         self.lettuce_selected_target = self.get_tag(GameTag.LETTUCE_SELECTED_TARGET)
         self.lettuce_mercenary_experience = self.get_tag(GameTag.LETTUCE_MERCENARY_EXPERIENCE)
+        self.lettuce_ability_tile_visual_all_visible = self.get_tag(GameTag.LETTUCE_ABILITY_TILE_VISUAL_ALL_VISIBLE)
 
     def set_pos(self, x, y):
         self.pos = [x, y]
@@ -108,6 +111,20 @@ class HeroEntity(BaseEntity):
         total_dmg = dmg * BaseEntity.damage_advantage[self.lettuce_role][target.lettuce_role]
         target.damage += total_dmg
         return total_dmg
+
+    def get_available_spell_list(self):
+        spell_list = [s for s in self.spell if s.can_use()]
+        return spell_list
+
+    def get_spell_by_eid(self, entity_id):
+        spell = [x for x in self.spell if x.entity_id == entity_id][0]
+        return spell
+
+    def get_enemy_action(self):
+        return self.get_spell_by_eid(self.lettuce_ability_tile_visual_all_visible)
+
+    def is_alive(self):
+        return self.get_health() > 0
 
     def __str__(self):
         return {'card_id': self.card_id, 'atk': self.atk, 'health': self.get_health(),

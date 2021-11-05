@@ -5,6 +5,7 @@ import os
 from entity.game_entity import GameEntity
 from entity.hero_entity import HeroEntity
 from entity.spell_entity import SpellEntity
+from utils.util import HEROS
 
 
 class LogUtil:
@@ -49,6 +50,15 @@ class LogUtil:
             elif e.type == CardType.SPELL:
                 # print(e, e.tags, end='\n\n\n')
                 pass
+
+        for h in self.game_entity.my_hero:
+            if h.card_id[:-3] not in HEROS.keys():
+                continue
+            hd = HEROS[h.card_id[:-3]]
+            for i, s in enumerate(h.spell):
+                if i > 2:
+                    break
+                s.read_from_config(hd[3][i])
         return self.game_entity
 
     pass
@@ -63,6 +73,5 @@ if __name__ == '__main__':
 
     for i in game_entity.enemy_hero:
         print(i)
-
 
     pass
