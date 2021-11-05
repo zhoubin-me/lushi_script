@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import os
-import sys
 import re
+import sys
+
 import PyQt5
 import pinyin
 import yaml
@@ -28,7 +29,10 @@ class Ui(QMainWindow):
         uic.loadUi('ui/main_chs.ui', self)
 
         self.trans = QtCore.QTranslator()
-        self.ui_lang = 'chs'
+        if __import__('locale').getdefaultlocale()[0] == 'zh_CN':
+            self.ui_lang = 'chs'
+        else:
+            self.ui_lang = 'eng'
 
         self.boss_id = self.findChild(QSpinBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
@@ -102,6 +106,9 @@ class Ui(QMainWindow):
         self.load_config('config/default.yaml')
         self.show()
 
+        if self.ui_lang == 'eng':
+            self.tiggerEnglish()
+
     def tiggerEnglish(self):
         # load qm file
         self.trans.load("ui/main_eng")
@@ -124,8 +131,6 @@ class Ui(QMainWindow):
         heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
         for k, v in heros_sorted.items():
             self.hero_dropdown.addItem(v)
-
-
 
     def triggerChinese(self):
         self.trans.load("ui/main_chs")
@@ -268,7 +273,6 @@ class Ui(QMainWindow):
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.slm.setStringList(str_list)
 
-
     def save_config(self):
         self.config['boss_id'] = self.boss_id.value() - 1
         self.config['team_id'] = self.team_id.value() - 1
@@ -340,7 +344,7 @@ class Ui(QMainWindow):
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
-        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))    # cannot translate
+        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))  # cannot translate
         self.r321.setText(_translate("MainWindow", "3, 2, 1"))
         self.r312.setText(_translate("MainWindow", "3, 1, 2"))
         self.r213.setText(_translate("MainWindow", "2, 1, 3"))
