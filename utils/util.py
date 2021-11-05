@@ -1,3 +1,4 @@
+import sys
 import cv2
 import pyautogui
 from PIL import ImageGrab, Image
@@ -10,6 +11,7 @@ import win32api
 from PyQt5.QtWidgets import *
 import csv
 
+sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 PLATFORM = platform.system()
 
 
@@ -266,4 +268,5 @@ if __name__ == "__main__":
     # a = 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
     # restart_game('chs', a)
     # BattleAi.battle(None, None)
-    print(read_hero_data())
+    # print(read_hero_data())
+    pass
