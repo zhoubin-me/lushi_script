@@ -25,7 +25,7 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
-        uic.loadUi('main_chs.ui', self)
+        uic.loadUi('ui/main_chs.ui', self)
 
         self.trans = QtCore.QTranslator()
 

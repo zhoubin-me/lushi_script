@@ -71,7 +71,7 @@ HEROS = {'LETL_009H_01': ['格罗玛什·地狱咆哮', 'Grommash Hellscream'],
 
 if PLATFORM:
     import win32gui
-    from winguiauto import findTopWindow
+    from utils.winguiauto import findTopWindow
 
 
     def windowEnumerationHandler(hwnd, top_windows):

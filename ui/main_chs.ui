@@ -613,7 +613,7 @@
   <customwidget>
    <class>DropLineEdit</class>
    <extends>QLineEdit</extends>
-   <header>util</header>
+   <header>utils/util</header>
   </customwidget>
  </customwidgets>
  <resources/>
