@@ -7,7 +7,7 @@ import PyQt5
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtCore import QStringListModel
+from PyQt5.QtCore import QStringListModel, QThread, pyqtSignal
 from PyQt5.QtWidgets import *
 
 from utils.util import HEROS
@@ -22,7 +22,17 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
+class Thread_2(QThread):  
+    _signal =pyqtSignal()
+    def __init__(self,config):
+        super().__init__()
+        self.config = config
+    def run(self):
 
+        from lushi import run_from_gui
+        run_from_gui(self.config)
+        self._signal.emit()
+        
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
@@ -324,9 +334,10 @@ class Ui(QMainWindow):
 
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            from lushi import run_from_gui
+            
             self.save_config()
-            run_from_gui(self.config)
+            self.thread_2 =Thread_2(self.config)
+            self.thread_2.start()
         else:
             pass
 
