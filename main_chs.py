@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import os
 import sys
-
+import re
 import PyQt5
 import pinyin
 import yaml
@@ -28,6 +28,7 @@ class Ui(QMainWindow):
         uic.loadUi('ui/main_chs.ui', self)
 
         self.trans = QtCore.QTranslator()
+        self.ui_lang = 'chs'
 
         self.boss_id = self.findChild(QSpinBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
@@ -51,10 +52,15 @@ class Ui(QMainWindow):
         self.load.clicked.connect(self.loadButtonPressed)  # Click event
 
         self.hero_dropdown = self.findChild(QComboBox, 'hero_list')
-        heros_sorted = {k: v[0] for k, v in sorted(
-            HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
-        for k, v in heros_sorted.items():
-            self.hero_dropdown.addItem(v)
+        if self.ui_lang == 'chs':
+            heros_sorted = {k: v[0] for k, v in sorted(
+                HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
+            for k, v in heros_sorted.items():
+                self.hero_dropdown.addItem(v)
+        elif self.ui_lang == 'eng':
+            heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
+            for k, v in heros_sorted.items():
+                self.hero_dropdown.addItem(v)
 
         self.hero_list = self.findChild(QListView, 'heros')
         self.slm = QStringListModel([])
@@ -83,7 +89,12 @@ class Ui(QMainWindow):
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
 
-        self.skill_order = "1, 2, 3"
+        self.action_eng = self.findChild(QAction, 'actionEnglish')
+        self.action_eng.triggered.connect(self.tiggerEnglish)
+        self.action_chs = self.findChild(QAction, 'actionChinese')
+        self.action_chs.triggered.connect(self.triggerChinese)
+
+        self.spell_order = "1, 2, 3"
         self.bn_path_str = ""
         self.hs_path_str = ""
         self.hero_info = {}
@@ -91,19 +102,131 @@ class Ui(QMainWindow):
         self.load_config('config/default.yaml')
         self.show()
 
-    def _tigger_english(self):
+    def tiggerEnglish(self):
         # load qm file
-        self.trans.load("main_chs")
+        self.trans.load("ui/main_eng")
         # get app instance and load trans
         QApplication.instance().installTranslator(self.trans)
         # translate
         self.retranslateUi()
+        self.show()
+        self.ui_lang = 'eng'
+        hero_ordered = {k_: v_ for k_, v_ in sorted(self.hero_info.items(), key=lambda item: item[1][-1])}
+        str_list = []
+        for k, v in self.hero_info.items():
+            if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) > 0:
+                self.hero_info[k] = [v[1], v[0], v[2], v[3]]
+                str_list.append(v[1])
+        if len(str_list) > 0:
+            self.slm.setStringList(str_list)
+
+        self.hero_dropdown.clear()
+        heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
+        for k, v in heros_sorted.items():
+            self.hero_dropdown.addItem(v)
+
+
+
+    def triggerChinese(self):
+        self.trans.load("ui/main_chs")
+        # get app instance and load trans
+        QApplication.instance().installTranslator(self.trans)
+        # translate
+        self.retranslateUi()
+        self.show()
+        self.ui_lang = 'chs'
+        hero_ordered = {k_: v_ for k_, v_ in sorted(self.hero_info.items(), key=lambda item: item[1][-1])}
+        str_list = []
+        for k, v in hero_ordered.items():
+            if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) == 0:
+                self.hero_info[k] = [v[1], v[0], v[2], v[3]]
+                str_list.append(v[1])
+        if len(str_list) > 0:
+            self.slm.setStringList(str_list)
+
+        self.hero_dropdown.clear()
+        heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][0])}
+        for k, v in heros_sorted.items():
+            self.hero_dropdown.addItem(v)
 
     def loadButtonPressed(self):
         load_path = QtWidgets.QFileDialog.getOpenFileName(self, "Load Config", "", "YAML Config(*.yaml)")[0]
         if load_path == '':
             load_path = 'config/default.yaml'
         self.load_config(load_path)
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    def on_hero_clicked(self, index):
+        self.hero_index = index.row()
+        str_list = self.slm.stringList()
+        if 0 <= self.hero_index < len(str_list):
+            name = str_list[self.hero_index]
+            for k, v in self.hero_info.items():
+                if v[0] == name:
+                    self.current_order.setText(self.hero_info[k][2])
+                    break
+
+    def on_load_path_click_hs(self):
+        self.hs_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Hearthstone.exe')[0]
+        if len(self.hs_path_str) > 0:
+            self.hs_path.setText(self.hs_path_str)
+
+    def on_load_path_click_bn(self):
+        self.bn_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Battle.net.exe')[0]
+        if len(self.bn_path_str) > 0:
+            self.bn_path.setText(self.bn_path_str)
+
+    def on_radio_click(self):
+        bt = self.sender()
+        if bt.isChecked():
+            self.spell_order = bt.text()
+
+    def upButtonPressed(self):
+        str_list = self.slm.stringList()
+        if 1 <= self.hero_index < len(str_list):
+            str_list[self.hero_index], str_list[self.hero_index - 1] = str_list[self.hero_index - 1], str_list[
+                self.hero_index]
+            self.slm.setStringList(str_list)
+
+    def downButtonPressed(self):
+        str_list = self.slm.stringList()
+        if 0 <= self.hero_index < len(str_list) - 1:
+            str_list[self.hero_index], str_list[self.hero_index + 1] = str_list[self.hero_index + 1], str_list[
+                self.hero_index]
+            self.slm.setStringList(str_list)
+
+    def delButtonPressed(self):
+        str_list = self.slm.stringList()
+        if 0 <= self.hero_index < len(str_list):
+            name = str_list.pop(self.hero_index)
+            self.slm.setStringList(str_list)
+            for k, v in self.hero_info.items():
+                if v[0] == name:
+                    del self.hero_info[k]
+                    break
+
+    def modifyButtonPressed(self):
+        str_list = self.slm.stringList()
+        if 0 <= self.hero_index < len(str_list):
+            name = str_list[self.hero_index]
+            for k, v in self.hero_info.items():
+                if v[0] == name:
+                    self.hero_info[k][2] = self.spell_order
+                    self.current_order.setText(self.spell_order)
+                    break
+
+    def addButtonPressed(self):
+        str_list = self.slm.stringList()
+        if self.hero_dropdown.currentText() not in str_list and len(str_list) < 6:
+            str_list.append(self.hero_dropdown.currentText())
+            kv = [(k, v) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
+            idx, (name_chs, name_eng) = kv[0]
+            index = len(str_list) - 1
+            if self.ui_lang == 'chs':
+                self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index]
+            elif self.ui_lang == 'eng':
+                self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index]
+            self.slm.setStringList(str_list)
 
     def load_config(self, path):
         try:
@@ -129,84 +252,22 @@ class Ui(QMainWindow):
                 self.early_stop.setChecked(v)
             if k == 'lang':
                 self.lang.setCurrentText(v)
+            if k == 'ui_lang':
+                self.ui_lang = v
+                if v == 'chs':
+                    self.triggerChinese()
+                elif v == 'eng':
+                    self.tiggerEnglish()
             if k == 'hero':
                 hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][-1])}
                 self.hero_info = {}
                 for k, v in hero_ordered.items():
-                    self.hero_info[k] = [v[0], v[1], v[2]]
+                    self.hero_info[k] = [v[0], v[1], v[2], v[3]]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.slm.setStringList(str_list)
 
-    @QtCore.pyqtSlot(QtCore.QModelIndex)
-    def on_hero_clicked(self, index):
-        self.hero_index = index.row()
-        str_list = self.slm.stringList()
-        if 0 <= self.hero_index < len(str_list):
-            hero_name = str_list[self.hero_index]
-            for k, v in self.hero_info.items():
-                if v[0] == hero_name:
-                    self.current_order.setText(self.hero_info[k][-1])
-                    break
 
-    def on_load_path_click_hs(self):
-        self.hs_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Hearthstone.exe')[0]
-        if len(self.hs_path_str) > 0:
-            self.hs_path.setText(self.hs_path_str)
-
-    def on_load_path_click_bn(self):
-        self.bn_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Battle.net.exe')[0]
-        if len(self.bn_path_str) > 0:
-            self.bn_path.setText(self.bn_path_str)
-
-    def on_radio_click(self):
-        bt = self.sender()
-        if bt.isChecked():
-            self.skill_order = bt.text()
-
-    def upButtonPressed(self):
-        str_list = self.slm.stringList()
-        if 1 <= self.hero_index < len(str_list):
-            str_list[self.hero_index], str_list[self.hero_index - 1] = str_list[self.hero_index - 1], str_list[
-                self.hero_index]
-            self.slm.setStringList(str_list)
-
-    def downButtonPressed(self):
-        str_list = self.slm.stringList()
-        if 0 <= self.hero_index < len(str_list) - 1:
-            str_list[self.hero_index], str_list[self.hero_index + 1] = str_list[self.hero_index + 1], str_list[
-                self.hero_index]
-            self.slm.setStringList(str_list)
-
-    def delButtonPressed(self):
-        str_list = self.slm.stringList()
-        if 0 <= self.hero_index < len(str_list):
-            name_chs = str_list.pop(self.hero_index)
-            self.slm.setStringList(str_list)
-            for k, v in self.hero_info.items():
-                if v[0] == name_chs:
-                    del self.hero_info[k]
-                    break
-
-    def modifyButtonPressed(self):
-        str_list = self.slm.stringList()
-        if 0 <= self.hero_index < len(str_list):
-            name_chs = str_list[self.hero_index]
-            for k, v in self.hero_info.items():
-                if v[0] == name_chs:
-                    self.hero_info[k][-1] = self.skill_order
-                    self.current_order.setText(self.skill_order)
-                    break
-
-    def addButtonPressed(self):
-        str_list = self.slm.stringList()
-        if self.hero_dropdown.currentText() not in str_list and len(str_list) <= 6:
-            str_list.append(self.hero_dropdown.currentText())
-            kv = [(k, v) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
-            idx, (name_chs, name_eng) = kv[0]
-            self.hero_info[idx] = [name_chs, name_eng, self.skill_order]
-            self.slm.setStringList(str_list)
-
-    def save_cfg(self):
+    def save_config(self):
         self.config['boss_id'] = self.boss_id.value() - 1
         self.config['team_id'] = self.team_id.value() - 1
         self.config['reward_count'] = self.reward_count.value()
@@ -218,6 +279,7 @@ class Ui(QMainWindow):
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
         self.config['longest_waiting'] = 80
+        self.config['ui_lang'] = self.ui_lang
         new_hero_info = {}
         hero_order_list = self.slm.stringList()
         for k, v in self.hero_info.items():
@@ -226,7 +288,7 @@ class Ui(QMainWindow):
         self.config['hero'] = new_hero_info
 
     def saveButtonPressed(self):
-        self.save_cfg()
+        self.save_config()
         save_path = QtWidgets.QFileDialog.getSaveFileName(self, 'Save To', "", "YAML Config (*.yaml)")[0]
         try:
             with open(save_path, 'w', encoding='utf-8') as f:
@@ -238,7 +300,7 @@ class Ui(QMainWindow):
     def runButtonPressed(self):
         hero_text = ""
         for k, v in self.hero_info.items():
-            hero_text += f"\t{v[0]}:\t{v[-1]}\n"
+            hero_text += f"\t{v[0]}:\t{v[2]}\n"
 
         cfm_text = f'''
             Current Setting:\n
@@ -257,7 +319,7 @@ class Ui(QMainWindow):
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
             from lushi import run_from_gui
-            self.save_cfg()
+            self.save_config()
             run_from_gui(self.config)
         else:
             pass
@@ -276,7 +338,7 @@ class Ui(QMainWindow):
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
-        # self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))    # cannot translate
+        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))    # cannot translate
         self.r321.setText(_translate("MainWindow", "3, 2, 1"))
         self.r312.setText(_translate("MainWindow", "3, 1, 2"))
         self.r213.setText(_translate("MainWindow", "2, 1, 3"))
