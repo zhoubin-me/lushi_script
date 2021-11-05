@@ -44,6 +44,9 @@ class HeroEntity(BaseEntity):
             SpellSchool.PHYSICAL_COMBAT: 0
         }
 
+        # 受伤触发器
+        self.damage_trigger: List[SpellEntity] = []
+
         self.deathrattle = 0
         # 是否选择了技能
         self.lettuce_has_manually_selected_ability = 0
@@ -125,6 +128,14 @@ class HeroEntity(BaseEntity):
 
     def is_alive(self):
         return self.get_health() > 0
+
+    def got_damage(self, damage):
+        self.damage += damage
+        for spell in self.damage_trigger:
+            spell.damage_trigger(self)
+
+    def is_adjacent(self, target):
+        return abs(self.zone_position - target.zone_position) <= 1
 
     def __str__(self):
         return {'card_id': self.card_id, 'atk': self.atk, 'health': self.get_health(),

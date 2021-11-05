@@ -2,6 +2,7 @@ import itertools
 import copy
 from typing import List
 
+from entity.action import Action
 from entity.game_entity import GameEntity
 from entity.hero_entity import HeroEntity
 from entity.spell_entity import SpellEntity
@@ -75,10 +76,12 @@ class BattleAi:
         pass
 
     def simulate_battle(self, action_list):
-        all_action_list = copy.deepcopy(action_list)
-        all_action_list.extend(self.game.get_enemy_action())
-        all_action_list.sort(key=lambda x: x['spell'])
         _game = copy.deepcopy(game)
+        all_action_list = copy.deepcopy(action_list)
+        _game.my_action_list = copy.deepcopy(action_list)
+        all_action_list.extend(_game.get_enemy_action())
+        all_action_list.sort()
+        _game.all_action_list = all_action_list
         for x in all_action_list:
             if not x['hero'].is_alive():
                 continue
@@ -107,11 +110,11 @@ class BattleAi:
                 if spell.range == '1':
                     for enemy in self.game.enemy_hero:
                         # 对哪个目标使用哪个技能
-                        result.append({'hero': hero, 'target': enemy, 'spell': spell})
+                        result.append(Action(hero=hero, spell=spell, target=enemy))
                         self.dfs(hero_id + 1, result)
                         result.pop()
                 else:
-                    result.append({'hero': hero, 'target': None, 'spell': spell})
+                    result.append(Action(hero=hero, spell=spell, target=None))
                     self.dfs(hero_id + 1, result)
                     result.pop()
             else:

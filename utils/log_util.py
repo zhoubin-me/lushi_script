@@ -36,6 +36,7 @@ class LogUtil:
                 pass
             elif e.type == CardType.MINION:
                 minion = HeroEntity(e)
+                minion.set_game(self.game_entity)
                 # print(e, e.tags, end='\n\n\n')
                 self.game_entity.add_hero(minion)
                 pass
@@ -43,6 +44,7 @@ class LogUtil:
             elif e.type == CardType.LETTUCE_ABILITY:
                 # print(e, e.tags, end='\n\n\n')
                 spell_entity = SpellEntity(e)
+                spell_entity.set_game(self.game_entity)
                 if spell_entity.lettuce_ability_owner in self.game_entity.hero_entities.keys():
                     self.game_entity.hero_entities[spell_entity.lettuce_ability_owner].add_spell(spell_entity)
                 pass

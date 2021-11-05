@@ -16,6 +16,7 @@ class BaseEntity:
         # LETTUCE_CONTROLLER 2:bot  3:my
         self.controller = 2
         self.entity = entity
+        self.game_entity = None
 
     def get_tag(self, tag_name):
         return self.entity.tags.get(tag_name) or 0
@@ -27,6 +28,9 @@ class BaseEntity:
         self.type = self.get_tag(GameTag.CARDTYPE)
         self.zone = self.get_tag(GameTag.ZONE)
         self.controller = self.get_tag(GameTag.LETTUCE_CONTROLLER)
+
+    def set_game(self, game):
+        self.game_entity = game
 
     def __str__(self) -> str:
         return self.__dict__.__str__()
