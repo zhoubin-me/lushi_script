@@ -8,65 +8,35 @@ import psutil
 import time
 import win32api
 from PyQt5.QtWidgets import *
+import csv
 
 PLATFORM = platform.system()
 
-HEROS = {'LETL_009H_01': ['格罗玛什·地狱咆哮', 'Grommash Hellscream'],
-         'LETL_006H_01': ['加拉克苏斯大王', 'Lord Jaraxxus'],
-         'BARL_005H_02': ['沃金', "Vol'jin"],
-         'LETL_012H_01': ['瓦里安·乌瑞恩', 'Varian Wrynn'],
-         'LETL_024H_01': ['尤朵拉', 'Eudora'],
-         'LETL_032H_01': ['光明之翼', 'Brightwing'],
-         'LETL_037H_01': ['暴龙王克鲁什', 'King Krush'],
-         'LETL_030H_01': ['迦顿男爵', 'Baron Geddon'],
-         'SWL_26H_03': ['迪亚波罗', 'Diablo'],
-         'LETL_040H_01': ['塔姆辛·罗姆', 'Tamsin Roame'],
-         'LETL_036H_01': ['古夫·符文图腾', 'Guff Runetotem'],
-         'BARL_025H_01': ['萨尔', 'Thrall'],
-         'LETL_014H_01': ['先知维伦', 'Prophet Velen'],
-         'LETL_811H': ['厨师曲奇', 'Cooki'],
-         'BARL_007H_01': ['安娜科德拉', 'Lady Anacondra'],
-         'LETL_038H_02': ['穆克拉', 'King Mukla'],
-         'LETL_015H_01': ['雷克萨', 'Rexxar'],
-         'SWL_01H_01': ['安东尼达斯', 'Antonidas'],
-         'LETL_034H_01': ['凯恩·血蹄', 'Cairne Bloodhoof'],
-         'SWL_10H_02': ['安度因·乌瑞恩', 'Anduin Wrynn'],
-         'LETL_028H_02': ['拉格纳罗斯', 'Ragnaros'],
-         'LT21_01H_01': ['艾德温，迪菲亚首脑', 'Edwin, Defias Kingpin'],
-         'SWL_13H_01': ['乌瑟尔', 'Uther'],
-         'BARL_010H_03': ['古尔丹', "Gul'dan"],
-         'BARL_017H_01': ['玛法里奥·怒风', 'Malfurion Stormrage'],
-         'LETL_020H_01': ['凯瑞尔·罗姆', 'Cariel Roame'],
-         'BARL_024H_01': ['剑圣萨穆罗', 'Blademaster Samuro'],
-         'BARL_008H_02': ['穆坦努斯', 'Mutanus'],
-         'LETL_029H_01': ['布鲁坎', "Bru'kan"],
-         'BARL_023H_01': ['拉索利安', 'Rathorian'],
-         'LETL_027H_02': ['神谕者摩戈尔', 'Morgl the Oracle'],
-         'BARL_009H_01': ['指挥官沃恩', 'War Master Voone'],
-         'LT21_03H_01': ['斯尼德', 'Sneed'],
-         'BARL_002H_01': ['萨鲁法尔', 'Saurfang'],
-         'LETL_001H_02': ['希尔瓦娜斯·风行者', 'Sylvanas Windrunner'],
-         'SWL_25H_01': ['吉安娜·普罗德摩尔', 'Jaina Proudmoore'],
-         'LETL_010H_01': ['斯卡布斯·刀油', 'Scabbs Cutterbutter'],
-         'BARL_013H_01': ['加尔鲁什·地狱咆哮', 'Garrosh Hellscream'],
-         'LT21_04H_01': ['重拳先生', 'Mr. Smite'], 'LETL_039H_02': ['塔维什·雷矛', 'Tavish Stormpike'],
-         'BARL_016H_01': ['泰兰德', 'Tyrande'],
-         'LETL_005H_01': ['米尔豪斯·法力风暴', 'Millhouse Manastorm'],
-         'LETL_031H_02': ['阿莱克丝塔萨', 'Alexstrasza'],
-         'LETL_011H_01': ['娜塔莉·塞林', 'Natalie Seline'],
-         'BARL_012H_01': ['玛诺洛斯', 'Mannoroth'],
-         'LETL_016H_02': ['洛卡拉', 'Rokara'],
-         'LETL_021H_02': ['泽瑞拉', 'Xyrella'],
-         'LETL_002H_02': ['提里奥·弗丁', 'Tirion Fordring'],
-         'LETL_041H_03': ['巫妖王', 'The Lich King'],
-         'LETL_007H_01': ['库尔特鲁斯·陨烬', 'Kurtrus Ashfallen'],
-         'LETL_033H_01': ['格鲁尔', 'Gruul'],
-         'SWL_06H_01': ['考内留斯·罗姆', 'Cornelius Roame'],
-         'LETL_017H_01': ['瓦尔登·晨拥', 'Varden Dawngrasp'],
-         'SWL_14H_02': ['闪狐', 'Blink Fox'],
-         'LETL_003H_02': ['伊利丹·怒风', 'Illidan Stormrage'],
-         'LETL_026H_01': ['老瞎眼', 'Old Murk-Eye']}
+def read_hero_data():
+    main_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    path = os.path.join(main_path, 'resource', 'hero_data.csv')
+    heros = {}
+    with open(path, 'r', encoding='utf-8') as f:
+        reader = csv.reader(f)
+        count = 0
+        for row in reader:
+            if count > 0:
+                # print(row)
+                num_id, name_eng, race, name_chs, sn_id, damage1, target1, speed1, type1, others1,\
+                    damage2, target2, speed2, type2, others2, \
+                    damage3, target3, speed3, type3, others3 = row
 
+                spells = {
+                    0: {'damage': damage1, 'range': target1, 'speed': speed1, 'type': type1, 'others': others1},
+                    1: {'damage': damage2, 'range': target2, 'speed': speed2, 'type': type2, 'others': others2},
+                    2: {'damage': damage3, 'range': target3, 'speed': speed3, 'type': type3, 'others': others3},
+                }
+
+                heros[sn_id[:-3]] = [name_chs, name_eng[1:-1], race[1:-1], spells]
+            count += 1
+    return heros
+
+HEROS = read_hero_data()
 
 
 if PLATFORM:

@@ -113,7 +113,7 @@ class Ui(QMainWindow):
         self.ui_lang = 'eng'
         hero_ordered = {k_: v_ for k_, v_ in sorted(self.hero_info.items(), key=lambda item: item[1][-1])}
         str_list = []
-        for k, v in self.hero_info.items():
+        for k, v in hero_ordered.items():
             if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) > 0:
                 self.hero_info[k] = [v[1], v[0], v[2], v[3]]
                 str_list.append(v[1])
@@ -135,7 +135,7 @@ class Ui(QMainWindow):
         self.retranslateUi()
         self.show()
         self.ui_lang = 'chs'
-        hero_ordered = {k_: v_ for k_, v_ in sorted(self.hero_info.items(), key=lambda item: item[1][-1])}
+        hero_ordered = {k_: v_ for k_, v_ in sorted(self.hero_info.items(), key=lambda item: item[1][1])}
         str_list = []
         for k, v in hero_ordered.items():
             if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) == 0:
@@ -145,7 +145,9 @@ class Ui(QMainWindow):
             self.slm.setStringList(str_list)
 
         self.hero_dropdown.clear()
-        heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][0])}
+        heros_sorted = {k: v[0] for k, v in sorted(
+            HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
+
         for k, v in heros_sorted.items():
             self.hero_dropdown.addItem(v)
 

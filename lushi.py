@@ -66,7 +66,7 @@ class Agent:
         self.heros = {}
         for k, v in hero_info.items():
             spell_order = [int(x)-1 for x in v[2].split(',')]
-            self.heros[k[:-3]] = [v[0],  v[1], spell_order, v[3]]
+            self.heros[k] = [v[0],  v[1], spell_order, v[3]]
             self.skill_seq_cache[k] = v[-2]
         del cfg['hero']
         cfg['hs_log'] = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')

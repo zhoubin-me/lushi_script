@@ -5,32 +5,32 @@ confidence: 0.8
 delay: 0.5
 early_stop: false
 hero:
-  LETL_009H_01:
+  LETL_009H:
   - "\u683C\u7F57\u739B\u4EC0\xB7\u5730\u72F1\u5486\u54EE"
   - Grommash Hellscream
   - 1, 2, 3
   - 0
-  LETL_015H_01:
+  LETL_015H:
   - "\u96F7\u514B\u8428"
   - Rexxar
   - 1, 2, 3
   - 5
-  LETL_017H_01:
+  LETL_017H:
   - "\u74E6\u5C14\u767B\xB7\u6668\u62E5"
   - Varden Dawngrasp
   - 1, 2, 3
   - 2
-  LETL_037H_01:
+  LETL_037H:
   - "\u66B4\u9F99\u738B\u514B\u9C81\u4EC0"
   - King Krush
   - 1, 2, 3
   - 3
-  LETL_038H_02:
+  LETL_038H:
   - "\u7A46\u514B\u62C9"
   - King Mukla
   - 1, 2, 3
   - 4
-  SWL_25H_01:
+  SWL_25H:
   - "\u5409\u5B89\u5A1C\xB7\u666E\u7F57\u5FB7\u6469\u5C14"
   - Jaina Proudmoore
   - 1, 2, 3
