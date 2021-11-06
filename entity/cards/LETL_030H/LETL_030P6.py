@@ -19,7 +19,6 @@ class LETL_030P6(SpellEntity):
 
     def play(self, game, hero, target):
         target.damage_trigger.append(self)
-        pass
 
     def damage_trigger(self, game, target):
         power = game.get_spell_power(self.spell_school, target.own)

@@ -10,6 +10,101 @@ from hearthstone.mercenaryxml import load
 import requests
 
 dbfData = {}
+cardData = {}
+
+
+def write_spell_init(folder_path, ids_list, hname):
+    with open(os.path.join(folder_path, "__init__.py"), 'w+', encoding='utf-8') as f:
+        muban = """# -*- coding: utf-8 -*-
+"""
+        f.write(muban)
+        for id in ids_list:
+            f.write("import entity.cards." + hname + '.' + id + '\n')
+
+        pass
+    pass
+
+
+def write_cards_init(sim_path, cardId_list):
+    with open(os.path.join(sim_path, "__init__.py"), 'w+', encoding='utf-8') as f:
+        muban = """# -*- coding: utf-8 -*-
+"""
+        f.write(muban)
+        for idd in cardId_list:
+            f.write("import entity.cards." + idd + '\n')
+
+
+def file_replace(file, old_str, new_str):
+    file_data = ""
+    with open(file, "r", encoding="utf-8") as f:
+        _ = f.read()
+        if 'pass' not in _:
+            return
+        f.seek(0)
+        for line in f:
+            if old_str in line:
+                line = line.replace(old_str, new_str)
+            file_data += line
+    with open(file, "w", encoding="utf-8") as f:
+        f.write(file_data)
+
+
+def write_spell(file_path, name):
+    with open(file_path, 'a+', encoding='utf-8') as f:
+        f.seek(0)
+    content = f.read()
+    if "range" in content:
+        return
+    muban = f"""# -*- coding: utf-8 -*-
+from hearthstone.entities import Entity
+
+from entity.spell_entity import SpellEntity
+
+
+class {name[:-3]}(SpellEntity):
+    \"\"\"
+        {cardData[name]['name']}
+        {cardData[name]['text']}
+    \"\"\"
+
+    def __init__(self, entity: Entity):
+        super().__init__(entity)
+        self.damage = 0
+        self.range = 1
+
+    def play(self, hero, target):
+        pass
+
+    """
+    f.write(muban)
+
+
+def write_equip(file_path, name):
+    with open(file_path, 'a+', encoding='utf-8') as f:
+        f.seek(0)
+        content = f.read()
+        if "class" in content:
+            return
+        muban = f"""# -*- coding: utf-8 -*-
+from hearthstone.entities import Entity
+
+from entity.spell_entity import SpellEntity
+
+
+class {name[:-3]}(SpellEntity):
+    \"\"\"
+        {cardData[name]['name']}
+        {cardData[name]['text']}
+    \"\"\"
+
+    def __init__(self, entity: Entity):
+        super().__init__(entity)
+
+    def equip(self, hero):
+        pass
+
+"""
+        f.write(muban)
 
 
 def loadjson():
@@ -42,7 +137,6 @@ def loadjson():
     cardData_temp = json.loads(cardJson_data)
     assert cardData_temp is not None
     print("loaded card_json successfully!")
-    cardData = {}
     for c in cardData_temp:
         cardData[c['id']] = c
         dbfData[c['dbfId']] = c
@@ -88,34 +182,9 @@ def run():
                 name = cardData[id]['id']
                 print(cardData[name]['name'])
                 ids_list.append(name[:-3])
-        #                 file_path = os.path.join(folder_path, name[:-3] + '.py')
-        #                 with open(file_path, 'a+', encoding='utf-8') as f:
-        #                     f.seek(0)
-        #                     content = f.read()
-        #                     if "range" in content:
-        #                         continue
-        #                     muban = f"""# -*- coding: utf-8 -*-
-        # from hearthstone.entities import Entity
-        #
-        # from entity.spell_entity import SpellEntity
-        #
-        #
-        # class {name[:-3]}(SpellEntity):
-        #     \"\"\"
-        #         {cardData[name]['name']}
-        #         {cardData[name]['text']}
-        #     \"\"\"
-        #
-        #     def __init__(self, entity: Entity):
-        #         super().__init__(entity)
-        #         self.damage = 0
-        #         self.range = 1
-        #
-        #     def play(self, hero, target):
-        #         pass
-        #
-        # """
-        #                     f.write(muban)
+                file_path = os.path.join(folder_path, name[:-3] + '.py')
+                # write_spell(file_path, name)
+                file_replace(file_path, 'self.range = 1', 'self.range = 0')
 
         for equ in m.equipment:
             eq = equ['tiers'][-1]['dbf_id']
@@ -125,50 +194,10 @@ def run():
             name = cardData[id]['id']
             print(cardData[id]['name'])
             ids_list.append(name[:-3])
+            file_path = os.path.join(folder_path, name[:-3] + '.py')
+            # write_equip(file_path, name)
 
-    #             file_path = os.path.join(folder_path, name[:-3] + '.py')
-    #             with open(file_path, 'a+', encoding='utf-8') as f:
-    #                 f.seek(0)
-    #                 content = f.read()
-    #                 if "class" in content:
-    #                     continue
-    #                 muban = f"""# -*- coding: utf-8 -*-
-    # from hearthstone.entities import Entity
-    #
-    # from entity.spell_entity import SpellEntity
-    #
-    #
-    # class {name[:-3]}(SpellEntity):
-    #     \"\"\"
-    #         {cardData[name]['name']}
-    #         {cardData[name]['text']}
-    #     \"\"\"
-    #
-    #     def __init__(self, entity: Entity):
-    #         super().__init__(entity)
-    #
-    #     def equip(self, hero):
-    #         pass
-    #
-    #             """
-    #                 f.write(muban)
-        with open(os.path.join(folder_path, "__init__.py"), 'w+', encoding='utf-8') as f:
-            muban = """# -*- coding: utf-8 -*-
-"""
-            f.write(muban)
-            for id in ids_list:
-                f.write("import entity.cards." + hname + '.' + id + '\n')
-
-            pass
     pass
-    with open(os.path.join(sim_path, "__init__.py"), 'w+', encoding='utf-8') as f:
-        muban = """# -*- coding: utf-8 -*-
-"""
-        f.write(muban)
-        for id in cardId_list:
-            f.write("import entity.cards." + id + '\n')
-
-        pass
 
 
 if __name__ == '__main__':

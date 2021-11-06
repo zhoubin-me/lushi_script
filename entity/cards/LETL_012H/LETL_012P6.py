@@ -13,7 +13,7 @@ class LETL_012P6(SpellEntity):
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
-        self.range = 1
+        self.range = 0
 
     def play(self, game, hero, target):
         pass
