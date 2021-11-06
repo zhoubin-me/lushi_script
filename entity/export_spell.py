@@ -66,7 +66,6 @@ def run():
             did = i
             break
         # print(dbfData[id])
-        # if not id.startswith('LETL_030H'):
         #     continue
         id = dbfData[did]['id']
         print(cardData[id]['name'])
@@ -93,7 +92,7 @@ def run():
                 with open(file_path, 'a+', encoding='utf-8') as f:
                     f.seek(0)
                     content = f.read()
-                    if "class" in content:
+                    if "range" in content:
                         continue
                     muban = f"""# -*- coding: utf-8 -*-
 from hearthstone.entities import Entity
@@ -110,6 +109,7 @@ class {name[:-3]}(SpellEntity):
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
+        self.range = 1
 
     def play(self, hero, target):
         pass

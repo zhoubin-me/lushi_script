@@ -14,6 +14,7 @@ class LETL_453(SpellEntity):
         super().__init__(entity)
 
     def equip(self, hero):
-        pass
+        spell = hero.get_spell_by_cid('LETL_450')
+        spell.damage += 4
 
             

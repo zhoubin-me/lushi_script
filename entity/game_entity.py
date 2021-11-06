@@ -105,6 +105,18 @@ class GameEntity(BaseEntity):
                 if action.spell.spell_school == spell_school:
                     return True
 
+    def combo_count(self, spell: SpellEntity, spell_school=None, own=True):
+        action_list = self.get_action_list(own)
+        if len(action_list) <= 0:
+            return 0
+        cnt = 0
+        for action in action_list:
+            if action.spell.entity_id == spell.entity_id:
+                return cnt
+            # 如果法术类型一样或者不要求特定法术类型
+            if action.spell.spell_school == spell_school or spell_school is None:
+                cnt += 1
+
     def get_enemy_action(self):
         if len(self.enemy_action_list):
             return self.enemy_action_list
@@ -125,6 +137,17 @@ class GameEntity(BaseEntity):
         if len(hero_list) <= 0:
             return None
         return min(hero_list, key=lambda x: x.get_health())
+
+    def find_max_health(self, own=True):
+        """
+        查找敌我场上生命值最高的佣兵, 默认我方
+        Args:
+            own: 是否是我方场上
+        """
+        hero_list = self.my_hero if own else self.enemy_hero
+        if len(hero_list) <= 0:
+            return None
+        return max(hero_list, key=lambda x: x.get_health())
 
     def play(self, hero: HeroEntity, spell: SpellEntity, target: HeroEntity):
         power = self.get_spell_power(spell.spell_school)

@@ -6,13 +6,14 @@ from entity.spell_entity import SpellEntity
 
 class LETLT_060(SpellEntity):
     """
-        刺骨之寒
-        <b>攻击</b>一个敌人，并对其相邻敌人造成$3点伤害。<b>冻结</b>其中在本回合中未使用过火焰技能的敌人。
+        饥饿寒冰
+        所有友方角色会<b>冻结</b>伤害的敌人。<b>火焰伤害</b>会终结此效果。
     """
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
+        self.range = 1
 
     def play(self, hero, target):
         pass

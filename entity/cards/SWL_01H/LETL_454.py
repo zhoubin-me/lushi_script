@@ -14,6 +14,8 @@ class LETL_454(SpellEntity):
         super().__init__(entity)
 
     def equip(self, hero):
-        pass
+        spell = hero.get_spell_by_cid('LETL_452')
+
+        spell.trigger_twice = 1
 
             

@@ -6,13 +6,14 @@ from entity.spell_entity import SpellEntity
 
 class LETLT_037(SpellEntity):
     """
-        怒爪
-        获得+0攻击力，持续1回合，并攻击一个敌人。
+        闪电链
+        对一个敌人造成0点伤害。并随机在相邻的敌人身上弹跳两次。
     """
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
+        self.range = 1
 
     def play(self, hero, target):
         pass

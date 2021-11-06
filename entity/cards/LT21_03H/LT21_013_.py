@@ -13,6 +13,7 @@ class LT21_013_(SpellEntity):
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
+        self.range = 1
 
     def play(self, hero, target):
         pass

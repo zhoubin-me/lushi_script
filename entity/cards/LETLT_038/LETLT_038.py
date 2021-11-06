@@ -6,13 +6,14 @@ from entity.spell_entity import SpellEntity
 
 class LETLT_038(SpellEntity):
     """
-        图腾震击
-        对一个敌人造成0点伤害。
+        图腾召唤
+        随机召唤一个石爪图腾或治疗图腾。
     """
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
+        self.range = 1
 
     def play(self, hero, target):
         pass

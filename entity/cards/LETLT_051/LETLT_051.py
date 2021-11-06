@@ -6,13 +6,14 @@ from entity.spell_entity import SpellEntity
 
 class LETLT_051(SpellEntity):
     """
-        烈性难驯
-        随机对四到五个敌人造成$1-$3点伤害。
+        诡谲突击
+        <b>攻击</b>一个敌人，并使目标的攻击力变为你的。
     """
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
+        self.range = 1
 
     def play(self, hero, target):
         pass
