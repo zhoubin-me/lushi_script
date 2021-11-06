@@ -16,6 +16,6 @@ class LETL_030P3_M(SpellEntity):
         self.range = 1
 
     def play(self, game, hero, target):
-        power = self.game_entity.get_spell_power(self.spell_school, hero.own)
+        power = game.get_spell_power(self.spell_school, hero.own)
 
-        target.got_damage((self.damage + power) * self.damage_advantage[self.lettuce_role][target.lettuce_role])
+        target.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][target.lettuce_role])

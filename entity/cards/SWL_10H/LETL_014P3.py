@@ -17,4 +17,3 @@ class LETL_014P3(SpellEntity):
 
     def play(self, game, hero, target):
         pass
-

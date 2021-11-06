@@ -14,7 +14,7 @@ class LETL_446_M(SpellEntity):
         super().__init__(entity)
 
     def equip(self, hero):
-        # 不需要填效果
+        # 被动增加属性的不需要填效果
         pass
 
             

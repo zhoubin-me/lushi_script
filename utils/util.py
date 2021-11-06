@@ -268,5 +268,5 @@ if __name__ == "__main__":
     # restart_game('chs', a)
     # BattleAi.battle(None, None)
     # print(read_hero_data())
-    print(3 * False)
     pass
+

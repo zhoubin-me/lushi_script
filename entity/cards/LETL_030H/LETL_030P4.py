@@ -26,5 +26,5 @@ class LETL_030P4(SpellEntity):
         combo_damage = (self.combo_damage + power) * combo
         hero_list = game.get_hero_list(not hero.own())
         for h in hero_list:
-            h.got_damage(
-                (self.damage + combo_damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
+            h.got_damage(game, (self.damage + combo_damage + power) * self.damage_advantage[self.lettuce_role][
+                h.lettuce_role])

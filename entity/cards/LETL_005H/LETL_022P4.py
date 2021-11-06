@@ -12,9 +12,13 @@ class LETL_022P4(SpellEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.damage = 0
-        self.range = 1
+        self.damage = 15
+        self.range = -1
 
     def play(self, game, hero, target):
-        pass
+        power = game.get_spell_power(self.spell_school, hero.own)
+        for _ in range(3):
+            # 假设每次只打最高血量的佣兵
+            h = game.find_max_health(not hero.own())
+            h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
 

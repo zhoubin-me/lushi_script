@@ -21,12 +21,12 @@ class LETL_030P6(SpellEntity):
         target.damage_trigger.append(self)
         pass
 
-    def damage_trigger(self, target):
-        power = self.game_entity.get_spell_power(self.spell_school, target.own)
+    def damage_trigger(self, game, target):
+        power = game.get_spell_power(self.spell_school, target.own)
 
-        hero_list = self.game_entity.get_hero_list(target.own())
+        hero_list = game.get_hero_list(target.own())
         for h in hero_list:
             if target.is_adjacent(h):
-                h.got_damage(self.damage + power)
+                h.got_damage(game, self.damage + power)
                 if self.trigger_twice:
-                    h.got_damage(self.damage + power)
+                    h.got_damage(game, self.damage + power)

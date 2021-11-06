@@ -59,18 +59,18 @@ class SpellEntity(BaseEntity):
         return self.lettuce_current_cooldown == 0 and not self.lettuce_is_equpiment and not self.lettuce_is_treasure_card
 
     def play(self, game, hero, target):
-        power = self.game_entity.get_spell_power(self.spell_school)
+        power = game.get_spell_power(self.spell_school)
         # print(power)
         if target is None:
             range = self.range
             if range == 'A':
-                hero_list = self.game_entity.get_hero_list(not hero.own())
+                hero_list = game.get_hero_list(not hero.own())
                 for h in hero_list:
                     h.damage += (self.damage + power) * self.damage_advantage[hero.lettuce_role][h.lettuce_role]
                 pass
             elif int(range) < 0:
                 range = int(range)
-                hero_list = self.game_entity.get_hero_list(not hero.own())
+                hero_list = game.get_hero_list(not hero.own())
                 range = -range
                 hero_list = random.sample(hero_list, range)
                 for h in hero_list:
@@ -81,7 +81,7 @@ class SpellEntity(BaseEntity):
 
         pass
 
-    def damage_trigger(self, target):
+    def damage_trigger(self, game, target):
         # 受伤触发器
         pass
 

@@ -31,4 +31,4 @@ class LETL_452(SpellEntity):
         for _ in range(cnt):
             # 假设每次只打最高血量的佣兵
             h = game.find_max_health(not hero.own())
-            h.got_damage((self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
+            h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])

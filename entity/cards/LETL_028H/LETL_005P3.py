@@ -23,6 +23,6 @@ class LETL_005P3(SpellEntity):
             if target.is_adjacent(h):
                 # 是自己
                 if target.entity_id == h.entity_id:
-                    h.got_damage(self.damage + power)
+                    h.got_damage(game, self.damage + power)
                 else:
-                    h.got_damage(self.damage2 + power)
+                    h.got_damage(game, self.damage2 + power)

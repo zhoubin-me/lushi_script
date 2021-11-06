@@ -57,8 +57,10 @@ class LogUtil:
                     cid = e.card_id[:-3]
                     cname = 'ecards.' + hcid + '.' + cid + '.' + cid + '(e)'
                     # print(cname)
-
-                    spell_entity = eval(cname)
+                    try:
+                        spell_entity = eval(cname)
+                    except:
+                        spell_entity = SpellEntity(e)
                     # spell_entity = SpellEntity(e)
                     self.game_entity.hero_entities[owner].add_spell(spell_entity)
                 pass

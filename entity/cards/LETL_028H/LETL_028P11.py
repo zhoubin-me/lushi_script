@@ -24,4 +24,4 @@ class LETL_028P11(SpellEntity):
         action_list.sort()
         combo = game.can_combo(self, SpellSchool.FIRE, hero.own)
         damage = self.combo_damage if combo else self.damage
-        target.got_damage((damage + power) * self.damage_advantage[self.lettuce_role][target.lettuce_role])
+        target.got_damage(game, (damage + power) * self.damage_advantage[self.lettuce_role][target.lettuce_role])

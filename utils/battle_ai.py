@@ -70,9 +70,9 @@ class BattleAi:
     def battle2(self):
         self.reset()
         self.dfs(0, [])
-        # print(self.score)
-        # for x in self.action:
-        #     print(x.hero, x.target, x.spell, end='\n\n\n')
+        print(self.score)
+        for x in self.action:
+            print(x.hero, x.target, x.spell, end='\n\n\n')
         return self.action
 
     def simulate_battle(self, action_list):
@@ -95,7 +95,9 @@ class BattleAi:
         score = self.analyze_score(_game.my_hero, _game.enemy_hero)
         # print(score)
         if self.score < score:
-
+            if score == 942:
+                for h in _game.enemy_hero:
+                    print(h.get_health())
             self.score = score
             self.action = copy.deepcopy(action_list)
             self.action.sort()

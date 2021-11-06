@@ -19,13 +19,13 @@ class LETL_452_M(SpellEntity):
         self.range = -1
 
     def play(self, game, hero, target):
-        power = self.game_entity.get_spell_power(self.spell_school, hero.own)
+        power = game.get_spell_power(self.spell_school, hero.own)
         # 获取技能列表
-        action_list = self.game_entity.get_action_list(hero.own)
+        action_list = game.get_action_list(hero.own)
         action_list.sort()
         # 获取之前用过的技能类型次数
-        cnt = self.game_entity.combo_count(SpellSchool.FIRE, hero.own())
+        cnt = game.combo_count(SpellSchool.FIRE, hero.own())
         for _ in range(cnt):
             # 假设每次只打最高血量的佣兵
-            h = self.game_entity.find_max_health(not hero.own())
-            h.got_damage((self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
+            h = game.find_max_health(not hero.own())
+            h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
