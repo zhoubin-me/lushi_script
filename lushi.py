@@ -385,7 +385,13 @@ class Agent:
 
 def run_from_gui(cfg):
     print(cfg)
-    restart_game(cfg['lang'], cfg['bn_path'], kill_existing=False)
+    if cfg['lang'].startswith('EN'):
+        lang = 'eng'
+    elif cfg['lang'].startswith('ZH'):
+        lang = 'chs'
+    else:
+        lang = None
+    restart_game(lang, cfg['bn_path'], kill_existing=False)
     agent = Agent(cfg=cfg)
     agent.run()
 
