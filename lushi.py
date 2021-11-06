@@ -84,7 +84,34 @@ class Agent:
         return success, loc, rect
 
     def scan_surprise_loc(self, rect):
-        if self.basic.auto_tasks:
+        time.sleep(5)
+        print('Scanning surprise')
+        pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
+        tic = time.time()
+        while True:
+            success, loc, rect = self.check_in_screen('surprise')
+            if success:
+                print(f"Found surprise at start {loc}")
+                return loc
+            if self.check_in_screen('start_point')[0]:
+                break
+            if time.time() - tic > 10:
+                return
+
+        for _ in range(10):
+            pyautogui.scroll(60)
+            success, loc, rect = self.check_in_screen('surprise')
+            if success:
+                for _ in range(10):
+                    pyautogui.scroll(-60)
+                print(f"Found surprise during scrolling {loc}")
+                return loc
+
+        print("Did not found any surprise")
+        return None
+
+    def task_submit(self, rect):
+        if self.basic.auto_tasks and self.lang=="chs":
             time.sleep(5)
             #select Camp Fire
             pyautogui.click(tuple_add(rect, (641,669)))
@@ -122,32 +149,10 @@ class Agent:
             pyautogui.click(tuple_add(rect, (1438, 440)))
             #select first first boss of map
             pyautogui.click(tuple_add(rect, (654, 431)))
-        print('Scanning surprise')
-        pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
-        tic = time.time()
-        while True:
-            success, loc, rect = self.check_in_screen('surprise')
-            if success:
-                print(f"Found surprise at start {loc}")
-                return loc
-            if self.check_in_screen('start_point')[0]:
-                break
-            if time.time() - tic > 10:
-                return
-
-        for _ in range(10):
-            pyautogui.scroll(60)
-            success, loc, rect = self.check_in_screen('surprise')
-            if success:
-                for _ in range(10):
-                    pyautogui.scroll(-60)
-                print(f"Found surprise during scrolling {loc}")
-                return loc
-
-        print("Did not found any surprise")
-        return None
+        
 
     def start_battle(self):
+        time.sleep(5)
         print("Scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
@@ -280,6 +285,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, (self.locs.teams[x_id], self.locs.teams[3 + y_id])))
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
+                self.task_submit(rect)
                 surprise_loc = self.scan_surprise_loc(rect)
                 if surprise_loc is not None:
                     if surprise_loc[0] < self.locs.start_point[0]:
