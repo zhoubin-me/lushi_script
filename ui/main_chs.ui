@@ -322,7 +322,7 @@
           </property>
          </widget>
         </item>
-        <item row="4" column="3">
+        <item row="4" column="3" colspan="2">
          <widget class="QCheckBox" name="auto_tasks">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
@@ -336,7 +336,7 @@
            </font>
           </property>
           <property name="text">
-           <string>自动提交任务</string>
+           <string>自动提交任务（仅ZH-1600x900有效）</string>
           </property>
          </widget>
         </item>
