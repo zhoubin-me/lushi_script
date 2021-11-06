@@ -31,18 +31,22 @@ class LogUtil:
         for e in self.game.entities:
             # 以下为游戏状态
             if e.type == CardType.GAME:
+
                 # print(e, e.tags, end='\n\n\n')
+                # player = e.players
+                # for p in player:
+                #     print(p.tags, end='\n\n')
                 self.game_entity = GameEntity(e)
                 pass
             elif e.type == CardType.MINION:
                 minion = HeroEntity(e)
                 minion.set_game(self.game_entity)
-                # print(e, e.tags, end='\n\n\n')
+                print(e, e.tags, end='\n\n\n')
                 self.game_entity.add_hero(minion)
                 pass
             # 佣兵技能信息
             elif e.type == CardType.LETTUCE_ABILITY:
-                # print(e, e.tags, end='\n\n\n')
+                print(e, e.tags, end='\n\n\n')
                 spell_entity = SpellEntity(e)
                 spell_entity.set_game(self.game_entity)
                 if spell_entity.lettuce_ability_owner in self.game_entity.hero_entities.keys():
@@ -61,6 +65,7 @@ class LogUtil:
                 if i > 2:
                     break
                 s.read_from_config(hd[3][i])
+
         return self.game_entity
 
     pass

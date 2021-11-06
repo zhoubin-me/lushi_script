@@ -11,7 +11,7 @@ class HeroEntity(BaseEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.card_id = 0
+        self.card_id = '1'
         self.atk = 0
         self.max_health = 0
         # 受伤
@@ -105,6 +105,8 @@ class HeroEntity(BaseEntity):
         return self.controller == 3
 
     def add_spell(self, spell: SpellEntity):
+        if spell.lettuce_is_equpiment:
+            spell.equip(self)
         self.spell.append(spell)
 
     def get_health(self):
@@ -123,6 +125,10 @@ class HeroEntity(BaseEntity):
         spell = [x for x in self.spell if x.entity_id == entity_id][0]
         return spell
 
+    def get_spell_by_cid(self, card_id):
+        spell = [x for x in self.spell if x.compare_card_id(card_id)][0]
+        return spell
+
     def get_enemy_action(self):
         return self.get_spell_by_eid(self.lettuce_ability_tile_visual_all_visible)
 
@@ -136,6 +142,9 @@ class HeroEntity(BaseEntity):
 
     def is_adjacent(self, target):
         return abs(self.zone_position - target.zone_position) <= 1
+
+    def compare_card_id(self, card_id):
+        return self.card_id.startswith(card_id)
 
     def __str__(self):
         return {'card_id': self.card_id, 'atk': self.atk, 'health': self.get_health(),

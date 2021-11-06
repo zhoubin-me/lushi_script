@@ -4,7 +4,7 @@ from hearthstone.entities import Entity
 from entity.spell_entity import SpellEntity
 
 
-class LETL_030P4(SpellEntity):
+class LETL_030P6(SpellEntity):
     """
         活体炸弹
         选择一个敌人。如果目标在本回合中受到伤害，则对目标和相邻的角色造成12点伤害
@@ -15,7 +15,7 @@ class LETL_030P4(SpellEntity):
         self.damage = 12
         self.combo_damage = 8
         self.range = 1
-        self.trigger_twice = 1
+        self.trigger_twice = 0
 
     def play(self, hero, target):
         target.damage_trigger.append(self)

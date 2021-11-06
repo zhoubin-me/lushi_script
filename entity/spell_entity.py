@@ -10,7 +10,7 @@ class SpellEntity(BaseEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.card_id = 0
+        self.card_id = '0'
         self.cost = 0  # 技能速度
         self.lettuce_role = 4
         # 法术种类 NONE = 0 ARCANE = 1 FIRE = 2 FROST = 3 NATURE = 4 HOLY = 5 SHADOW = 6 FEL = 7 PHYSICAL_COMBAT = 8
@@ -83,8 +83,14 @@ class SpellEntity(BaseEntity):
 
     def damage_trigger(self, target):
         # 受伤触发器
-
         pass
+
+    def equip(self, hero):
+        # 装备
+        pass
+
+    def compare_card_id(self, card_id):
+        return self.card_id.startswith(card_id)
 
     def __lt__(self, other):
         return self.cost < other.cost or not self.combo

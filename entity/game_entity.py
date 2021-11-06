@@ -13,6 +13,8 @@ class GameEntity(BaseEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
+        # 0 我方场上信息 1敌方场上信息
+        self.players = self.entity.players
         # 所有英雄
         self.hero_entities: Dict[int, HeroEntity] = {}
         # 我方场上0, 1, 2号随从(只有战斗阶段才有数据)
@@ -34,12 +36,14 @@ class GameEntity(BaseEntity):
         self.turn = 0  # 回合数
         # 允许移动随从
         self.allow_move_minion = 0
+
         self.parse_entity()
 
     def parse_entity(self):
         if self.entity is None:
             return
         super(GameEntity, self).parse_entity()
+
         self.action_step_type = self.get_tag(GameTag.ACTION_STEP_TYPE)
         self.turn = self.get_tag(GameTag.TURN)
         self.allow_move_minion = self.get_tag(GameTag.ALLOW_MOVE_MINION)
@@ -63,12 +67,24 @@ class GameEntity(BaseEntity):
         self.enemy_hero.sort(key=lambda x: x.zone_position)
 
     def get_spell_power(self, spell_school: SpellSchool, own=True):
-
-        power_list = [h.spellpower[spell_school] for h in self.my_hero] if own \
-            else [h.spellpower[spell_school] for h in self.enemy_hero]
-        power = sum(power_list) if len(power_list) else 0
+        player = self.players[0] if own else self.players[1]
+        pd = {
+            SpellSchool.NONE: GameTag.CURRENT_SPELLPOWER,
+            SpellSchool.ARCANE: GameTag.CURRENT_SPELLPOWER_ARCANE,
+            SpellSchool.FIRE: GameTag.CURRENT_SPELLPOWER_FIRE,
+            SpellSchool.FROST: GameTag.CURRENT_SPELLPOWER_FROST,
+            SpellSchool.NATURE: GameTag.CURRENT_SPELLPOWER_NATURE,
+            SpellSchool.HOLY: GameTag.CURRENT_SPELLPOWER_HOLY,
+            SpellSchool.SHADOW: GameTag.CURRENT_SPELLPOWER_SHADOW,
+            SpellSchool.FEL: GameTag.CURRENT_SPELLPOWER_FEL,
+            SpellSchool.PHYSICAL_COMBAT: GameTag.CURRENT_SPELLPOWER_PHYSICAL
+        }
+        power = player.tags.get(pd.get(spell_school)) or 0
         # 后续操作
         return power
+
+    def get_player_tag(self, player, tag_name):
+        return player.tags.get(tag_name) or 0
 
     def get_action_list(self, own=True):
         return self.my_action_list if own else self.enemy_action_list
