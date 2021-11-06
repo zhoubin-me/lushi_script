@@ -9,7 +9,7 @@ import yaml
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
 from utils.battle_ai import BattleAi
 
 
@@ -385,6 +385,7 @@ class Agent:
 
 def run_from_gui(cfg):
     print(cfg)
+    restart_game(cfg['lang'], cfg['bn_path'], kill_existing=False)
     agent = Agent(cfg=cfg)
     agent.run()
 
@@ -393,18 +394,29 @@ def main():
     parser = argparse.ArgumentParser()
     parser.add_argument('--lang', choices=['chs', 'eng'], default='chs', help='Choose Your Hearthstone Language')
     parser.add_argument('--config', default='config/default.yaml', help='launch config filename')
+    parser.add_argument('--func', choices=['run', 'coor'], help='Run main function or find coordinates')
     args = parser.parse_args()
 
-    with open(args.config, 'r', encoding='utf-8') as f:
-        cfg = yaml.safe_load(f)
+    if args.func == 'run':
+        with open(args.config, 'r', encoding='utf-8') as f:
+            cfg = yaml.safe_load(f)
 
-    if args.lang == 'chs':
-        cfg['lang'] = 'ZH-1600x900'
-    else:
-        cfg['lang'] = 'EN-1024x768'
+        if args.lang == 'chs':
+            cfg['lang'] = 'ZH-1600x900'
+        else:
+            cfg['lang'] = 'EN-1024x768'
 
-    run_from_gui(cfg)
-
+        run_from_gui(cfg)
+    elif args.func == 'coor':
+        if args.lang == 'chs':
+            title = '炉石传说'
+        elif args.lang == 'eng':
+            title = 'Hearthstone'
+        else:
+            title = None
+        while True:
+            find_relative_loc(title)
+            time.sleep(1)
 
 if __name__ == '__main__':
     main()

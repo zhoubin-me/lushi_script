@@ -133,20 +133,20 @@ def proc_kill(process_names):
             print(f"{p.name()} killed")
 
 
-def restart_game(lang, battle_net_path):
+def restart_game(lang, battle_net_path, kill_existing=True):
     bn = 'Battle.net.exe'
     hs = 'Hearthstone.exe'
     # battle_net_path = os.path.join(*battle_net_path)
-    if lang == 'eng':
+    if lang.startswith('EN'):
         title = 'Hearthstone'
-    elif lang == 'chs':
+    elif lang.startswith('ZH'):
         title = "炉石传说"
     else:
         raise ValueError(f"Language {lang} not supported")
-
-    proc_kill([bn, hs])
-
-    time.sleep(5)
+    if kill_existing:
+        proc_kill([bn, hs])
+        time.sleep(5)
+        
     while not proc_exist(bn):
         print('attempt to start Battle.net')
         win32api.ShellExecute(0, 'open', battle_net_path,

@@ -28,7 +28,6 @@ class Thread_2(QThread):
         super().__init__()
         self.config = config
     def run(self):
-
         from lushi import run_from_gui
         run_from_gui(self.config)
         self._signal.emit()
