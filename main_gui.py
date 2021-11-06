@@ -22,16 +22,20 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-class Thread_2(QThread):  
-    _signal =pyqtSignal()
-    def __init__(self,config):
+
+class Thread_2(QThread):
+    _signal = pyqtSignal()
+
+    def __init__(self, config):
         super().__init__()
         self.config = config
+
     def run(self):
         from lushi import run_from_gui
         run_from_gui(self.config)
         self._signal.emit()
-        
+
+
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
@@ -324,6 +328,7 @@ class Ui(QMainWindow):
         for k, v in self.hero_info.items():
             hero_text += f"\t{v[0]}:\t{v[2]}\n"
 
+        self.save_config()
         cfm_text = f'''
             Current Setting:\n
             Boss ID: {self.config['boss_id'] + 1}\n
@@ -341,9 +346,7 @@ class Ui(QMainWindow):
 
         reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
         if reply == QMessageBox.Yes:
-            
-            self.save_config()
-            self.thread_2 =Thread_2(self.config)
+            self.thread_2 = Thread_2(self.config)
             self.thread_2.start()
         else:
             pass
@@ -384,6 +387,7 @@ class Ui(QMainWindow):
         self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
         self.actionEnglish.setText(_translate("MainWindow", "English"))
         self.actionChinese.setText(_translate("MainWindow", "Chinese"))
+
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
