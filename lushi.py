@@ -284,9 +284,12 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
-                while True:
-                    treasure_id = np.random.randint(0, 3)
+                for treasure_id in range(3):
                     treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
+                    if treasure_id == 2:
+                        pyautogui.click(tuple_add(rect, treasure_loc))
+                        break
+
                     is_in_blacklilst = False
                     for key in self.treasure_blacklist.keys():
                         success, loc, rect = self.check_in_screen(key, prefix='treasure_blacklist')
@@ -295,11 +298,9 @@ class Agent:
                             if x_dis < 100:
                                 is_in_blacklilst = True
                                 break
-                    if is_in_blacklilst:
-                        continue
-                    else:
+                    if not is_in_blacklilst:
+                        pyautogui.click(tuple_add(rect, treasure_loc))
                         break
-                pyautogui.click(tuple_add(rect, treasure_loc))
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
 
             if state in ['destroy', 'blue_portal', 'boom']:
@@ -311,9 +312,19 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'visitor_list':
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-                pyautogui.click(tuple_add(rect, visitor_loc))
+                is_in_whitelilst = False
+                for key in self.heros_whitelist.keys():
+                    success, loc, rect = self.check_in_screen(key, prefix='heros_whitelist')
+                    if success:
+                        is_in_whitelilst = True
+                        pyautogui.click(tuple_add(rect, loc))
+                        break
+
+                if not is_in_whitelilst:
+                    visitor_id = np.random.randint(0, 3)
+                    visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+                    pyautogui.click(tuple_add(rect, visitor_loc))
+
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
                 for _ in range(4):
