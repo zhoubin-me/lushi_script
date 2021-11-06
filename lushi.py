@@ -7,43 +7,44 @@ import argparse
 import os
 import yaml
 from types import SimpleNamespace
-import copy
 
-from log_util.log_util import LogUtil
-from util import find_lushi_window, find_icon_location, restart_game, set_top_window, tuple_add
-from battle_ai import BattleAi
-from hearthstone.enums import GameTag, Zone
+from utils.log_util import LogUtil
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
+from utils.battle_ai import BattleAi
 
 
 class Agent:
-    def __init__(self, lang, basic_cfg=''):
-        if lang == 'eng':
-            self.cfg_file = 'config_eng.yaml'
-            self.img_folder = 'imgs_eng_1024x768'
+    def __init__(self, cfg):
+        if cfg['lang'].startswith('EN'):
+            self.lang = 'eng'
+            self.loc_file = 'config/locs_eng.yaml'
+            self.img_folder = 'resource/imgs_eng_1024x768'
             self.title = 'hearthstone'
-        elif lang == 'chs':
-            self.cfg_file = 'config_chs.yaml'
-            self.img_folder = "imgs_chs_1600x900"
+        elif cfg['lang'].startswith('ZH'):
+            self.lang = 'chs'
+            self.loc_file = 'config/locs_chs.yaml'
+            self.img_folder = "resource/imgs_chs_1600x900"
             self.title = "炉石传说"
         else:
-            raise ValueError(f"Language {lang} is not supported yet")
+            raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-        self.lang = lang
+
+
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
-        self.load_config(basic_cfg)
-        self.log_util = LogUtil(self.basic.hs_log)
         self.game = None
         self.skill_seq_cache = {}
         self.start_seq = {}
-        self.hero_info = {}
         self.side = None
         self.surprise_in_mid = False
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
-                  'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm']
+                       'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
+                       'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                       'final_reward', 'final_reward2', 'final_confirm']
+
+        self.load_config(cfg)
+        self.log_util = LogUtil(self.basic.hs_log)
 
     def read_sub_imgs(self, sub):
         imgs = [img for img in os.listdir(os.path.join(self.img_folder, sub)) if img.endswith('.png')]
@@ -53,24 +54,24 @@ class Agent:
             x = getattr(self, sub)
             x[k] = v
 
-    def load_config(self, basic_cfg=''):
-        with open(self.cfg_file, 'r', encoding='utf-8') as f:
-            config = yaml.safe_load(f)
+    def load_config(self, cfg):
+        with open(self.loc_file, 'r', encoding='utf-8') as f:
+            loc_cfg = yaml.safe_load(f)
 
-        if basic_cfg:
-            import base64
-            import json
-            basic_json = json.loads(base64.b64decode(basic_cfg.encode('utf-8')).decode('utf-8'))
-            self.basic = SimpleNamespace(**basic_json)
-        else:
-            self.basic = SimpleNamespace(**config['basic'])
-
-        self.heros = SimpleNamespace(**config['heros'])
-        self.locs = SimpleNamespace(**config['location'])
-        pyautogui.PAUSE = self.basic.delay
-
+        self.locs = SimpleNamespace(**loc_cfg['location'])
         for sub in ['icons', 'treasure_blacklist', 'heros_whitelist']:
             self.read_sub_imgs(sub)
+
+        hero_info = cfg['hero']
+        self.heros = {}
+        for k, v in hero_info.items():
+            spell_order = [int(x)-1 for x in v[2].split(',')]
+            self.heros[k] = [v[0],  v[1], spell_order, v[3]]
+            self.skill_seq_cache[k] = v[-2]
+        del cfg['hero']
+        cfg['hs_log'] = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
+        self.basic = SimpleNamespace(**cfg)
+        pyautogui.PAUSE = self.basic.delay
 
     def check_in_screen(self, name, prefix='icons'):
         rect, screen = find_lushi_window(self.title)
@@ -136,25 +137,17 @@ class Agent:
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
-        if len(self.hero_info) == 0:
-            for i, h in enumerate(game.hero_entities.values()):
-                if i < len(self.heros.battle_seq):
-                    self.skill_seq_cache[h.card_id[:-3]] = self.heros.skill_seq[i]
-        else:
-            print(self.hero_info)
-            for k, v in self.hero_info.items():
-                self.skill_seq_cache[k] = v[-2]
-
         for hero_i, h in enumerate(game.my_hero):
             if h.lettuce_has_manually_selected_ability:
                 continue
 
             pyautogui.click(h.pos)
-            if h.card_id[:-3] not in self.start_seq:
+            card_id = h.card_id[:-3]
+            if card_id not in self.heros:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
             else:
                 skill_loc = None
-                skill_seq = self.skill_seq_cache[h.card_id[:-3]]
+                skill_seq = self.heros[card_id][-2]
                 for skill_id in skill_seq:
                     skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
                     if skill_cooldown_round == 0:
@@ -169,26 +162,12 @@ class Agent:
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
 
-        if len(self.hero_info) == 0:
-            for h, i in zip(game.hero_entities.values(), self.heros.battle_seq):
-                self.start_seq[h.card_id[:-3]] = i
-        else:
-            self.heros.battle_seq = []
-            hero_ids = [h.card_id[:-3] for h in game.hero_entities.values()]
-            print(self.hero_info)
-            for k, v in self.hero_info.items():
-                if k in hero_ids:
-                    self.start_seq[k] = v[-1]
-                else:
-                    raise ValueError("Hero Configuration Wrong")
-            for h, _ in zip(game.hero_entities.values(), self.hero_info.items()):
-                self.heros.battle_seq.append(self.hero_info[h.card_id[:-3]][-1])
-
-        hero_in_battle = [x for x in game.my_hero if x.card_id[:-3] in self.start_seq]
-
+        hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in self.heros]
         if len(hero_in_battle) < 3:
             current_seq = {h.card_id[:-3]: i for i, h in enumerate(game.setaside_hero)}
-            card_id_seq = [list(game.hero_entities.values())[i].card_id[:-3] for i in self.heros.battle_seq]
+            heros_sorted = {k: v[-1] for k, v in sorted(
+                self.heros.items(), key=lambda item: item[1][-1])}
+            card_id_seq = list(heros_sorted.keys())
             card_id_seq = [x for x in card_id_seq if x in current_seq]
 
             for i in range(3 - len(hero_in_battle)):
@@ -305,9 +284,12 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
-                while True:
-                    treasure_id = np.random.randint(0, 3)
+                for treasure_id in range(3):
                     treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
+                    if treasure_id == 2:
+                        pyautogui.click(tuple_add(rect, treasure_loc))
+                        break
+
                     is_in_blacklilst = False
                     for key in self.treasure_blacklist.keys():
                         success, loc, rect = self.check_in_screen(key, prefix='treasure_blacklist')
@@ -316,11 +298,9 @@ class Agent:
                             if x_dis < 100:
                                 is_in_blacklilst = True
                                 break
-                    if is_in_blacklilst:
-                        continue
-                    else:
+                    if not is_in_blacklilst:
+                        pyautogui.click(tuple_add(rect, treasure_loc))
                         break
-                pyautogui.click(tuple_add(rect, treasure_loc))
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
 
             if state in ['destroy', 'blue_portal', 'boom']:
@@ -332,9 +312,19 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'visitor_list':
-                visitor_id = np.random.randint(0, 3)
-                visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-                pyautogui.click(tuple_add(rect, visitor_loc))
+                is_in_whitelilst = False
+                for key in self.heros_whitelist.keys():
+                    success, loc, rect = self.check_in_screen(key, prefix='heros_whitelist')
+                    if success:
+                        is_in_whitelilst = True
+                        pyautogui.click(tuple_add(rect, loc))
+                        break
+
+                if not is_in_whitelilst:
+                    visitor_id = np.random.randint(0, 3)
+                    visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+                    pyautogui.click(tuple_add(rect, visitor_loc))
+
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
                 for _ in range(4):
@@ -362,20 +352,15 @@ class Agent:
         return success, tic, state, rect
 
     def run(self):
-        if self.basic.mode == 'pve':
-            if self.basic.auto_restart:
-                while True:
-                    try:
-                        self.run_pve()
-                    except Exception as e:
-                        print('错误：', e)
-                        restart_game(self.lang, self.basic.bn_path)
-            else:
-                self.run_pve()
-        elif self.basic.mode == 'pvp':
-            print("PVP is no longer supported")
+        if self.basic.auto_restart:
+            while True:
+                try:
+                    self.run_pve()
+                except Exception as e:
+                    print('错误：', e)
+                    restart_game(self.lang, self.basic.bn_path)
         else:
-            raise ValueError(f"Mode {self.basic.mode} is not supported yet")
+            self.run_pve()
 
     def run_pve(self):
         time.sleep(2)
@@ -410,39 +395,45 @@ class Agent:
 
 
 def run_from_gui(cfg):
+    print(cfg)
     if cfg['lang'].startswith('EN'):
         lang = 'eng'
-    else:
+    elif cfg['lang'].startswith('ZH'):
         lang = 'chs'
-
-    agent = Agent(lang=lang)
-    agent.basic.boss_id = cfg['boss_id']
-    agent.basic.team_id = cfg['team_id']
-    agent.basic.reward_count = cfg['reward_count']
-    agent.basic.bn_path = cfg['bn_path']
-    agent.basic.hs_log_path = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
-    agent.basic.auto_restart = cfg['auto_restart']
-    agent.basic.early_stop = cfg['early_stop']
-    agent.hero_info = {}
-    for k, v in cfg['hero'].items():
-        key = k[:-3]
-        value = [int(x)-1 for x in v[2].split(',')]
-        agent.hero_info[key] = [v[0], v[1], value, v[3]]
+    else:
+        lang = None
+    restart_game(lang, cfg['bn_path'], kill_existing=False)
+    agent = Agent(cfg=cfg)
     agent.run()
+
 
 def main():
     parser = argparse.ArgumentParser()
-    parser.add_argument('--lang', choices=['eng', 'chs'], default='chs', help='Choose Your Hearthstone Language')
-    parser.add_argument('--config', default='default.yaml', help='base64 basic config')
+    parser.add_argument('--lang', choices=['chs', 'eng'], default='chs', help='Choose Your Hearthstone Language')
+    parser.add_argument('--config', default='config/default.yaml', help='launch config filename')
+    parser.add_argument('--func', choices=['run', 'coor'], help='Run main function or find coordinates')
     args = parser.parse_args()
 
-    with open(args.config, 'r', encoding='utf-8') as f:
-        cfg = yaml.safe_load(f)
+    if args.func == 'run':
+        with open(args.config, 'r', encoding='utf-8') as f:
+            cfg = yaml.safe_load(f)
 
-    cfg['lang'] = args.lang
-    run_from_gui(cfg)
+        if args.lang == 'chs':
+            cfg['lang'] = 'ZH-1600x900'
+        else:
+            cfg['lang'] = 'EN-1024x768'
 
-
+        run_from_gui(cfg)
+    elif args.func == 'coor':
+        if args.lang == 'chs':
+            title = '炉石传说'
+        elif args.lang == 'eng':
+            title = 'Hearthstone'
+        else:
+            title = None
+        while True:
+            find_relative_loc(title)
+            time.sleep(1)
 
 if __name__ == '__main__':
     main()

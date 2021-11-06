@@ -1,1 +1,2 @@
-start pythonw main_chs.py
+cd /d "%~dp0"
+start pythonw main_gui.py
