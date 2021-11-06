@@ -18,11 +18,10 @@ class LETL_028P9_M(SpellEntity):
     def play(self, game, hero, target):
         power = game.get_spell_power(self.spell_school, hero.own)
         # 随机只打血最高
-        h = game.find_max_health(not hero.own())
-        h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
-        # 击杀重复
-        while not h.is_alive():
+        while True:
             h = game.find_max_health(not hero.own())
-            if h.get_health() <= 0:
+            if h is None:
                 break
             h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
+            if not h.is_alive():
+                break

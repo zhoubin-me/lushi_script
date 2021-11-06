@@ -134,6 +134,8 @@ class GameEntity(BaseEntity):
             own: 是否是我方场上
         """
         hero_list = self.my_hero if own else self.enemy_hero
+        # 只找活的
+        hero_list = [h for h in hero_list if h.is_alive()]
         if len(hero_list) <= 0:
             return None
         return min(hero_list, key=lambda x: x.get_health())
@@ -145,6 +147,8 @@ class GameEntity(BaseEntity):
             own: 是否是我方场上
         """
         hero_list = self.my_hero if own else self.enemy_hero
+        # 只找活的
+        hero_list = [h for h in hero_list if h.is_alive()]
         if len(hero_list) <= 0:
             return None
         return max(hero_list, key=lambda x: x.get_health())
