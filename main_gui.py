@@ -101,6 +101,7 @@ class Ui(QMainWindow):
 
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
+        self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
 
         self.action_eng = self.findChild(QAction, 'actionEnglish')
         self.action_eng.triggered.connect(self.tiggerEnglish)
@@ -267,6 +268,8 @@ class Ui(QMainWindow):
                 self.hs_path.setText(v)
             if k == 'auto_restart':
                 self.auto_restart.setChecked(v)
+            if k == 'auto_tasks':
+                self.auto_tasks.setChecked(v)
             if k == 'early_stop':
                 self.early_stop.setChecked(v)
             if k == 'lang':
@@ -293,6 +296,7 @@ class Ui(QMainWindow):
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
         self.config['early_stop'] = self.early_stop.isChecked()
+        self.config['auto_tasks'] = self.auto_tasks.isChecked()
         self.config['lang'] = self.lang.currentText()
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
@@ -329,6 +333,7 @@ class Ui(QMainWindow):
             HearthStone Path: {self.config['hs_path']}\n
             Auto Restart: {self.config['auto_restart']}\n
             Early Stop: {self.config['early_stop']}\n
+            Auto Task: {self.config['auto_tasks']}\n
             Language & Resolution: {self.config['lang']}\n
             Heroes:\n
             {hero_text}
@@ -378,7 +383,7 @@ class Ui(QMainWindow):
         # self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
         self.actionEnglish.setText(_translate("MainWindow", "English"))
         self.actionChinese.setText(_translate("MainWindow", "Chinese"))
-
+        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
