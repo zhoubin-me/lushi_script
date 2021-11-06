@@ -84,6 +84,44 @@ class Agent:
         return success, loc, rect
 
     def scan_surprise_loc(self, rect):
+        if self.basic.auto_tasks:
+            time.sleep(5)
+            #select Camp Fire
+            pyautogui.click(tuple_add(rect, (641,669)))
+            pyautogui.click(tuple_add(rect, (1302,744)))
+            
+            #first task
+            pyautogui.click(tuple_add(rect, (588,329)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            #second task
+            pyautogui.click(tuple_add(rect, (988,336)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            #third task
+            pyautogui.click(tuple_add(rect, (602, 474)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            #forth task
+            pyautogui.click(tuple_add(rect, (988, 474)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            #exit the campfire
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+            #select first first boss of map
+            pyautogui.click(tuple_add(rect, (654, 431)))
         print('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
