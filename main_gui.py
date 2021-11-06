@@ -383,7 +383,7 @@ class Ui(QMainWindow):
         # self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
         self.actionEnglish.setText(_translate("MainWindow", "English"))
         self.actionChinese.setText(_translate("MainWindow", "Chinese"))
-        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
+        self.auto_tasks.setText(_translate("MainWindow", "仅中文可用自动提交任务"))
 
 if __name__ == '__main__':
     app = QApplication(sys.argv)
