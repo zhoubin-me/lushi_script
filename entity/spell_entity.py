@@ -58,7 +58,7 @@ class SpellEntity(BaseEntity):
         # 不是装备且冷却为0
         return self.lettuce_current_cooldown == 0 and not self.lettuce_is_equpiment and not self.lettuce_is_treasure_card
 
-    def play(self, hero, target):
+    def play(self, game, hero, target):
         power = self.game_entity.get_spell_power(self.spell_school)
         # print(power)
         if target is None:
@@ -93,7 +93,9 @@ class SpellEntity(BaseEntity):
         return self.card_id.startswith(card_id)
 
     def __lt__(self, other):
-        return self.cost < other.cost or not self.combo
+        if self.cost == other.cost:
+            return not self.combo
+        return self.cost < other.cost
 
     def __str__(self):
         return {'card_id': self.card_id, 'damage': self.damage, 'cost': self.cost, 'range': self.range,

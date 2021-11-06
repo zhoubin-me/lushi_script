@@ -12,9 +12,17 @@ class LETL_005P3(SpellEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.damage = 0
+        self.damage = 25
+        self.damage2 = 10
         self.range = 1
 
-    def play(self, hero, target):
-        pass
-
+    def play(self, game, hero, target):
+        power = game.get_spell_power(self.spell_school, target.own)
+        hero_list = game.get_hero_list(target.own())
+        for h in hero_list:
+            if target.is_adjacent(h):
+                # 是自己
+                if target.entity_id == h.entity_id:
+                    h.got_damage(self.damage + power)
+                else:
+                    h.got_damage(self.damage2 + power)

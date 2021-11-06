@@ -17,14 +17,14 @@ class LETL_030P4(SpellEntity):
         self.combo_damage = 8
         self.range = 7
 
-    def play(self, hero, target):
+    def play(self, game, hero, target):
         # aoe或者随机不需要指定target
-        power = self.game_entity.get_spell_power(self.spell_school, hero.own)
-        action_list = self.game_entity.get_action_list(hero.own)
+        power = game.get_spell_power(self.spell_school, hero.own)
+        action_list = game.get_action_list(hero.own)
         action_list.sort()
-        combo = self.game_entity.can_combo(self, SpellSchool.FIRE, hero.own)
+        combo = game.can_combo(self, SpellSchool.FIRE, hero.own)
         combo_damage = (self.combo_damage + power) * combo
-        hero_list = self.game_entity.get_hero_list(not hero.own())
+        hero_list = game.get_hero_list(not hero.own())
         for h in hero_list:
             h.got_damage(
                 (self.damage + combo_damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])

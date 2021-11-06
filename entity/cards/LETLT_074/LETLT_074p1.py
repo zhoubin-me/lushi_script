@@ -15,6 +15,6 @@ class LETLT_074p1(SpellEntity):
         self.damage = 0
         self.range = 1
 
-    def play(self, hero, target):
+    def play(self, game, hero, target):
         pass
 

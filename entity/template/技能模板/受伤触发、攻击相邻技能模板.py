@@ -17,7 +17,7 @@ class LETL_030P6(SpellEntity):
         self.range = 1
         self.trigger_twice = 0
 
-    def play(self, hero, target):
+    def play(self, game, hero, target):
         target.damage_trigger.append(self)
         pass
 

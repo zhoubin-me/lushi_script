@@ -4,17 +4,17 @@ from hearthstone.entities import Entity
 from entity.spell_entity import SpellEntity
 
 
-class LETL_300(SpellEntity):
+class LETL_446_M(SpellEntity):
     """
-        邪能箭5
-        造成$20点伤害。
+        炽烧符文4
+        <b>被动：</b><b>+3火焰伤害</b>。
     """
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.damage = 0
-        self.range = 1
 
-    def play(self, game, hero, target):
+    def equip(self, hero):
+        # 不需要填效果
         pass
 
+            

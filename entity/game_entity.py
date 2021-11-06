@@ -124,7 +124,7 @@ class GameEntity(BaseEntity):
         for h in self.enemy_hero:
             spell = h.get_enemy_action()
             action.append(Action(hero=h, spell=spell, target=self.find_min_health()))
-            self.action_list = action
+        self.enemy_action_list = action
         return action
 
     def find_min_health(self, own=True):
@@ -149,9 +149,12 @@ class GameEntity(BaseEntity):
             return None
         return max(hero_list, key=lambda x: x.get_health())
 
-    def play(self, hero: HeroEntity, spell: SpellEntity, target: HeroEntity):
-        power = self.get_spell_power(spell.spell_school)
-        spell.play(hero, target)
+    def get_hero_by_eid(self, entity_id):
+        spell = [x for i, x in self.hero_entities.items() if x.entity_id == entity_id][0]
+        return spell
+
+    def play(self, game, hero: HeroEntity, spell: SpellEntity, target: HeroEntity):
+        spell.play(game, hero, target)
         pass
 
     def do_action(self, action):

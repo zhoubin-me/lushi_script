@@ -17,14 +17,14 @@ class LETL_030P6(SpellEntity):
         self.range = 1
         self.trigger_twice = 0
 
-    def play(self, hero, target):
+    def play(self, game, hero, target):
         target.damage_trigger.append(self)
         pass
 
     def damage_trigger(self, target):
-        power = self.game_entity.get_spell_power(self.spell_school, target.own)
+        power = game.get_spell_power(self.spell_school, target.own)
 
-        hero_list = self.game_entity.get_hero_list(target.own())
+        hero_list = game.get_hero_list(target.own())
         for h in hero_list:
             if target.is_adjacent(h):
                 h.got_damage(self.damage + power)

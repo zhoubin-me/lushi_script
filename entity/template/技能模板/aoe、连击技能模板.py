@@ -17,7 +17,7 @@ class LETL_030P4_M(SpellEntity):
         self.combo_damage = 8
         self.range = 7
 
-    def play(self, hero, target):
+    def play(self, game, hero, target):
         # aoe或者随机不需要指定target
         power = self.game_entity.get_spell_power(self.spell_school, hero.own)
         # 获取技能列表
