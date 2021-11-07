@@ -12,9 +12,13 @@ class LETL_246(SpellEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.damage = 0
-        self.range = 0
+        self.damage = 10
+        self.range = 7
 
     def play(self, game, hero, target):
-        pass
+        power = game.get_spell_power(self.spell_school, hero.own)
 
+        hero_list = game.get_hero_list(not hero.own())
+        for h in hero_list:
+            h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][
+                h.lettuce_role])

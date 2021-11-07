@@ -29,6 +29,11 @@ class HeroEntity(BaseEntity):
         # INVALID = 0 部落HORDE = 1  联盟ALLIANCE = 2 中立NEUTRAL = 3
         self.faction = 0
         self.windfury = 0
+        # 嘲讽
+        self.taunt = 0
+        self.frozen = 0
+        # 免疫
+        self.immune = 0
         # 被动 一技能 二技能 三技能 ...
         self.spell: List[SpellEntity] = []
         # 法术伤害
@@ -76,6 +81,9 @@ class HeroEntity(BaseEntity):
         self.divine_shield = self.get_tag(GameTag.DIVINE_SHIELD)
         self.faction = self.get_tag(GameTag.FACTION)
         self.windfury = self.get_tag(GameTag.WINDFURY)
+        self.taunt = self.get_tag(GameTag.TAUNT)
+        self.frozen = self.get_tag(GameTag.FROZEN)
+        self.immune = self.get_tag(GameTag.IMMUNE)
 
         self.spellpower[SpellSchool.ARCANE] = self.get_tag(GameTag.SPELLPOWER_ARCANE)
         self.spellpower[SpellSchool.FIRE] = self.get_tag(GameTag.SPELLPOWER_FIRE)
@@ -136,9 +144,19 @@ class HeroEntity(BaseEntity):
         return self.get_health() > 0
 
     def got_damage(self, game, damage):
-        self.damage += damage
-        for spell in self.damage_trigger:
-            spell.damage_trigger(game, self)
+        if self.immune:
+            return
+        elif self.divine_shield:
+            self.divine_shield = 0
+        else:
+            self.damage += damage
+            for spell in self.damage_trigger:
+                spell.damage_trigger(game, self)
+
+    def got_heal(self, game, health):
+        if self.damage <= 0:
+            return
+        self.damage = max(0, self.damage - health)
 
     def is_adjacent(self, target):
         return abs(self.zone_position - target.zone_position) <= 1

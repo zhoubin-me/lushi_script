@@ -14,6 +14,7 @@ class LETL_282(SpellEntity):
         super().__init__(entity)
         self.damage = 0
         self.range = -1
+        self.is_attack = 1
 
     def play(self, game, hero, target):
         # 伤害为攻击伤害

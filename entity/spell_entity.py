@@ -30,6 +30,8 @@ class SpellEntity(BaseEntity):
         self.damage = 0
         # 技能范围: -1随机，6全部
         self.range = 0
+        # 是否是普通攻击
+        self.is_attack = 0
         self.parse_entity()
 
     def parse_entity(self):

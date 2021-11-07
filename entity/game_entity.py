@@ -153,6 +153,18 @@ class GameEntity(BaseEntity):
             return None
         return max(hero_list, key=lambda x: x.get_health())
 
+    def get_attack_target(self, target):
+        # 如果目标已经是嘲讽了，就返回原目标
+        if target.taunt:
+            return target
+        else:
+            # 否则找对面场上是否有嘲讽，有就返回第一个找到的嘲讽，否则就返回原目标
+            hero_list = self.get_hero_list(target.own())
+            for h in hero_list:
+                if h.taunt:
+                    return h
+            return target
+
     def get_hero_by_eid(self, entity_id):
         spell = [x for i, x in self.hero_entities.items() if x.entity_id == entity_id][0]
         return spell
