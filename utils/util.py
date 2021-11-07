@@ -57,6 +57,7 @@ if PLATFORM:
     def set_top_window(title):
         top_windows = []
         win32gui.EnumWindows(windowEnumerationHandler, top_windows)
+        title = title.lower()
         for i in top_windows:
             if title in i[1].lower():
                 win32gui.ShowWindow(i[0], 5)
@@ -120,9 +121,12 @@ def move2loc(x, y, title='炉石传说'):
 
 def proc_exist(process_names):
     for p in psutil.process_iter():
-        if len(p.name()) > 0 and p.name() in process_names:
-            print(f"find {p.name()} exists")
-            return True
+        try:
+            if len(p.name()) > 0 and p.name() in process_names:
+                print(f"find {p.name()} exists")
+                return True
+        except Exception as e:
+            print(f"can not get name of process {e}")
     return False
 
 
