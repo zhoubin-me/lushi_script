@@ -76,6 +76,6 @@ A: 请确保config.yaml文件中的路径正确(盘符后面需要添加双斜�
 hs_log: [ "D:\\", "Hearthstone", "Logs", "Power.log" ]
 ```
 ### 5.奇怪问题，例如莫名其妙退出
-Q:为啥闪退？为啥不动？为啥...？
-A:需要查看报错信息，如果是release版本可以点击运行debug.bat，如果是main分支下也就是当前最新版本，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息
+Q: 为啥闪退?为啥不动?为啥...?
+A: 需要查看报错信息，如果是release版本可以点击运行debug.bat，如果是main分支下也就是当前最新版本，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息
 
