@@ -57,4 +57,4 @@ def handle_exception(exc_type, exc_value, exc_traceback):
 sys.excepthook = handle_exception  # 重点
 
 if __name__ == '__main__':
-    log = LoggingUtil()
+    LoggingUtil().test()
