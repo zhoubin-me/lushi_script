@@ -124,7 +124,7 @@ class GameEntity(BaseEntity):
         for h in self.enemy_hero:
             spell = h.get_enemy_action()
             action.append(Action(hero=h, spell=spell, target=self.find_min_health()))
-            self.action_list = action
+        self.enemy_action_list = action
         return action
 
     def find_min_health(self, own=True):
@@ -134,6 +134,8 @@ class GameEntity(BaseEntity):
             own: 是否是我方场上
         """
         hero_list = self.my_hero if own else self.enemy_hero
+        # 只找活的
+        hero_list = [h for h in hero_list if h.is_alive()]
         if len(hero_list) <= 0:
             return None
         return min(hero_list, key=lambda x: x.get_health())
@@ -145,13 +147,30 @@ class GameEntity(BaseEntity):
             own: 是否是我方场上
         """
         hero_list = self.my_hero if own else self.enemy_hero
+        # 只找活的
+        hero_list = [h for h in hero_list if h.is_alive()]
         if len(hero_list) <= 0:
             return None
         return max(hero_list, key=lambda x: x.get_health())
 
-    def play(self, hero: HeroEntity, spell: SpellEntity, target: HeroEntity):
-        power = self.get_spell_power(spell.spell_school)
-        spell.play(hero, target)
+    def get_attack_target(self, target):
+        # 如果目标已经是嘲讽了，就返回原目标
+        if target.taunt:
+            return target
+        else:
+            # 否则找对面场上是否有嘲讽，有就返回第一个找到的嘲讽，否则就返回原目标
+            hero_list = self.get_hero_list(target.own())
+            for h in hero_list:
+                if h.taunt:
+                    return h
+            return target
+
+    def get_hero_by_eid(self, entity_id):
+        spell = [x for i, x in self.hero_entities.items() if x.entity_id == entity_id][0]
+        return spell
+
+    def play(self, game, hero: HeroEntity, spell: SpellEntity, target: HeroEntity):
+        spell.play(game, hero, target)
         pass
 
     def do_action(self, action):

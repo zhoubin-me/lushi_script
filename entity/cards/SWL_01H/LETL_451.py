@@ -15,9 +15,8 @@ class LETL_451(SpellEntity):
         self.damage = 14
         self.range = 7
 
-    def play(self, hero, target):
-        power = self.game_entity.get_spell_power(self.spell_school, hero.own)
-        hero_list = self.game_entity.get_hero_list(not hero.own())
+    def play(self, game, hero, target):
+        power = game.get_spell_power(self.spell_school, hero.own)
+        hero_list = game.get_hero_list(not hero.own())
         for h in hero_list:
-            h.got_damage(
-                (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
+            h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])

@@ -13,8 +13,13 @@ class LETL_319(SpellEntity):
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
-        self.range = 1
+        self.range = 0
+        self.speed = -4
 
-    def play(self, hero, target):
-        pass
-
+    def play(self, game, hero, target):
+        hero.taunt = 1
+        # 因为是本回合，所以需要在代码中写出来，下回合的增益就不用写了。
+        # 加速
+        action_list = game.get_action_list(hero.own())
+        for act in action_list:
+            act.spell.cost += self.speed

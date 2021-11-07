@@ -72,8 +72,8 @@ class BattleAi:
         self.dfs(0, [])
         print(self.score)
         for x in self.action:
-            print(x['hero'], x['target'], x['spell'], end='\n\n\n')
-        pass
+            print(x.hero, x.target, x.spell, end='\n\n\n')
+        return self.action
 
     def simulate_battle(self, action_list):
         _game = copy.deepcopy(game)
@@ -83,17 +83,24 @@ class BattleAi:
         all_action_list.sort()
         _game.all_action_list = all_action_list
         for x in all_action_list:
-            if not x['hero'].is_alive():
+            if not x.hero.is_alive():
                 continue
             # print(x['hero'], x['target'], x['spell'], end='\n\n\n')
-            _game.play(x['hero'], x['spell'], x['target'])
+            hero = _game.get_hero_by_eid(x.hero.entity_id)
+            target = None
+            spell = hero.get_spell_by_eid(x.spell.entity_id)
+            if x.target is not None:
+                target = _game.get_hero_by_eid(x.target.entity_id)
+            _game.play(_game, hero, spell, target)
         score = self.analyze_score(_game.my_hero, _game.enemy_hero)
         # print(score)
         if self.score < score:
+            if score == 942:
+                for h in _game.enemy_hero:
+                    print(h.get_health())
             self.score = score
-
             self.action = copy.deepcopy(action_list)
-            self.action.sort(key=lambda x: x['spell'])
+            self.action.sort()
         pass
 
     def dfs(self, hero_id, result: List):
@@ -107,7 +114,7 @@ class BattleAi:
         for spell in spell_list:
             # 枚举目标
             if spell.damage >= 0:
-                if spell.range == '1':
+                if spell.range == 1:
                     for enemy in self.game.enemy_hero:
                         # 对哪个目标使用哪个技能
                         result.append(Action(hero=hero, spell=spell, target=enemy))

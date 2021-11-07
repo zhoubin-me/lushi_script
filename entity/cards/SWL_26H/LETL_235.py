@@ -13,8 +13,14 @@ class LETL_235(SpellEntity):
     def __init__(self, entity: Entity):
         super().__init__(entity)
         self.damage = 0
-        self.range = 1
+        self.range = 0
+        self.is_attack = 1
 
-    def play(self, hero, target):
-        pass
-
+    def play(self, game, hero, target):
+        # 伤害为攻击伤害
+        damage = hero.dmg
+        # 重新选择攻击目标，因为可能有嘲讽
+        target = game.get_attack_target(target)
+        target.got_damage(game, damage * self.damage_advantage[self.lettuce_role][target.lettuce_role])
+        # 自己受到伤害
+        hero.got_damage(game, target.dmg)

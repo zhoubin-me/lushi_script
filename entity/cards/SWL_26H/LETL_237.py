@@ -12,9 +12,11 @@ class LETL_237(SpellEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.damage = 0
+        self.damage = 12
         self.range = 1
 
-    def play(self, hero, target):
-        pass
-
+    def play(self, game, hero, target):
+        # 将敌人的角色改成5（受到所有身份的角色的爆击）
+        target.lettuce_role = 5
+        power = game.get_spell_power(self.spell_school, hero.own)
+        target.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][target.lettuce_role])

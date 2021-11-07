@@ -12,9 +12,16 @@ class LETL_028P9(SpellEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.damage = 0
-        self.range = 1
+        self.damage = 22
+        self.range = -1
 
-    def play(self, hero, target):
-        pass
-
+    def play(self, game, hero, target):
+        power = game.get_spell_power(self.spell_school, hero.own)
+        # 随机只打血最高
+        while True:
+            h = game.find_max_health(not hero.own())
+            if h is None:
+                break
+            h.got_damage(game, (self.damage + power) * self.damage_advantage[self.lettuce_role][h.lettuce_role])
+            if not h.is_alive():
+                break
