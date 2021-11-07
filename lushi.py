@@ -44,7 +44,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -266,7 +266,7 @@ class Agent:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock']:
+            if state in ['mercenaries', 'box', 'team_lock', 'close']:
                 pyautogui.click(tuple_add(rect, loc))
 
             if state == 'travel':
