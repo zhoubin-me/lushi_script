@@ -59,7 +59,8 @@ class LogUtil:
                     # print(cname)
                     try:
                         spell_entity = eval(cname)
-                    except:
+                    except Exception as ex:
+                        print(ex)
                         spell_entity = SpellEntity(e)
                     # spell_entity = SpellEntity(e)
                     self.game_entity.hero_entities[owner].add_spell(spell_entity)

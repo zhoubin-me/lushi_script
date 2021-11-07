@@ -404,7 +404,7 @@ class Agent:
                     self.run_pve()
                 except Exception as e:
                     logger.error(f'错误：{e}')
-                    restart_game(self.lang, self.basic.bn_path)
+                    restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()
 
