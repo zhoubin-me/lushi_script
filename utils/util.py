@@ -1,3 +1,4 @@
+import logging
 import sys
 import cv2
 import pyautogui
@@ -10,6 +11,9 @@ import time
 import win32api
 from PyQt5.QtWidgets import *
 import csv
+import utils.logging_util
+
+logger = logging.getLogger()
 
 sys.path.append(os.path.dirname(os.path.dirname(os.path.realpath(__file__))))
 PLATFORM = platform.system()
@@ -121,7 +125,7 @@ def move2loc(x, y, title='炉石传说'):
 def proc_exist(process_names):
     for p in psutil.process_iter():
         if len(p.name()) > 0 and p.name() in process_names:
-            print(f"find {p.name()} exists")
+            logger.info(f"find {p.name()} exists")
             return True
     return False
 
@@ -130,7 +134,7 @@ def proc_kill(process_names):
     for p in psutil.process_iter():
         if len(p.name()) > 0 and p.name() in process_names:
             p.kill()
-            print(f"{p.name()} killed")
+            logger.info(f"{p.name()} killed")
 
 
 def restart_game(lang, battle_net_path, kill_existing=True):
@@ -147,24 +151,24 @@ def restart_game(lang, battle_net_path, kill_existing=True):
         time.sleep(5)
 
     while not proc_exist(bn):
-        print('attempt to start Battle.net')
+        logger.info('attempt to start Battle.net')
         win32api.ShellExecute(0, 'open', battle_net_path,
                               '--exec=\"launch WTCG\"',
                               '', 1)
         time.sleep(10)
 
-    print('Battle.net start success')
+    logger.info('Battle.net start success')
 
     while not proc_exist(hs):
-        print('attempt to start Hearthstone')
+        logger.info('attempt to start Hearthstone')
         win32api.ShellExecute(0, 'open', battle_net_path,
                               '--exec=\"launch WTCG\"',
                               '', 1)
         time.sleep(10)
-    print('Hearthstone start success')
+    logger.info('Hearthstone start success')
     time.sleep(5)
     set_top_window(title)
-    print('done')
+    logger.info('done')
 
 
 def analyse_battle_field(region, screen, digits):
@@ -268,5 +272,5 @@ if __name__ == "__main__":
     # restart_game('chs', a)
     # BattleAi.battle(None, None)
     # print(read_hero_data())
+    raise RuntimeError("Test unhandled")
     pass
-
