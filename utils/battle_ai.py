@@ -95,9 +95,9 @@ class BattleAi:
         score = self.analyze_score(_game.my_hero, _game.enemy_hero)
         # print(score)
         if self.score < score:
-            if score == 942:
-                for h in _game.enemy_hero:
-                    print(h.get_health())
+            # if score == 942:
+            #     for h in _game.enemy_hero:
+            #         print(h.get_health())
             self.score = score
             self.action = copy.deepcopy(action_list)
             self.action.sort()
@@ -112,6 +112,7 @@ class BattleAi:
         # 枚举技能
         spell_list = hero.get_available_spell_list()
         for spell in spell_list:
+
             # 枚举目标
             if spell.damage >= 0:
                 if spell.range == 1:
