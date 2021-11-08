@@ -10,7 +10,7 @@ class SpellEntity(BaseEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.card_id = 0
+        self.card_id = '0'
         self.cost = 0  # 技能速度
         self.lettuce_role = 4
         # 法术种类 NONE = 0 ARCANE = 1 FIRE = 2 FROST = 3 NATURE = 4 HOLY = 5 SHADOW = 6 FEL = 7 PHYSICAL_COMBAT = 8
@@ -30,6 +30,8 @@ class SpellEntity(BaseEntity):
         self.damage = 0
         # 技能范围: -1随机，6全部
         self.range = 0
+        # 是否是普通攻击
+        self.is_attack = 0
         self.parse_entity()
 
     def parse_entity(self):
@@ -58,19 +60,19 @@ class SpellEntity(BaseEntity):
         # 不是装备且冷却为0
         return self.lettuce_current_cooldown == 0 and not self.lettuce_is_equpiment and not self.lettuce_is_treasure_card
 
-    def play(self, hero, target):
-        power = self.game_entity.get_spell_power(self.spell_school)
+    def play(self, game, hero, target):
+        power = game.get_spell_power(self.spell_school)
         # print(power)
         if target is None:
             range = self.range
             if range == 'A':
-                hero_list = self.game_entity.get_hero_list(not hero.own())
+                hero_list = game.get_hero_list(not hero.own())
                 for h in hero_list:
                     h.damage += (self.damage + power) * self.damage_advantage[hero.lettuce_role][h.lettuce_role]
                 pass
             elif int(range) < 0:
                 range = int(range)
-                hero_list = self.game_entity.get_hero_list(not hero.own())
+                hero_list = game.get_hero_list(not hero.own())
                 range = -range
                 hero_list = random.sample(hero_list, range)
                 for h in hero_list:
@@ -81,13 +83,21 @@ class SpellEntity(BaseEntity):
 
         pass
 
-    def damage_trigger(self, target):
+    def damage_trigger(self, game, target):
         # 受伤触发器
-
         pass
 
+    def equip(self, hero):
+        # 装备
+        pass
+
+    def compare_card_id(self, card_id):
+        return self.card_id.startswith(card_id)
+
     def __lt__(self, other):
-        return self.cost < other.cost or not self.combo
+        if self.cost == other.cost:
+            return not self.combo
+        return self.cost < other.cost
 
     def __str__(self):
         return {'card_id': self.card_id, 'damage': self.damage, 'cost': self.cost, 'range': self.range,

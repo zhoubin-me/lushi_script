@@ -2,12 +2,16 @@
 import os
 import re
 import sys
+import ctypes
+import threading
+import ctypes
+import inspect
 
 import PyQt5
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtCore import QStringListModel, QThread, pyqtSignal
+from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.util import HEROS
@@ -22,20 +26,31 @@ if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
 if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
-class Thread_2(QThread):  
-    _signal =pyqtSignal()
-    def __init__(self,config):
-        super().__init__()
-        self.config = config
-    def run(self):
-        from lushi import run_from_gui
-        run_from_gui(self.config)
-        self._signal.emit()
-        
+
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+ 
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
+
+
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('ui/main_chs.ui', self)
+
+        self.run_status = False
 
         self.trans = QtCore.QTranslator()
         if __import__('locale').getdefaultlocale()[0] == 'zh_CN':
@@ -66,13 +81,13 @@ class Ui(QMainWindow):
 
         self.hero_dropdown = self.findChild(QComboBox, 'hero_list')
         if self.ui_lang == 'chs':
-            heros_sorted = {k: v[0] for k, v in sorted(
+            heroes_sorted = {k: v[0] for k, v in sorted(
                 HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
-            for k, v in heros_sorted.items():
+            for k, v in heroes_sorted.items():
                 self.hero_dropdown.addItem(v)
         elif self.ui_lang == 'eng':
-            heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
-            for k, v in heros_sorted.items():
+            heroes_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
+            for k, v in heroes_sorted.items():
                 self.hero_dropdown.addItem(v)
 
         self.hero_list = self.findChild(QListView, 'heros')
@@ -101,6 +116,7 @@ class Ui(QMainWindow):
 
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
+        self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
 
         self.action_eng = self.findChild(QAction, 'actionEnglish')
         self.action_eng.triggered.connect(self.tiggerEnglish)
@@ -137,8 +153,8 @@ class Ui(QMainWindow):
             self.slm.setStringList(str_list)
 
         self.hero_dropdown.clear()
-        heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
-        for k, v in heros_sorted.items():
+        heroes_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
+        for k, v in heroes_sorted.items():
             self.hero_dropdown.addItem(v)
 
     def triggerChinese(self):
@@ -159,10 +175,10 @@ class Ui(QMainWindow):
             self.slm.setStringList(str_list)
 
         self.hero_dropdown.clear()
-        heros_sorted = {k: v[0] for k, v in sorted(
+        heroes_sorted = {k: v[0] for k, v in sorted(
             HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
 
-        for k, v in heros_sorted.items():
+        for k, v in heroes_sorted.items():
             self.hero_dropdown.addItem(v)
 
     def loadButtonPressed(self):
@@ -267,6 +283,8 @@ class Ui(QMainWindow):
                 self.hs_path.setText(v)
             if k == 'auto_restart':
                 self.auto_restart.setChecked(v)
+            if k == 'auto_tasks':
+                self.auto_tasks.setChecked(v)
             if k == 'early_stop':
                 self.early_stop.setChecked(v)
             if k == 'lang':
@@ -293,6 +311,7 @@ class Ui(QMainWindow):
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
         self.config['early_stop'] = self.early_stop.isChecked()
+        self.config['auto_tasks'] = self.auto_tasks.isChecked()
         self.config['lang'] = self.lang.currentText()
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
@@ -316,66 +335,85 @@ class Ui(QMainWindow):
             return QMessageBox.critical(self, 'Error!', "Save Path Fail", QMessageBox.Ok, QMessageBox.Ok)
 
     def runButtonPressed(self):
-        hero_text = ""
-        for k, v in self.hero_info.items():
-            hero_text += f"\t{v[0]}:\t{v[2]}\n"
+        if not self.run_status:
+            hero_text = ""
+            for k, v in self.hero_info.items():
+                hero_text += f"\t{v[0]}:\t{v[2]}\n"
 
-        cfm_text = f'''
-            Current Setting:\n
-            Boss ID: {self.config['boss_id'] + 1}\n
-            Team ID: {self.config['team_id'] + 1}\n
-            Boss Reward: {self.config['reward_count']}\n
-            BattleNet Path: {self.config['bn_path']}\n
-            HearthStone Path: {self.config['hs_path']}\n
-            Auto Restart: {self.config['auto_restart']}\n
-            Early Stop: {self.config['early_stop']}\n
-            Language & Resolution: {self.config['lang']}\n
-            Heroes:\n
-            {hero_text}
-        '''.strip().replace('    ', '')
-
-        reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            
             self.save_config()
-            self.thread_2 =Thread_2(self.config)
-            self.thread_2.start()
+            cfm_text = f'''
+                Current Setting:\n
+                Boss ID: {self.config['boss_id'] + 1}\n
+                Team ID: {self.config['team_id'] + 1}\n
+                Boss Reward: {self.config['reward_count']}\n
+                BattleNet Path: {self.config['bn_path']}\n
+                HearthStone Path: {self.config['hs_path']}\n
+                Auto Restart: {self.config['auto_restart']}\n
+                Early Stop: {self.config['early_stop']}\n
+                Auto Task: {self.config['auto_tasks']}\n
+                Language & Resolution: {self.config['lang']}\n
+                Heroes:\n
+                {hero_text}
+            '''.strip().replace('    ', '')
+
+            reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.run_status = True
+                self.run.setText("停止脚本" if self.ui_lang == 'chs' else "Stop")
+                self._thread = threading.Thread(target=self.script_run)
+                self._thread.start()
+            else:
+                pass
         else:
-            pass
+            self.run.setText("运行脚本" if self.ui_lang == 'chs' else "Run")
+            self.run_status = False
+            stop_thread(self._thread)
+
+    def closeEvent(self, event):
+        if self.run_status:
+            stop_thread(self._thread)
+            event.accept()
+        else:
+            event.accept()
+
+    def script_run(self):
+        from lushi import run_from_gui
+        run_from_gui(self.config)
 
     def retranslateUi(self):  # generate from python -m PyQt5.uic.pyuic main_chs.ui -o main_chs_ui.py
         _translate = QtCore.QCoreApplication.translate
         # MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
-        self.label.setText(_translate("MainWindow", "关卡选择序号"))
+        self.load.setText(_translate("MainWindow", "加载配置"))
+        self.save.setText(_translate("MainWindow", "保存配置"))
+        self.run.setText(_translate("MainWindow", "运行脚本"))
         self.label_4.setText(_translate("MainWindow", "战网路径"))
-        self.load_path.setText(_translate("MainWindow", "..."))
+        self.label.setText(_translate("MainWindow", "关卡选择序号"))
+        self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
         self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
         self.label_5.setText(_translate("MainWindow", "炉石路径"))
-        self.load_path2.setText(_translate("MainWindow", "..."))
         self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
-        self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
-        self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
+        self.load_path2.setText(_translate("MainWindow", "..."))
+        self.load_path.setText(_translate("MainWindow", "..."))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
+        self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
+        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务（仅ZH-1600x900有效）"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
-        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))  # cannot translate
+        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
         self.r321.setText(_translate("MainWindow", "3, 2, 1"))
         self.r312.setText(_translate("MainWindow", "3, 1, 2"))
         self.r213.setText(_translate("MainWindow", "2, 1, 3"))
         self.r231.setText(_translate("MainWindow", "2, 3, 1"))
         self.r123.setText(_translate("MainWindow", "1, 2, 3"))
         self.r132.setText(_translate("MainWindow", "1, 3, 2"))
-        self.add.setText(_translate("MainWindow", "添加"))
-        self.empty.setText(_translate("MainWindow", "..."))
-        self.goup.setText(_translate("MainWindow", "上移"))
-        self.godown.setText(_translate("MainWindow", "下移"))
-        self.del_1.setText(_translate("MainWindow", "删除"))
-        self.modify.setText(_translate("MainWindow", "修改"))
-        self.label_9.setText(_translate("MainWindow", "当前英雄技能顺序:"))
         self.label_6.setText(_translate("MainWindow", "英雄出场顺序"))
-        self.load.setText(_translate("MainWindow", "加载配置"))
-        self.save.setText(_translate("MainWindow", "保存配置"))
-        self.run.setText(_translate("MainWindow", "运行脚本"))
-        # self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
+        self.add.setText(_translate("MainWindow", "添加"))
+        self.del_1.setText(_translate("MainWindow", "删除"))
+        self.goup.setText(_translate("MainWindow", "上移"))
+        self.empty.setText(_translate("MainWindow", "..."))
+        self.godown.setText(_translate("MainWindow", "下移"))
+        self.label_9.setText(_translate("MainWindow", "当前英雄技能顺序:"))
+        self.modify.setText(_translate("MainWindow", "修改"))
+        self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
         self.actionEnglish.setText(_translate("MainWindow", "English"))
         self.actionChinese.setText(_translate("MainWindow", "Chinese"))
 
