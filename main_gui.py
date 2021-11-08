@@ -2,12 +2,16 @@
 import os
 import re
 import sys
+import ctypes
+import threading
+import ctypes
+import inspect
 
 import PyQt5
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtCore import QStringListModel, QThread, pyqtSignal
+from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.util import HEROS
@@ -23,23 +27,30 @@ if hasattr(QtCore.Qt, 'AA_UseHighDpiPixmaps'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_UseHighDpiPixmaps, True)
 
 
-class Thread_2(QThread):
-    _signal = pyqtSignal()
-
-    def __init__(self, config):
-        super().__init__()
-        self.config = config
-
-    def run(self):
-        from lushi import run_from_gui
-        run_from_gui(self.config)
-        self._signal.emit()
+def _async_raise(tid, exctype):
+    """raises the exception, performs cleanup if needed"""
+    tid = ctypes.c_long(tid)
+    if not inspect.isclass(exctype):
+        exctype = type(exctype)
+    res = ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, ctypes.py_object(exctype))
+    if res == 0:
+        raise ValueError("invalid thread id")
+    elif res != 1:
+        # """if it returns a number greater than one, you're in trouble,
+        # and you should call it again with exc=NULL to revert the effect"""
+        ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
+        raise SystemError("PyThreadState_SetAsyncExc failed")
+ 
+def stop_thread(thread):
+    _async_raise(thread.ident, SystemExit)
 
 
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
         uic.loadUi('ui/main_chs.ui', self)
+
+        self.run_status = False
 
         self.trans = QtCore.QTranslator()
         if __import__('locale').getdefaultlocale()[0] == 'zh_CN':
@@ -70,13 +81,13 @@ class Ui(QMainWindow):
 
         self.hero_dropdown = self.findChild(QComboBox, 'hero_list')
         if self.ui_lang == 'chs':
-            heros_sorted = {k: v[0] for k, v in sorted(
+            heroes_sorted = {k: v[0] for k, v in sorted(
                 HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
-            for k, v in heros_sorted.items():
+            for k, v in heroes_sorted.items():
                 self.hero_dropdown.addItem(v)
         elif self.ui_lang == 'eng':
-            heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
-            for k, v in heros_sorted.items():
+            heroes_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
+            for k, v in heroes_sorted.items():
                 self.hero_dropdown.addItem(v)
 
         self.hero_list = self.findChild(QListView, 'heros')
@@ -142,8 +153,8 @@ class Ui(QMainWindow):
             self.slm.setStringList(str_list)
 
         self.hero_dropdown.clear()
-        heros_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
-        for k, v in heros_sorted.items():
+        heroes_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
+        for k, v in heroes_sorted.items():
             self.hero_dropdown.addItem(v)
 
     def triggerChinese(self):
@@ -164,10 +175,10 @@ class Ui(QMainWindow):
             self.slm.setStringList(str_list)
 
         self.hero_dropdown.clear()
-        heros_sorted = {k: v[0] for k, v in sorted(
+        heroes_sorted = {k: v[0] for k, v in sorted(
             HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
 
-        for k, v in heros_sorted.items():
+        for k, v in heroes_sorted.items():
             self.hero_dropdown.addItem(v)
 
     def loadButtonPressed(self):
@@ -324,32 +335,50 @@ class Ui(QMainWindow):
             return QMessageBox.critical(self, 'Error!', "Save Path Fail", QMessageBox.Ok, QMessageBox.Ok)
 
     def runButtonPressed(self):
-        hero_text = ""
-        for k, v in self.hero_info.items():
-            hero_text += f"\t{v[0]}:\t{v[2]}\n"
+        if not self.run_status:
+            hero_text = ""
+            for k, v in self.hero_info.items():
+                hero_text += f"\t{v[0]}:\t{v[2]}\n"
 
-        self.save_config()
-        cfm_text = f'''
-            Current Setting:\n
-            Boss ID: {self.config['boss_id'] + 1}\n
-            Team ID: {self.config['team_id'] + 1}\n
-            Boss Reward: {self.config['reward_count']}\n
-            BattleNet Path: {self.config['bn_path']}\n
-            HearthStone Path: {self.config['hs_path']}\n
-            Auto Restart: {self.config['auto_restart']}\n
-            Early Stop: {self.config['early_stop']}\n
-            Auto Task: {self.config['auto_tasks']}\n
-            Language & Resolution: {self.config['lang']}\n
-            Heroes:\n
-            {hero_text}
-        '''.strip().replace('    ', '')
+            self.save_config()
+            cfm_text = f'''
+                Current Setting:\n
+                Boss ID: {self.config['boss_id'] + 1}\n
+                Team ID: {self.config['team_id'] + 1}\n
+                Boss Reward: {self.config['reward_count']}\n
+                BattleNet Path: {self.config['bn_path']}\n
+                HearthStone Path: {self.config['hs_path']}\n
+                Auto Restart: {self.config['auto_restart']}\n
+                Early Stop: {self.config['early_stop']}\n
+                Auto Task: {self.config['auto_tasks']}\n
+                Language & Resolution: {self.config['lang']}\n
+                Heroes:\n
+                {hero_text}
+            '''.strip().replace('    ', '')
 
-        reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
-        if reply == QMessageBox.Yes:
-            self.thread_2 = Thread_2(self.config)
-            self.thread_2.start()
+            reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
+            if reply == QMessageBox.Yes:
+                self.run_status = True
+                self.run.setText("停止脚本" if self.ui_lang == 'chs' else "Stop")
+                self._thread = threading.Thread(target=self.script_run)
+                self._thread.start()
+            else:
+                pass
         else:
-            pass
+            self.run.setText("运行脚本" if self.ui_lang == 'chs' else "Run")
+            self.run_status = False
+            stop_thread(self._thread)
+
+    def closeEvent(self, event):
+        if self.run_status:
+            stop_thread(self._thread)
+            event.accept()
+        else:
+            event.accept()
+
+    def script_run(self):
+        from lushi import run_from_gui
+        run_from_gui(self.config)
 
     def retranslateUi(self):  # generate from python -m PyQt5.uic.pyuic main_chs.ui -o main_chs_ui.py
         _translate = QtCore.QCoreApplication.translate
