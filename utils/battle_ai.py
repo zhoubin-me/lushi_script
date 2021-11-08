@@ -51,6 +51,8 @@ class BattleAi:
             for i, e in enumerate(enemy):
                 if e.get_health() > 0:
                     my_min_health_hero = BattleAi.find_min_health(my)
+                    if my_min_health_hero is None:
+                        continue
                     e.basic_attack(my_min_health_hero, e.atk)
 
             score = BattleAi.analyze_score(my, enemy)
@@ -61,6 +63,8 @@ class BattleAi:
 
     @staticmethod
     def find_min_health(heros):
+        if len(heros) <= 0:
+            return None
         return min(heros, key=lambda x: x.get_health())
 
     def reset(self):
