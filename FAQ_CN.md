@@ -78,5 +78,5 @@ hs_log: [ "D:\\", "Hearthstone", "Logs", "Power.log" ]
 ### 5.奇怪问题，例如莫名其妙退出
 Q: 为啥闪退?为啥不动?为啥...?
 
-A: 需要查看报错信息，如果你的版本有debug.bat可以运行该文件，如果无该文件，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息
+A: 需要查看报错信息，如果你的版本有log文件夹，可以通过他查看历史状态，如果无该文件，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息
 
