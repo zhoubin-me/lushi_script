@@ -51,6 +51,8 @@ class BattleAi:
             for i, e in enumerate(enemy):
                 if e.get_health() > 0:
                     my_min_health_hero = BattleAi.find_min_health(my)
+                    if my_min_health_hero is None:
+                        continue
                     e.basic_attack(my_min_health_hero, e.atk)
 
             score = BattleAi.analyze_score(my, enemy)
@@ -61,6 +63,8 @@ class BattleAi:
 
     @staticmethod
     def find_min_health(heros):
+        if len(heros) <= 0:
+            return None
         return min(heros, key=lambda x: x.get_health())
 
     def reset(self):
@@ -95,9 +99,9 @@ class BattleAi:
         score = self.analyze_score(_game.my_hero, _game.enemy_hero)
         # print(score)
         if self.score < score:
-            if score == 942:
-                for h in _game.enemy_hero:
-                    print(h.get_health())
+            # if score == 942:
+            #     for h in _game.enemy_hero:
+            #         print(h.get_health())
             self.score = score
             self.action = copy.deepcopy(action_list)
             self.action.sort()
@@ -112,6 +116,7 @@ class BattleAi:
         # 枚举技能
         spell_list = hero.get_available_spell_list()
         for spell in spell_list:
+
             # 枚举目标
             if spell.damage >= 0:
                 if spell.range == 1:

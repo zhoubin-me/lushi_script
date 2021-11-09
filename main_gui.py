@@ -1,13 +1,15 @@
+#!/usr/bin/env python
 # -*- coding: utf-8 -*-
+import ctypes
+import inspect
 import os
 import re
 import sys
-import ctypes
 import threading
-import ctypes
-import inspect
+import traceback
 
 import PyQt5
+import keyboard
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
@@ -15,10 +17,6 @@ from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.util import HEROS
-
-if sys.executable.endswith("pythonw.exe"):
-    sys.stdout = open(os.devnull, "w")
-    sys.stderr = open(os.path.join(os.getenv("TEMP"), "stderr-" + os.path.basename(sys.argv[0])), "w")
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -40,7 +38,8 @@ def _async_raise(tid, exctype):
         # and you should call it again with exc=NULL to revert the effect"""
         ctypes.pythonapi.PyThreadState_SetAsyncExc(tid, None)
         raise SystemError("PyThreadState_SetAsyncExc failed")
- 
+
+
 def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
 
@@ -51,6 +50,8 @@ class Ui(QMainWindow):
         uic.loadUi('ui/main_chs.ui', self)
 
         self.run_status = False
+
+        keyboard.add_hotkey("ctrl+q", self.script_exit, suppress=True)
 
         self.trans = QtCore.QTranslator()
         if __import__('locale').getdefaultlocale()[0] == 'zh_CN':
@@ -365,20 +366,30 @@ class Ui(QMainWindow):
             else:
                 pass
         else:
+            self.script_exit()
+
+    def script_exit(self):
+        if self.run_status:
             self.run.setText("运行脚本" if self.ui_lang == 'chs' else "Run")
             self.run_status = False
             stop_thread(self._thread)
-
-    def closeEvent(self, event):
-        if self.run_status:
-            stop_thread(self._thread)
-            event.accept()
         else:
-            event.accept()
+            pass
 
     def script_run(self):
-        from lushi import run_from_gui
-        run_from_gui(self.config)
+        try:
+            from lushi import run_from_gui
+            run_from_gui(self.config)
+        except:
+            self.run.setText("运行脚本" if self.ui_lang == 'chs' else "Run")
+            self.run_status = False
+            err_log = traceback.format_exc()
+            with open('error.log', 'a+') as f:
+                f.writelines(err_log + '\n')
+
+    def closeEvent(self, event):
+        self.script_exit()
+        event.accept()
 
     def retranslateUi(self):  # generate from python -m PyQt5.uic.pyuic main_chs.ui -o main_chs_ui.py
         _translate = QtCore.QCoreApplication.translate
@@ -419,6 +430,7 @@ class Ui(QMainWindow):
 
 
 if __name__ == '__main__':
+    os.chdir(os.path.abspath(os.path.dirname(os.path.realpath(__file__))))
     app = QApplication(sys.argv)
     window = Ui()
     app.exec_()
