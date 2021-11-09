@@ -205,6 +205,7 @@ class Agent:
 
     def select_members(self):
         game = self.log_util.parse_game()
+        logger.info(f" select_members  during scrolling game data {game}")
         rect, screen = find_lushi_window(self.title, to_gray=False)
 
         hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in self.heros]
@@ -277,6 +278,7 @@ class Agent:
                 x_id = self.basic.boss_id % 3
                 y_id = self.basic.boss_id // 3
                 loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                logger.info(f" boss_list surprise during scrolling loc: {loc}, rect: {rect}")
                 pyautogui.click(tuple_add(rect, loc))
                 pyautogui.click(tuple_add(rect, self.locs.start_game))
 
@@ -321,12 +323,15 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'member_not_ready':
+                logger.info(f" member_not_ready  during scrolling ")
                 self.select_members()
 
             if state == 'not_ready_dots':
+                logger.info(f" not_ready_dots  during scrolling lo ")
                 self.start_battle()
 
             if state == 'battle_ready':
+                logger.info(f" battle_ready  during scrolling lo ")
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
