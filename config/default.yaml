@@ -1,4 +1,5 @@
 auto_restart: false
+auto_tasks: false
 bn_path: C:/Program Files (x86)/Battle.net/Battle.net.exe
 boss_id: 5
 confidence: 0.8

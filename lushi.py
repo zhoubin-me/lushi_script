@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+import logging
+
 import pyautogui
 import cv2
 import time
@@ -11,6 +13,9 @@ from types import SimpleNamespace
 from utils.log_util import LogUtil
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
 from utils.battle_ai import BattleAi
+import utils.logging_util
+
+logger = logging.getLogger()
 
 
 class Agent:
@@ -28,8 +33,6 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-
-
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
@@ -41,7 +44,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -65,8 +68,8 @@ class Agent:
         hero_info = cfg['hero']
         self.heros = {}
         for k, v in hero_info.items():
-            spell_order = [int(x)-1 for x in v[2].split(',')]
-            self.heros[k] = [v[0],  v[1], spell_order, v[3]]
+            spell_order = [int(x) - 1 for x in v[2].split(',')]
+            self.heros[k] = [v[0], v[1], spell_order, v[3]]
             self.skill_seq_cache[k] = v[-2]
         del cfg['hero']
         cfg['hs_log'] = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
@@ -84,13 +87,14 @@ class Agent:
         return success, loc, rect
 
     def scan_surprise_loc(self, rect):
-        print('Scanning surprise')
+        time.sleep(5)
+        logger.info('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
             success, loc, rect = self.check_in_screen('surprise')
             if success:
-                print(f"Found surprise at start {loc}")
+                logger.info(f"Found surprise at start {loc}")
                 return loc
             if self.check_in_screen('start_point')[0]:
                 break
@@ -103,14 +107,55 @@ class Agent:
             if success:
                 for _ in range(10):
                     pyautogui.scroll(-60)
-                print(f"Found surprise during scrolling {loc}")
+                logger.info(f"Found surprise during scrolling {loc}")
                 return loc
 
-        print("Did not found any surprise")
+        logger.info("Did not found any surprise")
         return None
 
+    def task_submit(self, rect):
+        if self.basic.auto_tasks and self.lang == "chs":
+            time.sleep(5)
+            # select Camp Fire
+            pyautogui.click(tuple_add(rect, (641, 669)))
+            pyautogui.click(tuple_add(rect, (1302, 744)))
+
+            # first task
+            pyautogui.click(tuple_add(rect, (588, 329)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            # second task
+            pyautogui.click(tuple_add(rect, (988, 336)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            # third task
+            pyautogui.click(tuple_add(rect, (602, 474)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            # forth task
+            pyautogui.click(tuple_add(rect, (988, 474)))
+            pyautogui.click(tuple_add(rect, (548, 719)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (928, 544)))
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+
+            # exit the campfire
+            pyautogui.click(tuple_add(rect, (1438, 440)))
+            # select first first boss of map
+            pyautogui.click(tuple_add(rect, (654, 431)))
+
     def start_battle(self):
-        print("Scanning battlefield")
+        time.sleep(5)
+        logger.info("Scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
         game = self.log_util.parse_game()
@@ -221,7 +266,7 @@ class Agent:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock']:
+            if state in ['mercenaries', 'box', 'team_lock', 'close']:
                 pyautogui.click(tuple_add(rect, loc))
 
             if state == 'travel':
@@ -242,6 +287,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, (self.locs.teams[x_id], self.locs.teams[3 + y_id])))
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
+                self.task_submit(rect)
                 surprise_loc = self.scan_surprise_loc(rect)
                 if surprise_loc is not None:
                     if surprise_loc[0] < self.locs.start_point[0]:
@@ -253,7 +299,7 @@ class Agent:
                         self.surprise_in_mid = True
                     else:
                         self.surprise_in_mid = False
-                    print(f'Surprise side {self.side}, surprise in middile {self.surprise_in_mid}')
+                    logger.info(f'Surprise side {self.side}, surprise in middile {self.surprise_in_mid}')
 
             if state == 'map_not_ready':
                 first_x, mid_x, last_x, y = self.locs.focus
@@ -330,9 +376,9 @@ class Agent:
                 for _ in range(4):
                     pyautogui.click(tuple_add(rect, self.locs.empty))
 
-                print("Visitors Selected")
+                logger.info("Visitors Selected")
                 if self.basic.early_stop:
-                    print("Early stopping")
+                    logger.info("Early stopping")
                     pyautogui.click(tuple_add(rect, self.locs.view_team))
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
@@ -357,8 +403,8 @@ class Agent:
                 try:
                     self.run_pve()
                 except Exception as e:
-                    print('错误：', e)
-                    restart_game(self.lang, self.basic.bn_path)
+                    logger.error(f'错误：{e}')
+                    restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()
 
@@ -386,7 +432,7 @@ class Agent:
                     restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
-                print(
+                logger.info(
                     f"[{currentTime}] Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
 
             for state_text in self.states:
@@ -396,7 +442,7 @@ class Agent:
 
 
 def run_from_gui(cfg):
-    print(cfg)
+    logger.debug(cfg)
     if cfg['lang'].startswith('EN'):
         lang = 'eng'
     elif cfg['lang'].startswith('ZH'):
@@ -435,6 +481,7 @@ def main():
         while True:
             find_relative_loc(title)
             time.sleep(1)
+
 
 if __name__ == '__main__':
     main()

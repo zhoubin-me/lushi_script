@@ -11,7 +11,7 @@ class HeroEntity(BaseEntity):
 
     def __init__(self, entity: Entity):
         super().__init__(entity)
-        self.card_id = 0
+        self.card_id = '1'
         self.atk = 0
         self.max_health = 0
         # 受伤
@@ -29,6 +29,11 @@ class HeroEntity(BaseEntity):
         # INVALID = 0 部落HORDE = 1  联盟ALLIANCE = 2 中立NEUTRAL = 3
         self.faction = 0
         self.windfury = 0
+        # 嘲讽
+        self.taunt = 0
+        self.frozen = 0
+        # 免疫
+        self.immune = 0
         # 被动 一技能 二技能 三技能 ...
         self.spell: List[SpellEntity] = []
         # 法术伤害
@@ -76,6 +81,9 @@ class HeroEntity(BaseEntity):
         self.divine_shield = self.get_tag(GameTag.DIVINE_SHIELD)
         self.faction = self.get_tag(GameTag.FACTION)
         self.windfury = self.get_tag(GameTag.WINDFURY)
+        self.taunt = self.get_tag(GameTag.TAUNT)
+        self.frozen = self.get_tag(GameTag.FROZEN)
+        self.immune = self.get_tag(GameTag.IMMUNE)
 
         self.spellpower[SpellSchool.ARCANE] = self.get_tag(GameTag.SPELLPOWER_ARCANE)
         self.spellpower[SpellSchool.FIRE] = self.get_tag(GameTag.SPELLPOWER_FIRE)
@@ -105,6 +113,8 @@ class HeroEntity(BaseEntity):
         return self.controller == 3
 
     def add_spell(self, spell: SpellEntity):
+        if spell.lettuce_is_equpiment:
+            spell.equip(self)
         self.spell.append(spell)
 
     def get_health(self):
@@ -123,19 +133,36 @@ class HeroEntity(BaseEntity):
         spell = [x for x in self.spell if x.entity_id == entity_id][0]
         return spell
 
+    def get_spell_by_cid(self, card_id):
+        spell = [x for x in self.spell if x.compare_card_id(card_id)][0]
+        return spell
+
     def get_enemy_action(self):
         return self.get_spell_by_eid(self.lettuce_ability_tile_visual_all_visible)
 
     def is_alive(self):
         return self.get_health() > 0
 
-    def got_damage(self, damage):
-        self.damage += damage
-        for spell in self.damage_trigger:
-            spell.damage_trigger(self)
+    def got_damage(self, game, damage):
+        if self.immune:
+            return
+        elif self.divine_shield:
+            self.divine_shield = 0
+        else:
+            self.damage += damage
+            for spell in self.damage_trigger:
+                spell.damage_trigger(game, self)
+
+    def got_heal(self, game, health):
+        if self.damage <= 0:
+            return
+        self.damage = max(0, self.damage - health)
 
     def is_adjacent(self, target):
         return abs(self.zone_position - target.zone_position) <= 1
+
+    def compare_card_id(self, card_id):
+        return self.card_id.startswith(card_id)
 
     def __str__(self):
         return {'card_id': self.card_id, 'atk': self.atk, 'health': self.get_health(),
