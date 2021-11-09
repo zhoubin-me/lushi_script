@@ -67,7 +67,7 @@ class LogUtil:
 
 
 if __name__ == '__main__':
-    path = "D:/Hearthstone/Logs/Power.log"
+    path = "C:/var/Hearthstone/Logs/Power.log"
     hs_log = LogUtil(path)
     game_entity = hs_log.parse_game()
     for i in game_entity.my_hero:

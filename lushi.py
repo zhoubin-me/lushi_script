@@ -372,6 +372,7 @@ class Agent:
         state = ""
 
         while True:
+            currentTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
                 if state == 'not_ready_dots' or state == 'member_not_ready':
@@ -386,7 +387,7 @@ class Agent:
                 tic = time.time()
             else:
                 print(
-                    f"Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
+                    f"[{currentTime}] Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
 
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)
