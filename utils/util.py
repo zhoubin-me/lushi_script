@@ -102,6 +102,7 @@ else:
 def find_icon_location(lushi, icon, confidence):
     result = cv2.matchTemplate(lushi, icon, cv2.TM_CCOEFF_NORMED)
     (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
+    del result
     if maxVal > confidence:
         (startX, startY) = maxLoc
         endX = startX + icon.shape[1]

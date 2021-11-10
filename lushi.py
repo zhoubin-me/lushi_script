@@ -77,12 +77,14 @@ class Agent:
         pyautogui.PAUSE = self.basic.delay
 
     def check_in_screen(self, name, prefix='icons'):
+        
         rect, screen = find_lushi_window(self.title)
         try:
             icon = getattr(self, prefix)[name]
         except:
             return False, None, None
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
+        del screen
         loc = X, Y
         return success, loc, rect
 
@@ -158,6 +160,7 @@ class Agent:
         logger.info("Scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
+        del screen
         game = self.log_util.parse_game()
 
         first_x, mid_x, last_x, y = self.locs.heros
@@ -207,7 +210,7 @@ class Agent:
         game = self.log_util.parse_game()
         logger.info(f" select_members  during scrolling game data {game}")
         rect, screen = find_lushi_window(self.title, to_gray=False)
-
+        del screen
         hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in self.heros]
         if len(hero_in_battle) < 3:
             current_seq = {h.card_id[:-3]: i for i, h in enumerate(game.setaside_hero)}
