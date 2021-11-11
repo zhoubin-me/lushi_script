@@ -1,5 +1,5 @@
 aniso8601
-hearthstone==5.49.0
+hearthstone==5.51.0
 hearthstone-data==124497.1
 hslog==1.16.1
 MouseInfo

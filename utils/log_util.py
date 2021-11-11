@@ -1,3 +1,4 @@
+import logging
 import sys
 
 from hearthstone.enums import CardType, Zone, GameTag
@@ -10,7 +11,9 @@ from entity.hero_entity import HeroEntity
 from entity.spell_entity import SpellEntity
 from utils.util import HEROS
 import entity.cards as ecards
+import utils.logging_util
 
+logger = logging.getLogger()
 
 class LogUtil:
     def __init__(self, log_path):
@@ -60,7 +63,7 @@ class LogUtil:
                     try:
                         spell_entity = eval(cname)
                     except Exception as ex:
-                        print(ex)
+                        logger.warning(ex)
                         spell_entity = SpellEntity(e)
                     # spell_entity = SpellEntity(e)
                     self.game_entity.hero_entities[owner].add_spell(spell_entity)
