@@ -157,6 +157,7 @@ class Agent:
 
     def start_battle(self):
         time.sleep(5)
+
         logger.info("Scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
@@ -277,11 +278,24 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.travel))
 
             if state == 'boss_list':
-                x_id = self.basic.boss_id % 3
-                y_id = self.basic.boss_id // 3
-                loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
-                pyautogui.click(tuple_add(rect, loc))
-                pyautogui.click(tuple_add(rect, self.locs.start_game))
+                if self.basic.boss_id > 5:
+                    id_standard = (self.basic.boss_id-6)*2
+                    x_id = id_standard % 3
+                    y_id = id_standard // 3
+                    loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    if self.lang == "chs":
+                        loc_page_right = (1091,479)
+                    if self.lang == "eng":
+                        loc_page_right = (765.418)
+                    pyautogui.click(tuple_add(rect,loc_page_right))
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
+                else:
+                    x_id = self.basic.boss_id % 3
+                    y_id = self.basic.boss_id // 3
+                    loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'team_list':
                 x_id = self.basic.team_id % 3
@@ -291,7 +305,9 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
                 self.task_submit(rect)
+                #if self.basic.boss_id != 0:
                 surprise_loc = self.scan_surprise_loc(rect)
+
                 if surprise_loc is not None:
                     if surprise_loc[0] < self.locs.start_point[0]:
                         self.side = 'left'
