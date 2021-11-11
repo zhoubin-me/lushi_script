@@ -89,7 +89,7 @@ class Agent:
         return success, loc, rect
 
     def scan_surprise_loc(self, rect):
-        time.sleep(5)
+        #time.sleep(5)
         logger.info('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
@@ -117,7 +117,7 @@ class Agent:
 
     def task_submit(self, rect):
         if self.basic.auto_tasks and self.lang == "chs":
-            time.sleep(5)
+            #time.sleep(5)
             # select Camp Fire
             pyautogui.click(tuple_add(rect, (641, 669)))
             pyautogui.click(tuple_add(rect, (1302, 744)))
@@ -156,12 +156,13 @@ class Agent:
             pyautogui.click(tuple_add(rect, (654, 431)))
 
     def start_battle(self):
-        time.sleep(5)
-
+       
         logger.info("Scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
-        del screen
+        
+        del self.log_util
+        self.log_util=LogUtil(self.basic.hs_log)
         game = self.log_util.parse_game()
 
         first_x, mid_x, last_x, y = self.locs.heros
@@ -304,6 +305,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, (self.locs.teams[x_id], self.locs.teams[3 + y_id])))
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
+                time.sleep(7)   #avoid too low speed of entering map action to skip task_submit and scan_surprise
                 self.task_submit(rect)
                 #if self.basic.boss_id != 0:
                 surprise_loc = self.scan_surprise_loc(rect)
