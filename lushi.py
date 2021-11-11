@@ -311,11 +311,15 @@ class Agent:
                 if self.side is None:
                     self.side = 'left'
                 if self.side == 'left':
-                    x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x
+                    if self.surprise_in_mid:
+                        x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
+                    else:
+                        x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x                 
                 else:
-                    x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
-                if self.surprise_in_mid:
-                    x1, x3 = x3, x1
+                    if self.surprise_in_mid:
+                        x1, x2, x3 = last_x, (last_x + mid_x) // 2, mid_x
+                    else:
+                        x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
 
                 for x in (x1, x2, x3):
                     pyautogui.moveTo(tuple_add(rect, (x, y)))
