@@ -75,11 +75,11 @@ Verbose=True
 
 Q: 我设置了日志路径，但还是提示找不到文件（FileNotFoundError）
 
-A: ~~请确保config.yaml文件中的路径正确(盘符后面需要添加双斜杠)
+A: 请确保config.yaml文件中的路径正确(盘符后面需要添加双斜杠)
 ```
 示例：
 ~~hs_log: [ "D:\\", "Hearthstone", "Logs", "Power.log" ]~~
-```~~
+```
 A: 现在这个路径已经无需配置，但是需要通过GUI指定战网和炉石路径
 
 ### 5.奇怪问题，例如莫名其妙退出
