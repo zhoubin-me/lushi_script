@@ -93,3 +93,8 @@ Q: 出现如下错误
 ![image](https://user-images.githubusercontent.com/46051884/141449319-11fddc54-546d-4742-bf39-e533ab9d652f.png)
 
 A: 查看文件路径，避免中文路径
+
+### 7.电脑/游戏不支持对应分辨率
+Q: 无法选择1600*900分辨率
+
+A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomment-966912310
