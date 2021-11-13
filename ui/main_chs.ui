@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>627</width>
-    <height>564</height>
+    <width>582</width>
+    <height>420</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -120,7 +120,7 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>6</number>
+           <number>9</number>
           </property>
          </widget>
         </item>
@@ -178,7 +178,7 @@
            <number>3</number>
           </property>
           <property name="maximum">
-           <number>5</number>
+           <number>8</number>
           </property>
          </widget>
         </item>
@@ -364,10 +364,13 @@
           </item>
           <item>
            <widget class="QComboBox" name="hero_list">
+            <property name="enabled">
+             <bool>true</bool>
+            </property>
             <property name="maximumSize">
              <size>
               <width>200</width>
-              <height>16777215</height>
+              <height>20</height>
              </size>
             </property>
             <property name="font">
@@ -375,6 +378,9 @@
               <family>Microsoft YaHei UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="editable">
+             <bool>true</bool>
             </property>
            </widget>
           </item>
@@ -620,8 +626,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>627</width>
-     <height>26</height>
+     <width>582</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">
