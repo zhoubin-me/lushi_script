@@ -8,8 +8,6 @@ import sys
 import threading
 import traceback
 
-import sip
-
 from utils.extendedcombobox import ExtendedComboBox
 
 import PyQt5
@@ -20,7 +18,6 @@ from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QStringListModel, Qt, QSortFilterProxyModel
 from PyQt5.QtWidgets import *
 
-#from spyderlib.qt.QtGui.QComboBox import setSizeAdjustPolicy
 
 
 from utils.util import HEROS
@@ -49,8 +46,6 @@ def _async_raise(tid, exctype):
 
 def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
-
-
 
 
 
@@ -93,7 +88,6 @@ class Ui(QMainWindow):
 
         self.hero_dropdown=(self.findChild(ExtendedComboBox, 'hero_list'))
        
-        
         
         if self.ui_lang == 'chs':
             heroes_sorted = {k: v[0] for k, v in sorted(
