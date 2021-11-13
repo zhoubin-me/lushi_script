@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>500</width>
-    <height>420</height>
+    <width>627</width>
+    <height>564</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -120,7 +120,7 @@
            <number>1</number>
           </property>
           <property name="maximum">
-           <number>9</number>
+           <number>6</number>
           </property>
          </widget>
         </item>
@@ -364,6 +364,12 @@
           </item>
           <item>
            <widget class="QComboBox" name="hero_list">
+            <property name="maximumSize">
+             <size>
+              <width>200</width>
+              <height>16777215</height>
+             </size>
+            </property>
             <property name="font">
              <font>
               <family>Microsoft YaHei UI</family>
@@ -614,7 +620,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>500</width>
+     <width>627</width>
      <height>26</height>
     </rect>
    </property>
