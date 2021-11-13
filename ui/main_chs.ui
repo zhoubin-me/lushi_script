@@ -363,13 +363,13 @@
            </widget>
           </item>
           <item>
-           <widget class="QComboBox" name="hero_list">
+           <widget class="ExtendedComboBox" name="hero_list">
             <property name="enabled">
              <bool>true</bool>
             </property>
             <property name="maximumSize">
              <size>
-              <width>200</width>
+              <width>5000</width>
               <height>20</height>
              </size>
             </property>
@@ -656,6 +656,11 @@
    <class>DropLineEdit</class>
    <extends>QLineEdit</extends>
    <header>utils/util</header>
+  </customwidget>
+  <customwidget>
+   <class>ExtendedComboBox</class>
+   <extends>QComboBox</extends>
+   <header>utils/extendedcombobox</header>
   </customwidget>
  </customwidgets>
  <resources/>
