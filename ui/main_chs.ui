@@ -7,13 +7,13 @@
     <x>0</x>
     <y>0</y>
     <width>800</width>
-    <height>600</height>
+    <height>500</height>
    </rect>
   </property>
   <property name="minimumSize">
    <size>
     <width>600</width>
-    <height>500</height>
+    <height>420</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -319,6 +319,19 @@
           </property>
           <property name="text">
            <string>拿完惊喜提前结束</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="5">
+         <widget class="QCheckBox" name="screenshot_reward">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>奖励截图</string>
           </property>
          </widget>
         </item>

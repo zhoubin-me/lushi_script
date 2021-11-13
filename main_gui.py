@@ -117,6 +117,7 @@ class Ui(QMainWindow):
 
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
+        self.screenshot_reward = self.findChild(QCheckBox, 'screenshot_reward')
         self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
 
         self.action_eng = self.findChild(QAction, 'actionEnglish')
@@ -286,6 +287,8 @@ class Ui(QMainWindow):
                 self.auto_restart.setChecked(v)
             if k == 'auto_tasks':
                 self.auto_tasks.setChecked(v)
+            if k == 'screenshot_reward':
+                self.screenshot_reward.setChecked(v)
             if k == 'early_stop':
                 self.early_stop.setChecked(v)
             if k == 'lang':
@@ -312,6 +315,7 @@ class Ui(QMainWindow):
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
         self.config['early_stop'] = self.early_stop.isChecked()
+        self.config['screenshot_reward'] = self.screenshot_reward.isChecked()
         self.config['auto_tasks'] = self.auto_tasks.isChecked()
         self.config['lang'] = self.lang.currentText()
         self.config['delay'] = 0.5
@@ -406,6 +410,7 @@ class Ui(QMainWindow):
         self.load_path2.setText(_translate("MainWindow", "..."))
         self.load_path.setText(_translate("MainWindow", "..."))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
+        self.screenshot_reward.setText(_translate("MainWindow", "奖励截图"))
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
         self.auto_tasks.setText(_translate("MainWindow", "自动提交任务（仅ZH-1600x900有效）"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))

@@ -8,6 +8,8 @@ import numpy as np
 import argparse
 import os
 import yaml
+import datetime
+from PIL import Image
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
@@ -210,7 +212,6 @@ class Agent:
 
     def select_members(self):
         game = self.log_util.parse_game()
-        logger.info(f" select_members  during scrolling game data {game}")
         rect, screen = find_lushi_window(self.title, to_gray=False)
         del screen
         hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in self.heros]
@@ -258,6 +259,17 @@ class Agent:
                     for k, v in current_seq.items():
                         if v > current_pos:
                             current_seq[k] = v - 1
+
+    def screen_record(self):
+        timeFormated = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
+        imageName = f"reward_{timeFormated}.png"
+        _, screen = find_lushi_window(self.title, to_gray=False)
+
+        isinstance(screen, np.ndarray)
+        len(screen.shape) == 3
+        screen.shape[2] == 3
+        img = Image.fromarray(screen, 'RGB')
+        img.save(imageName)
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -413,10 +425,13 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state in ['final_reward', 'final_reward2']:
-                reward_locs = eval(self.locs.rewards[self.basic.reward_count])
+                reward_locs = eval(self.locs.rewards["all"])    # click all of 3， 4， 5 rewards location
                 for loc in reward_locs:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
+
+                if self.basic.screenshot_reward : # record reward by image
+                    self.screen_record()
 
                 pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
                 pyautogui.click()
@@ -478,7 +493,7 @@ def run_from_gui(cfg):
         lang = 'chs'
     else:
         lang = None
-    restart_game(lang, cfg['bn_path'], kill_existing=False)
+    # restart_game(lang, cfg['bn_path'], kill_existing=False)
     agent = Agent(cfg=cfg)
     agent.run()
 

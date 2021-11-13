@@ -69,6 +69,11 @@
         <translation>Early Stop</translation>
     </message>
     <message>
+        <location filename="main_chs.py" line="397"/>
+        <source>奖励截图</source>
+        <translation>Screenshot Reward</translation>
+    </message>
+    <message>
         <location filename="main_chs.py" line="376"/>
         <source>自动提交任务（仅ZH-1600x900有效）</source>
         <translation>Auto tasks(Only ZH-1600x900)</translation>
