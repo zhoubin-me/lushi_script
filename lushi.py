@@ -89,7 +89,7 @@ class Agent:
         return success, loc, rect
 
     def scan_surprise_loc(self, rect):
-        #time.sleep(5)
+        time.sleep(5)
         logger.info('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
@@ -117,7 +117,7 @@ class Agent:
 
     def task_submit(self, rect):
         if self.basic.auto_tasks and self.lang == "chs":
-            #time.sleep(5)
+            time.sleep(5)
             # select Camp Fire
             pyautogui.click(tuple_add(rect, (641, 669)))
             pyautogui.click(tuple_add(rect, (1302, 744)))
@@ -156,13 +156,13 @@ class Agent:
             pyautogui.click(tuple_add(rect, (654, 431)))
 
     def start_battle(self):
-       
+        time.sleep(5)
         logger.info("Scanning battlefield")
-
+        # selectself.log_util = LogUtil(self.basic.hs_log)
         rect, screen = find_lushi_window(self.title)
-        
+        del screen
         del self.log_util
-        self.log_util=LogUtil(self.basic.hs_log)
+        self.log_util = LogUtil(self.basic.hs_log)
         game = self.log_util.parse_game()
 
         first_x, mid_x, last_x, y = self.locs.heros
@@ -279,24 +279,11 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.travel))
 
             if state == 'boss_list':
-                if self.basic.boss_id > 5:
-                    id_standard = (self.basic.boss_id-6)*2
-                    x_id = id_standard % 3
-                    y_id = id_standard // 3
-                    loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
-                    if self.lang == "chs":
-                        loc_page_right = (1091,479)
-                    if self.lang == "eng":
-                        loc_page_right = (765.418)
-                    pyautogui.click(tuple_add(rect,loc_page_right))
-                    pyautogui.click(tuple_add(rect, loc))
-                    pyautogui.click(tuple_add(rect, self.locs.start_game))
-                else:
-                    x_id = self.basic.boss_id % 3
-                    y_id = self.basic.boss_id // 3
-                    loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
-                    pyautogui.click(tuple_add(rect, loc))
-                    pyautogui.click(tuple_add(rect, self.locs.start_game))
+                x_id = self.basic.boss_id % 3
+                y_id = self.basic.boss_id // 3
+                loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                pyautogui.click(tuple_add(rect, loc))
+                pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'team_list':
                 x_id = self.basic.team_id % 3
@@ -305,11 +292,8 @@ class Agent:
                 pyautogui.click(tuple_add(rect, (self.locs.teams[x_id], self.locs.teams[3 + y_id])))
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
-                time.sleep(7)   #avoid too low speed of entering map action to skip task_submit and scan_surprise
                 self.task_submit(rect)
-                #if self.basic.boss_id != 0:
                 surprise_loc = self.scan_surprise_loc(rect)
-
                 if surprise_loc is not None:
                     if surprise_loc[0] < self.locs.start_point[0]:
                         self.side = 'left'
