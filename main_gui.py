@@ -16,7 +16,6 @@ from PyQt5 import uic, QtCore, QtWidgets
 from PyQt5.QtCore import QStringListModel, Qt, QSortFilterProxyModel
 from PyQt5.QtWidgets import *
 
-import sip
 
 
 from utils.util import HEROS
