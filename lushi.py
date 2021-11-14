@@ -14,7 +14,7 @@ from types import SimpleNamespace
 
 from utils.log_util import LogUtil
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
-from utils.images import get_sub_np_array, get_sub_image
+from utils.images import get_sub_np_array
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -36,9 +36,11 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
+        self.debug = True # TODO check before commit
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
+        self.heros_blacklist = {}
         self.game = None
         self.skill_seq_cache = {}
         self.start_seq = {}
@@ -65,7 +67,7 @@ class Agent:
             loc_cfg = yaml.safe_load(f)
 
         self.locs = SimpleNamespace(**loc_cfg['location'])
-        for sub in ['icons', 'treasure_blacklist', 'heros_whitelist']:
+        for sub in ['icons', 'treasure_blacklist', 'heros_whitelist', 'heros_blacklist']:
             self.read_sub_imgs(sub)
 
         hero_info = cfg['hero']
@@ -90,6 +92,17 @@ class Agent:
         del screen
         loc = X, Y
         return success, loc, rect
+    
+    # 传入图片，匹配子图
+    def find_in_image(self, screen, name, prefix='icons'):
+        try:
+            icon = getattr(self, prefix)[name]
+        except:
+            return False, None, None
+        success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
+        del screen
+        loc = X, Y
+        return success, loc
 
     def scan_surprise_loc(self, rect):
         #time.sleep(5)
@@ -275,18 +288,53 @@ class Agent:
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[1], 最多返回：[1,2,3]
     def pick_treasure(self, screen):
         advice_idx = []
+        not_advice_idx = []
         for key in self.treasure_blacklist.keys():
             for idx in range(1, 4):
                 loc = self.locs.treasures_locaion[idx]
                 oneTrasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
                 success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key], self.basic.confidence)
                 if success :
-                    advice_idx.append(idx)
+                    not_advice_idx.append(idx)
 
-        if 1 > len(advice_idx) :
+        if 2 < len(not_advice_idx):
             return [1]
         else :
+            for idx in range(1, 4):
+                if idx not in not_advice_idx:
+                    advice_idx.append(idx)
             return advice_idx
+
+    # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中这不选，如果白名单没命中，黑名单全命中，则随机选
+    def pick_visitor(self, screen, rect):
+        is_in_whitelist = False
+        is_in_blacklist = False
+        idx_whiteList = []
+        for key in self.heros_whitelist.keys():
+            success, loc = self.find_in_image(screen, key, prefix='heros_whitelist')
+            if success:
+                is_in_whitelist = True
+                for idx, vloc in self.locs.visitors:
+                    if vloc[0] < loc[0] and loc[1] < vloc[2]:
+                        idx_whiteList.append(idx)
+
+        if is_in_whitelist:
+            visitor_id = np.random.randint(0, 3)
+            visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+            pyautogui.click(tuple_add(rect, visitor_loc))
+
+        for key in self.heros_blacklist.keys():
+            success, loc = self.find_in_image(screen, key, prefix='heros_blacklist')
+            if success:
+                is_in_blacklist = True
+                return loc
+
+        if not is_in_whitelist:
+            visitor_id = np.random.randint(0, 3)
+            visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
+            pyautogui.click(tuple_add(rect, visitor_loc))
+
+        pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -389,10 +437,18 @@ class Agent:
 
             if state in ['treasure_list', 'treasure_replace']:
                 _, screen = find_lushi_window(self.title)
-                adive = self.pick_treasure(screen, self.treasure_blacklist)
-                treasure_loc = (self.locs.treasures[adive[0]], self.locs.treasures[-1])
+                adive = self.pick_treasure(screen)
+                while True:
+                    id = np.random.randint(1, 3)
+                    if id in adive:
+                        treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
+                        break
+                
                 print(f"click treasure : {rect}, {treasure_loc}")
                 pyautogui.click(tuple_add(rect, treasure_loc))
+                # hero treasure screenshot before confirm
+                if self.debug :
+                    self.screen_record()
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
@@ -405,6 +461,8 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'visitor_list':
+                _, screen = find_lushi_window(self.title)
+                # advice = self.pick_visitor(screen, rect) # TODO test
                 is_in_whitelilst = False
                 for key in self.heros_whitelist.keys():
                     success, loc, rect = self.check_in_screen(key, prefix='heros_whitelist')
@@ -418,6 +476,9 @@ class Agent:
                     visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                     pyautogui.click(tuple_add(rect, visitor_loc))
 
+                # visitor, pick mission record
+                if self.debug:
+                    self.screen_record()
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
                 for _ in range(4):
@@ -436,7 +497,7 @@ class Agent:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
 
-                if self.basic.screenshot_reward : # record reward by image
+                if self.basic.screenshot_reward  or self.debug : # record reward by image
                     self.screen_record()
 
                 pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
@@ -499,7 +560,7 @@ def run_from_gui(cfg):
         lang = 'chs'
     else:
         lang = None
-    # restart_game(lang, cfg['bn_path'], kill_existing=False)
+    restart_game(lang, cfg['bn_path'], kill_existing=False)
     agent = Agent(cfg=cfg)
     agent.run()
 
