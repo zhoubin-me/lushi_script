@@ -1,0 +1,80 @@
+# -*- coding: utf-8 -*-
+import unittest
+from utils.util import find_lushi_window, find_icon_location
+from utils.images import get_sub_image, match_sub_image
+import yaml
+from types import SimpleNamespace
+import cv2
+import numpy as np
+import os
+
+class TestImage(unittest.TestCase):
+
+    def setUp(self):
+        print("setUp")
+
+    def tearDown(self) -> None:
+        return super().tearDown()
+
+    def gen_config(self):
+        config = {}
+        
+        try:
+            with open('config/default.yaml', 'r', encoding='utf-8') as f:
+                config = yaml.safe_load(f)
+        except:
+            return ""
+
+        config['screenshot_reward'] = True
+        config['lang'] = 'EN-1024x768'
+
+        loc_file = 'config/locs_eng.yaml'
+        with open(loc_file, 'r', encoding='utf-8') as f:
+            loc_cfg = yaml.safe_load(f)
+
+        locs = SimpleNamespace(**loc_cfg['location'])
+        return config, locs
+
+    def get_screen(self, title):
+        return find_lushi_window(title)
+
+    def get_save_image(self, to_gray = True):
+        imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", "treasure2.png")
+        src = cv2.imread(imgPath)
+        if to_gray:
+            image = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+        else:
+            image = np.array(src)
+        return image
+
+    def read_sub_imgs(self, sub):
+        self.img_folder = os.path.join(".", "resource", "imgs_eng_1024x768")
+        self.treasure_blacklist = {}
+        # treasure_blacklist
+        imgs = [img for img in os.listdir(os.path.join(self.img_folder, sub)) if img.endswith('.png')]
+        x = {}
+        for img in imgs:
+            k = img.split('.')[0]
+            v = cv2.cvtColor(cv2.imread(os.path.join(self.img_folder, sub, img)), cv2.COLOR_BGR2GRAY)
+            x = getattr(self, sub)
+            x[k] = v
+        
+        return x
+
+    def test_get_sub_image(self):
+        # _, screen = self.getScreen('RustDesk')
+        screen = self.get_save_image()
+        config, locs = self.gen_config()
+        print(config, locs.treasures_locaion)
+        
+        imgMap = self.read_sub_imgs("treasure_blacklist")
+        for key in self.treasure_blacklist.keys():
+            for idx in range(1, 3):
+                loc =  locs.treasures_locaion[idx]
+                subImage = get_sub_image(screen, loc[0], loc[1], loc[2], loc[3])
+                # success, X, Y, conf = match_sub_image(subImage, imgMap[key], 0.75)
+                success, X, Y, conf = find_icon_location(subImage, imgMap["big_skills"], 0.75)
+                print("")
+
+if __name__  == "__main__":
+    unittest.main()

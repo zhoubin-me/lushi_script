@@ -9,6 +9,7 @@ __pycache__/
 
 # Distribution / packaging
 .idea
+.vscode
 .ipynb_checkpoints
 .Python
 build/
