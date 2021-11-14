@@ -1,5 +1,7 @@
 import logging
 import sys
+from datetime import datetime
+
 import cv2
 import pyautogui
 from PIL import ImageGrab, Image
@@ -80,6 +82,21 @@ if PLATFORM:
         else:
             image = np.array(image)
         return rect, image
+
+
+    def screenshot(title, file_name=None):
+        hwnd = findTopWindow(title)
+        rect = win32gui.GetWindowPlacement(hwnd)[-1]
+        image = ImageGrab.grab(rect)
+        dt = datetime.strftime(datetime.now(), "%Y-%m-%d_%H")
+        screenshot_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', dt, 'screenshot')
+        if not os.path.exists(screenshot_path):
+            os.makedirs(screenshot_path)
+        if file_name is None:
+            file_name = datetime.strftime(datetime.now(), '%H.%M.%S,%f')[:-3] + '.png'
+        full_file_name = os.path.join(screenshot_path, file_name)
+        image.save(full_file_name)
+        logger.info(f'screenshot saved at {full_file_name}')
 
 
 
@@ -272,10 +289,5 @@ class DropLineEdit(QLineEdit):  # support drag
 
 
 if __name__ == "__main__":
-    # restart_game("chs")
-    # a = 'C:\\Program Files (x86)\\Battle.net\\Battle.net.exe'
-    # restart_game('chs', a)
-    # BattleAi.battle(None, None)
-    # print(read_hero_data())
-    raise RuntimeError("Test unhandled")
-    pass
+    screenshot_folder = r'resource\screenshot'
+    screenshot('hearthstone', os.path.join(screenshot_folder))

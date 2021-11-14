@@ -11,7 +11,7 @@ import yaml
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -20,6 +20,7 @@ logger = logging.getLogger()
 
 class Agent:
     def __init__(self, cfg):
+        self.is_screenshot = cfg.get('is_screenshot') or False
         if cfg['lang'].startswith('EN'):
             self.lang = 'eng'
             self.loc_file = 'config/locs_eng.yaml'
@@ -393,6 +394,9 @@ class Agent:
                     visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                     pyautogui.click(tuple_add(rect, visitor_loc))
 
+                if self.is_screenshot:
+                    screenshot(self.title)
+
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
                 for _ in range(4):
@@ -426,6 +430,8 @@ class Agent:
                     self.run_pve()
                 except Exception as e:
                     logger.error(f'错误：{e}')
+                    if self.is_screenshot:
+                        screenshot(self.title)
                     restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()
@@ -442,6 +448,8 @@ class Agent:
         while True:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
+                if self.is_screenshot:
+                    screenshot(self.title)
                 if state == 'not_ready_dots' or state == 'member_not_ready':
                     pyautogui.click(tuple_add(rect, self.locs.options))
                     pyautogui.click(tuple_add(rect, self.locs.surrender))

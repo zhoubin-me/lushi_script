@@ -17,13 +17,13 @@ class LoggingUtil:
         self.logger.setLevel(logging.INFO)
 
         current_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
+        dt = datetime.strftime(datetime.now(), "%Y-%m-%d_%H")
         # print(current_path)
         # 指定文件输出路径，注意logs是个文件夹，一定要加上/，不然会导致输出路径错误，把log变成文件名的一部分了
-        log_path = os.path.join(current_path, 'logs')
+        log_path = os.path.join(current_path, f'logs/{dt}')
         if not os.path.exists(log_path):
-            os.mkdir(log_path)
+            os.makedirs(log_path)
         # 指定输出的日志文件名
-        dt = datetime.strftime(datetime.now(), "%Y-%m-%d_%H")
         # 日志的文件名
         log_name = log_path + '/' + str(dt) + '.log'
         # 创建一个handler，用于写入日志文件, 'a'表示追加
