@@ -44,7 +44,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm', 'close']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -77,7 +77,7 @@ class Agent:
         pyautogui.PAUSE = self.basic.delay
 
     def check_in_screen(self, name, prefix='icons'):
-        
+
         rect, screen = find_lushi_window(self.title)
         try:
             icon = getattr(self, prefix)[name]
@@ -89,7 +89,7 @@ class Agent:
         return success, loc, rect
 
     def scan_surprise_loc(self, rect):
-        #time.sleep(5)
+        # time.sleep(5)
         logger.info('Scanning surprise')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
@@ -117,7 +117,7 @@ class Agent:
 
     def task_submit(self, rect):
         if self.basic.auto_tasks and self.lang == "chs":
-            #time.sleep(5)
+            # time.sleep(5)
             # select Camp Fire
             pyautogui.click(tuple_add(rect, (641, 669)))
             pyautogui.click(tuple_add(rect, (1302, 744)))
@@ -156,13 +156,13 @@ class Agent:
             pyautogui.click(tuple_add(rect, (654, 431)))
 
     def start_battle(self):
-       
+
         logger.info("Scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
-        
+
         del self.log_util
-        self.log_util=LogUtil(self.basic.hs_log)
+        self.log_util = LogUtil(self.basic.hs_log)
         game = self.log_util.parse_game()
 
         first_x, mid_x, last_x, y = self.locs.heros
@@ -271,8 +271,9 @@ class Agent:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock', 'close']:
+            if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok']:
                 pyautogui.click(tuple_add(rect, loc))
+                logger.info(f'clicked {state}')
 
             if state == 'travel':
                 pyautogui.click(tuple_add(rect, loc))
@@ -280,15 +281,15 @@ class Agent:
 
             if state == 'boss_list':
                 if self.basic.boss_id > 5:
-                    id_standard = (self.basic.boss_id-6)*2
+                    id_standard = (self.basic.boss_id - 6) * 2
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
                     if self.lang == "chs":
-                        loc_page_right = (1091,479)
+                        loc_page_right = (1091, 479)
                     if self.lang == "eng":
                         loc_page_right = (765.418)
-                    pyautogui.click(tuple_add(rect,loc_page_right))
+                    pyautogui.click(tuple_add(rect, loc_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
                 else:
@@ -305,9 +306,9 @@ class Agent:
                 pyautogui.click(tuple_add(rect, (self.locs.teams[x_id], self.locs.teams[3 + y_id])))
                 pyautogui.click(tuple_add(rect, self.locs.team_select))
                 pyautogui.click(tuple_add(rect, self.locs.team_lock))
-                time.sleep(7)   #avoid too low speed of entering map action to skip task_submit and scan_surprise
+                time.sleep(7)  # avoid too low speed of entering map action to skip task_submit and scan_surprise
                 self.task_submit(rect)
-                #if self.basic.boss_id != 0:
+                # if self.basic.boss_id != 0:
                 surprise_loc = self.scan_surprise_loc(rect)
 
                 if surprise_loc is not None:
