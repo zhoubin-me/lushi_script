@@ -14,6 +14,7 @@ from types import SimpleNamespace
 
 from utils.log_util import LogUtil
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
+from utils.images import get_sub_np_array, get_sub_image
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -270,6 +271,22 @@ class Agent:
         screen.shape[2] == 3
         img = Image.fromarray(screen, 'RGB')
         img.save(imageName)
+    
+    # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[1], 最多返回：[1,2,3]
+    def pick_treasure(self, screen):
+        advice_idx = []
+        for key in self.treasure_blacklist.keys():
+            for idx in range(1, 4):
+                loc = self.locs.treasures_locaion[idx]
+                oneTrasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
+                success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key], self.basic.confidence)
+                if success :
+                    advice_idx.append(idx)
+
+        if 1 > len(advice_idx) :
+            return [1]
+        else :
+            return advice_idx
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -371,24 +388,13 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
-                for treasure_id in range(3):
-                    treasure_loc = (self.locs.treasures[treasure_id], self.locs.treasures[-1])
-                    if treasure_id == 2:
-                        pyautogui.click(tuple_add(rect, treasure_loc))
-                        break
-
-                    is_in_blacklilst = False
-                    for key in self.treasure_blacklist.keys():
-                        success, loc, rect = self.check_in_screen(key, prefix='treasure_blacklist')
-                        if success:
-                            x_dis = np.abs(loc[0] - treasure_loc[0])
-                            if x_dis < 100:
-                                is_in_blacklilst = True
-                                break
-                    if not is_in_blacklilst:
-                        pyautogui.click(tuple_add(rect, treasure_loc))
-                        break
+                _, screen = find_lushi_window(self.title)
+                adive = self.pick_treasure(screen, self.treasure_blacklist)
+                treasure_loc = (self.locs.treasures[adive[0]], self.locs.treasures[-1])
+                print(f"click treasure : {rect}, {treasure_loc}")
+                pyautogui.click(tuple_add(rect, treasure_loc))
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
+                del screen
 
             if state in ['destroy', 'blue_portal', 'boom']:
                 if self.basic.early_stop:

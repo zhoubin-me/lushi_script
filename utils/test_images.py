@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 from utils.util import find_lushi_window, find_icon_location
-from utils.images import get_sub_image, match_sub_image
+from utils.images import get_sub_np_array
 import yaml
 from types import SimpleNamespace
 import cv2
@@ -69,12 +69,12 @@ class TestImage(unittest.TestCase):
         
         imgMap = self.read_sub_imgs("treasure_blacklist")
         for key in self.treasure_blacklist.keys():
-            for idx in range(1, 3):
+            for idx in range(1, 4):
                 loc =  locs.treasures_locaion[idx]
-                subImage = get_sub_image(screen, loc[0], loc[1], loc[2], loc[3])
+                subImage = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
                 # success, X, Y, conf = match_sub_image(subImage, imgMap[key], 0.75)
-                success, X, Y, conf = find_icon_location(subImage, imgMap["big_skills"], 0.75)
-                print("")
+                success, X, Y, conf = find_icon_location(subImage, imgMap[key], 0.75)
+                print(f"test get_sub_image idx: {idx}, sub_key: {key}, suc: {success}, score: {conf}\n")
 
 if __name__  == "__main__":
     unittest.main()
