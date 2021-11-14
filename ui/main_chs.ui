@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>555</width>
-    <height>420</height>
+    <width>558</width>
+    <height>464</height>
    </rect>
   </property>
   <property name="minimumSize">
@@ -84,264 +84,6 @@
         </item>
        </layout>
       </item>
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_4">
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>战网路径</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QSpinBox" name="boss_level">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI Light</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>9</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>关卡选择序号</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>语言与分辨率</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QComboBox" name="lang">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="1">
-         <widget class="QSpinBox" name="boss_reward">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI Light</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="minimum">
-           <number>3</number>
-          </property>
-          <property name="maximum">
-           <number>8</number>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>队伍选择序号</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="label_5">
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>炉石路径</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>关卡奖励数量</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="5">
-         <widget class="QToolButton" name="load_path2">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="5">
-         <widget class="QToolButton" name="load_path">
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>...</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="4">
-         <widget class="DropLineEdit" name="hs_path">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="team_id">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI Light</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>9</number>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="4">
-         <widget class="DropLineEdit" name="bn_path">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="3">
-         <widget class="QCheckBox" name="auto_restart">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>脚本宕机自动重启</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="4">
-         <widget class="QCheckBox" name="early_stop">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>拿完惊喜提前结束</string>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3" colspan="2">
-         <widget class="QCheckBox" name="auto_tasks">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-           </font>
-          </property>
-          <property name="text">
-           <string>自动提交任务（仅ZH-1600x900有效）</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
       <item row="2" column="0">
        <layout class="QHBoxLayout" name="horizontalLayout">
         <item>
@@ -370,7 +112,7 @@
             <property name="maximumSize">
              <size>
               <width>5000</width>
-              <height>20</height>
+              <height>30</height>
              </size>
             </property>
             <property name="font">
@@ -487,12 +229,29 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="0" rowspan="6" colspan="2">
-           <widget class="QListView" name="heros">
+          <item row="2" column="2">
+           <widget class="QPushButton" name="add">
             <property name="font">
              <font>
+              <family>Microsoft YaHei UI</family>
               <pointsize>9</pointsize>
              </font>
+            </property>
+            <property name="text">
+             <string>添加</string>
+            </property>
+           </widget>
+          </item>
+          <item row="4" column="2">
+           <widget class="QPushButton" name="goup">
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>上移</string>
             </property>
            </widget>
           </item>
@@ -512,16 +271,10 @@
             </property>
            </widget>
           </item>
-          <item row="2" column="2">
-           <widget class="QPushButton" name="add">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+          <item row="3" column="2">
+           <widget class="QPushButton" name="empty">
             <property name="text">
-             <string>添加</string>
+             <string>...</string>
             </property>
            </widget>
           </item>
@@ -538,36 +291,12 @@
             </property>
            </widget>
           </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="goup">
+          <item row="2" column="0" rowspan="6" colspan="2">
+           <widget class="QListView" name="heros">
             <property name="font">
              <font>
-              <family>Microsoft YaHei UI</family>
               <pointsize>9</pointsize>
              </font>
-            </property>
-            <property name="text">
-             <string>上移</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="empty">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="2">
-           <widget class="QLabel" name="current_order">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string/>
             </property>
            </widget>
           </item>
@@ -581,6 +310,32 @@
             </property>
             <property name="text">
              <string>下移</string>
+            </property>
+           </widget>
+          </item>
+          <item row="7" column="2">
+           <widget class="QPushButton" name="modify">
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string>修改</string>
+            </property>
+           </widget>
+          </item>
+          <item row="8" column="2">
+           <widget class="QLabel" name="current_order">
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
             </property>
            </widget>
           </item>
@@ -600,20 +355,280 @@
             </property>
            </widget>
           </item>
-          <item row="7" column="2">
-           <widget class="QPushButton" name="modify">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>修改</string>
-            </property>
-           </widget>
-          </item>
          </layout>
+        </item>
+       </layout>
+      </item>
+      <item row="0" column="0">
+       <layout class="QGridLayout" name="gridLayout_2">
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>关卡奖励数量</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="0">
+         <widget class="QLabel" name="label_2">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>队伍选择序号</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="3">
+         <widget class="QLabel" name="label_5">
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>炉石路径</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="5">
+         <widget class="QToolButton" name="load_path">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="DropLineEdit" name="hs_path">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <widget class="QToolButton" name="load_path2">
+          <property name="font">
+           <font>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>...</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QSpinBox" name="boss_level">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI Light</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>9</number>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label_4">
+          <property name="minimumSize">
+           <size>
+            <width>90</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>战网路径</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>关卡选择序号</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QSpinBox" name="team_id">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI Light</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="minimum">
+           <number>1</number>
+          </property>
+          <property name="maximum">
+           <number>9</number>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="3" colspan="2">
+         <widget class="QCheckBox" name="auto_tasks">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>自动提交任务（仅ZH-1600x900有效）</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="3">
+         <widget class="QCheckBox" name="auto_restart">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>脚本宕机自动重启</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="4">
+         <widget class="QCheckBox" name="early_stop">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>拿完惊喜提前结束</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="4">
+         <widget class="DropLineEdit" name="bn_path">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QSpinBox" name="boss_reward">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI Light</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="minimum">
+           <number>3</number>
+          </property>
+          <property name="maximum">
+           <number>8</number>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0" rowspan="2">
+         <widget class="QLabel" name="label_8">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>语言与分辨率</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1" rowspan="2">
+         <widget class="QComboBox" name="lang">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="3" colspan="2">
+         <widget class="QCheckBox" name="is_screenshot">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>脚本出错截图</string>
+          </property>
+          <property name="checked">
+           <bool>true</bool>
+          </property>
+         </widget>
         </item>
        </layout>
       </item>
@@ -626,8 +641,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>555</width>
-     <height>23</height>
+     <width>558</width>
+     <height>26</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">
