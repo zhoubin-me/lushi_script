@@ -44,12 +44,17 @@ A: 安装时请仔细看清每一步，确保在Advanced Options界面时勾选A
 
 ### 3.如何运行脚本的相关问题
 Q: 上面的这些步骤我已经全部完成了，脚本压缩包也下载并解压好了，为什么我双击lushi.py没有任何反应？  
-A： lushi.py没有办法直接运行，需要通过cmd启动。如果你安装了Anaconda，可以通过启动Anaconda Prompt来打开命令行。比如，你下载的本项目的路径为```C:\\Users\\Downloads\\lushi_script```,
-则在命令行中输入```cd C:\\Users\\Downloads\\lushi_script```，按回车到当前目录，再输入```python lushi.py```回车即可启动脚本。具体的操作方法为在cmd中输入CD加空格加lushi.py所在路径，详细可参照[命令提示符——CMD目录操作——cd命令](https://jingyan.baidu.com/article/73c3ce28480637e50343d992.html)。   
+A：旧版本适用：~~lushi.py没有办法直接运行，需要通过cmd启动。如果你安装了Anaconda，可以通过启动Anaconda Prompt来打开命令行。比如，你下载的本项目的路径为```C:\\Users\\Downloads\\lushi_script```,
+则在命令行中输入```cd C:\\Users\\Downloads\\lushi_script```，按回车到当前目录，再输入```python lushi.py```回车即可启动脚本。具体的操作方法为在cmd中输入CD加空格加lushi.py所在路径，详细可参照[命令提示符——CMD目录操作——cd命令]~(https://jingyan.baidu.com/article/73c3ce28480637e50343d992.html)。 
+
+新版本适用：双击start_gui.bat
 
 Q: 成功启动脚本后该如何设置脚本？  
-A: 脚本的设置文件是config_chs.yaml和config_eng.yaml这两个文件，根据你炉石客户端的语言设置对应的配置文件即可。  
+A: ~~旧版本适用：脚本的设置文件是config_chs.yaml和config_eng.yaml这两个文件，根据你炉石客户端的语言设置对应的配置文件即可~~
 
+   现版本可直接通过GUI修改和导入设置，为了正常运行，必须要修改战网路径和炉石路径，部分版本在启动前必须要先保存才能使配置生效，另外，将设置保存成default.yaml可以在下次打开自动导入，
+
+  
 
 
 ### 4.Power.log相关问题
@@ -69,14 +74,27 @@ Verbose=True
 关于炉石log的更多信息可以查看这个 [Reddit帖子](https://www.reddit.com/r/hearthstone/comments/268fkk/simple_hearthstone_logging_see_your_complete_play/) 。
 
 Q: 我设置了日志路径，但还是提示找不到文件（FileNotFoundError）
-A: 请确保config.yaml文件中的路径正确(盘符后面需要添加双斜杠)
 
+A: ~~请确保config.yaml文件中的路径正确(盘符后面需要添加双斜杠)~~
 ```
 示例：
 hs_log: [ "D:\\", "Hearthstone", "Logs", "Power.log" ]
 ```
+A: 现在这个路径已经无需配置，但是需要通过GUI指定战网和炉石路径
+
 ### 5.奇怪问题，例如莫名其妙退出
 Q: 为啥闪退?为啥不动?为啥...?
 
 A: 需要查看报错信息，如果你的版本有log文件夹，可以通过他查看历史状态，如果无该文件，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息
 
+### 6.platform初始化错误
+Q: 出现如下错误
+
+![image](https://user-images.githubusercontent.com/46051884/141449319-11fddc54-546d-4742-bf39-e533ab9d652f.png)
+
+A: 查看文件路径，避免中文路径
+
+### 7.电脑/游戏不支持对应分辨率
+Q: 无法选择1600*900分辨率
+
+A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomment-966912310

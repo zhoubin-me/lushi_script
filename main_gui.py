@@ -8,13 +8,17 @@ import sys
 import threading
 import traceback
 
+from utils.extendedcombobox import ExtendedComboBox
+
 import PyQt5
 import keyboard
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtCore import QStringListModel
+from PyQt5.QtCore import QStringListModel, Qt, QSortFilterProxyModel
 from PyQt5.QtWidgets import *
+
+
 
 from utils.util import HEROS
 
@@ -42,6 +46,7 @@ def _async_raise(tid, exctype):
 
 def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
+
 
 
 class Ui(QMainWindow):
@@ -85,7 +90,10 @@ class Ui(QMainWindow):
         self.load = self.findChild(QPushButton, 'load')  # Find the button
         self.load.clicked.connect(self.loadButtonPressed)  # Click event
 
-        self.hero_dropdown = self.findChild(QComboBox, 'hero_list')
+
+        self.hero_dropdown=(self.findChild(ExtendedComboBox, 'hero_list'))
+       
+        
         if self.ui_lang == 'chs':
             heroes_sorted = {k: v[0] for k, v in sorted(
                 HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
@@ -124,6 +132,7 @@ class Ui(QMainWindow):
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
         self.screenshot_reward = self.findChild(QCheckBox, 'screenshot_reward')
         self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
+        self.is_sceenshot = self.findChild(QCheckBox, 'is_sceenshot')
 
         self.action_eng = self.findChild(QAction, 'actionEnglish')
         self.action_eng.triggered.connect(self.tiggerEnglish)
@@ -136,6 +145,9 @@ class Ui(QMainWindow):
         self.hero_info = {}
         self.config = {}
         self.load_config('config/default.yaml')
+
+
+
         self.show()
 
         if self.ui_lang == 'eng':
@@ -294,6 +306,8 @@ class Ui(QMainWindow):
                 self.auto_tasks.setChecked(v)
             if k == 'screenshot_reward':
                 self.screenshot_reward.setChecked(v)
+            if k == 'is_sceenshot':
+                self.is_sceenshot.setChecked(v)
             if k == 'early_stop':
                 self.early_stop.setChecked(v)
             if k == 'lang':
@@ -322,6 +336,7 @@ class Ui(QMainWindow):
         self.config['early_stop'] = self.early_stop.isChecked()
         self.config['screenshot_reward'] = self.screenshot_reward.isChecked()
         self.config['auto_tasks'] = self.auto_tasks.isChecked()
+        self.config['is_screenshot'] = self.is_screenshot.isChecked()
         self.config['lang'] = self.lang.currentText()
         self.config['reward_count'] = self.reward_count_dropdown.currentText()
         self.config['delay'] = 0.5
@@ -362,6 +377,7 @@ class Ui(QMainWindow):
                 Auto Restart: {self.config['auto_restart']}\n
                 Early Stop: {self.config['early_stop']}\n
                 Auto Task: {self.config['auto_tasks']}\n
+                Is Screenshot: {self.config['is_screenshot']}\n
                 Language & Resolution: {self.config['lang']}\n
                 Heroes:\n
                 {hero_text}
@@ -423,6 +439,7 @@ class Ui(QMainWindow):
         self.screenshot_reward.setText(_translate("MainWindow", "奖励截图"))
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
         self.auto_tasks.setText(_translate("MainWindow", "自动提交任务（仅ZH-1600x900有效）"))
+        #self.is_screenshot.setText(_translate("MainWindow", "脚本出错截图"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
         self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
         self.r321.setText(_translate("MainWindow", "3, 2, 1"))
