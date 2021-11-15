@@ -37,7 +37,7 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-        self.debug = True # TODO check before commit
+        self.debug = False # TODO check before commit
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
