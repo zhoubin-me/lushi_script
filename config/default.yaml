@@ -36,7 +36,7 @@ hero:
   - Diablo
   - 3, 2, 1
   - 3
-hs_path: E:/Games/Hearthstone/Hearthstone.exe
+hs_path: C:/Program Files (x86)/Hearthstone/Hearthstone.exe
 is_screenshot: true
 lang: ZH-1600x900
 longest_waiting: 80

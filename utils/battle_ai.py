@@ -136,7 +136,7 @@ class BattleAi:
 
 
 if __name__ == '__main__':
-    path = 'D:\\Hearthstone\\Logs\\Power.log'
+    path = 'C:\\var\\Hearthstone\\Logs\\Power.log'
     log = LogUtil(path)
     game = log.parse_game()
     # a = BattleAi.battle(game.my_hero, game.enemy_hero)

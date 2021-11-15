@@ -12,7 +12,7 @@
   </property>
   <property name="minimumSize">
    <size>
-    <width>384</width>
+    <width>600</width>
     <height>420</height>
    </size>
   </property>
@@ -361,22 +361,6 @@
       </item>
       <item row="0" column="0">
        <layout class="QGridLayout" name="gridLayout_2">
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>关卡奖励数量</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="0">
          <widget class="QLabel" name="label_2">
           <property name="font">
@@ -412,6 +396,32 @@
           </property>
           <property name="alignment">
            <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>关卡奖励数量</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <widget class="QComboBox" name="reward">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
           </property>
          </widget>
         </item>
@@ -573,22 +583,6 @@
           </property>
          </widget>
         </item>
-        <item row="3" column="1">
-         <widget class="QSpinBox" name="boss_reward">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI Light</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="minimum">
-           <number>3</number>
-          </property>
-          <property name="maximum">
-           <number>8</number>
-          </property>
-         </widget>
-        </item>
         <item row="6" column="0" rowspan="2">
          <widget class="QLabel" name="label_8">
           <property name="font">
@@ -627,6 +621,19 @@
           </property>
           <property name="checked">
            <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="7" column="4">
+         <widget class="QCheckBox" name="screenshot_reward">
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+            <pointsize>9</pointsize>
+           </font>
+          </property>
+          <property name="text">
+           <string>BOSS奖励截图</string>
           </property>
          </widget>
         </item>

@@ -67,6 +67,11 @@ class Ui(QMainWindow):
         self.boss_id = self.findChild(QSpinBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
         self.reward_count = self.findChild(QSpinBox, 'boss_reward')
+        self.reward_count_dropdown = self.findChild(QComboBox, 'reward')
+        self.reward_count_dropdown.addItem('3')
+        self.reward_count_dropdown.addItem('4')
+        self.reward_count_dropdown.addItem('5')
+        self.reward_count_dropdown.addItem('all')   # 都点一遍
         self.bn_path = self.findChild(QLineEdit, 'bn_path')
         self.hs_path = self.findChild(QLineEdit, 'hs_path')
         self.bn_path_find = self.findChild(QToolButton, 'load_path')
@@ -125,6 +130,7 @@ class Ui(QMainWindow):
 
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
+        self.screenshot_reward = self.findChild(QCheckBox, 'screenshot_reward')
         self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
         self.is_sceenshot = self.findChild(QCheckBox, 'is_sceenshot')
 
@@ -287,9 +293,9 @@ class Ui(QMainWindow):
             if k == 'boss_id':
                 self.boss_id.setValue(v + 1)
             if k == 'team_id':
-                self.team_id.setValue(v + 1)
+                self.team_id.setValue(v + 1) 
             if k == 'reward_count':
-                self.reward_count.setValue(v)
+                self.reward_count_dropdown.setCurrentText(f"{v}")
             if k == 'bn_path':
                 self.bn_path.setText(v)
             if k == 'hs_path':
@@ -298,6 +304,8 @@ class Ui(QMainWindow):
                 self.auto_restart.setChecked(v)
             if k == 'auto_tasks':
                 self.auto_tasks.setChecked(v)
+            if k == 'screenshot_reward':
+                self.screenshot_reward.setChecked(v)
             if k == 'is_sceenshot':
                 self.is_sceenshot.setChecked(v)
             if k == 'early_stop':
@@ -326,9 +334,11 @@ class Ui(QMainWindow):
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
         self.config['early_stop'] = self.early_stop.isChecked()
+        self.config['screenshot_reward'] = self.screenshot_reward.isChecked()
         self.config['auto_tasks'] = self.auto_tasks.isChecked()
         self.config['is_screenshot'] = self.is_screenshot.isChecked()
         self.config['lang'] = self.lang.currentText()
+        self.config['reward_count'] = self.reward_count_dropdown.currentText()
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
         self.config['longest_waiting'] = 80
@@ -377,8 +387,11 @@ class Ui(QMainWindow):
             if reply == QMessageBox.Yes:
                 self.run_status = True
                 self.run.setText("停止脚本" if self.ui_lang == 'chs' else "Stop")
-                self._thread = threading.Thread(target=self.script_run)
-                self._thread.start()
+                try:
+                    self._thread = threading.Thread(target=self.script_run)
+                    self._thread.start()
+                except Exception as e:
+                    print(f'catch that {e}')
             else:
                 pass
         else:
@@ -396,7 +409,8 @@ class Ui(QMainWindow):
         try:
             from lushi import run_from_gui
             run_from_gui(self.config)
-        except:
+        except Exception as e:
+            print(e)
             self.run.setText("运行脚本" if self.ui_lang == 'chs' else "Run")
             self.run_status = False
             err_log = traceback.format_exc()
@@ -422,6 +436,7 @@ class Ui(QMainWindow):
         self.load_path2.setText(_translate("MainWindow", "..."))
         self.load_path.setText(_translate("MainWindow", "..."))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
+        self.screenshot_reward.setText(_translate("MainWindow", "BOSS奖励截图"))
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
         self.auto_tasks.setText(_translate("MainWindow", "自动提交任务（仅ZH-1600x900有效）"))
         #self.is_screenshot.setText(_translate("MainWindow", "脚本出错截图"))
