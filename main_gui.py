@@ -66,7 +66,7 @@ class Ui(QMainWindow):
 
         self.boss_id = self.findChild(QSpinBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
-        self.reward_count = self.findChild(QSpinBox, 'boss_reward')
+        #self.reward_count = self.findChild(QSpinBox, 'boss_reward')
         self.reward_count_dropdown = self.findChild(QComboBox, 'reward')
         self.reward_count_dropdown.addItem('3')
         self.reward_count_dropdown.addItem('4')
@@ -294,7 +294,7 @@ class Ui(QMainWindow):
                 self.boss_id.setValue(v + 1)
             if k == 'team_id':
                 self.team_id.setValue(v + 1) 
-            if k == 'reward_count':
+            if k == 'reward_count_dropdown':
                 self.reward_count_dropdown.setCurrentText(f"{v}")
             if k == 'bn_path':
                 self.bn_path.setText(v)
@@ -329,7 +329,7 @@ class Ui(QMainWindow):
     def save_config(self):
         self.config['boss_id'] = self.boss_id.value() - 1
         self.config['team_id'] = self.team_id.value() - 1
-        # self.config['reward_count'] = self.reward_count.value()
+        #self.config['reward_count'] = self.reward_count.value()
         self.config['bn_path'] = self.bn_path.text()
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
@@ -338,7 +338,7 @@ class Ui(QMainWindow):
         self.config['auto_tasks'] = self.auto_tasks.isChecked()
         self.config['is_screenshot'] = self.is_screenshot.isChecked()
         self.config['lang'] = self.lang.currentText()
-        self.config['reward_count'] = self.reward_count_dropdown.currentText()
+        self.config['reward_count_dropdown'] = self.reward_count_dropdown.currentText()
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
         self.config['longest_waiting'] = 80
@@ -349,6 +349,7 @@ class Ui(QMainWindow):
             hero_index = hero_order_list.index(v[0])
             new_hero_info[k] = [v[0], v[1], v[2], hero_index]
         self.config['hero'] = new_hero_info
+
 
     def saveButtonPressed(self):
         self.save_config()
@@ -371,7 +372,7 @@ class Ui(QMainWindow):
                 Current Setting:\n
                 Boss ID: {self.config['boss_id'] + 1}\n
                 Team ID: {self.config['team_id'] + 1}\n
-                Boss Reward: {self.config['reward_count']}\n
+                Boss Reward: {self.config['reward_count_dropdown']}\n
                 BattleNet Path: {self.config['bn_path']}\n
                 HearthStone Path: {self.config['hs_path']}\n
                 Auto Restart: {self.config['auto_restart']}\n
