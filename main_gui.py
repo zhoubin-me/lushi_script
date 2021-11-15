@@ -329,7 +329,7 @@ class Ui(QMainWindow):
     def save_config(self):
         self.config['boss_id'] = self.boss_id.value() - 1
         self.config['team_id'] = self.team_id.value() - 1
-        self.config['reward_count'] = self.reward_count.value()
+        # self.config['reward_count'] = self.reward_count.value()
         self.config['bn_path'] = self.bn_path.text()
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
