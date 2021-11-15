@@ -37,7 +37,7 @@ class TestLushi(unittest.TestCase):
     def test_screen_record(self):
         config = self.get_config()
         agent = lushi.Agent(config)
-        agent.screen_record()
+        agent.screen_record("test")
         self.assertEqual(True, True)
 
     def test_pick_treasure(self):

@@ -275,9 +275,9 @@ class Agent:
                         if v > current_pos:
                             current_seq[k] = v - 1
 
-    def screen_record(self):
+    def screen_record(self, prefix):
         timeFormated = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-        imageName = f"reward_{timeFormated}.png"
+        imageName = f"{prefix}_{timeFormated}.png"
         _, screen = find_lushi_window(self.title, to_gray=False)
 
         isinstance(screen, np.ndarray)
@@ -450,7 +450,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
                 if self.debug :
-                    self.screen_record()
+                    self.screen_record(state)
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
@@ -480,7 +480,7 @@ class Agent:
 
                 # visitor, pick mission record
                 if self.debug:
-                    self.screen_record()
+                    self.screen_record(state)
                 if self.is_screenshot:
                     screenshot(self.title)
 
@@ -502,8 +502,8 @@ class Agent:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
 
-                if self.basic.screenshot_reward  or self.debug : # record reward by image
-                    self.screen_record()
+                if self.basic.screenshot_reward or self.debug : # record reward by image
+                    self.screen_record(state)
 
                 pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
                 pyautogui.click()
