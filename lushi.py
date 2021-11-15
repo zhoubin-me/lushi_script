@@ -274,7 +274,6 @@ class Agent:
 
             if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok']:
                 pyautogui.click(tuple_add(rect, loc))
-                logger.info(f'clicked {state}')
 
             if state == 'travel':
                 pyautogui.click(tuple_add(rect, loc))
