@@ -436,7 +436,7 @@ class Ui(QMainWindow):
         self.load_path2.setText(_translate("MainWindow", "..."))
         self.load_path.setText(_translate("MainWindow", "..."))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
-        self.screenshot_reward.setText(_translate("MainWindow", "奖励截图"))
+        self.screenshot_reward.setText(_translate("MainWindow", "BOSS奖励截图"))
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
         self.auto_tasks.setText(_translate("MainWindow", "自动提交任务（仅ZH-1600x900有效）"))
         #self.is_screenshot.setText(_translate("MainWindow", "脚本出错截图"))

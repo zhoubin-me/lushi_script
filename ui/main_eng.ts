@@ -70,7 +70,7 @@
     </message>
     <message>
         <location filename="main_chs.py" line="397"/>
-        <source>奖励截图</source>
+        <source>BOSS奖励截图</source>
         <translation>Screenshot Reward</translation>
     </message>
     <message>
