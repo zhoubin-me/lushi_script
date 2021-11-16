@@ -486,7 +486,10 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state in ['final_reward', 'final_reward2']:
-                reward_locs = eval(self.locs.rewards["all"])  # click all of 3， 4， 5 rewards location
+                reward_count = self.basic.reward_count_dropdown
+                reward_count = int(reward_count) if reward_count.isdigit() else reward_count
+
+                reward_locs = eval(self.locs.rewards[reward_count])  # click all of 3， 4， 5 rewards location
                 for loc in reward_locs:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
