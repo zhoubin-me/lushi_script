@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import traceback
 
 import pyautogui
 import cv2
@@ -37,7 +38,7 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-        self.debug = False # TODO check before commit
+        self.debug = False  # TODO check before commit
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
@@ -93,7 +94,7 @@ class Agent:
         del screen
         loc = X, Y
         return success, loc, rect
-    
+
     # 传入图片，匹配子图
     def find_in_image(self, screen, name, prefix='icons'):
         try:
@@ -275,33 +276,24 @@ class Agent:
                         if v > current_pos:
                             current_seq[k] = v - 1
 
-    def screen_record(self, prefix):
-        timeFormated = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-        imageName = f"{prefix}_{timeFormated}.png"
-        _, screen = find_lushi_window(self.title, to_gray=False)
-
-        isinstance(screen, np.ndarray)
-        len(screen.shape) == 3
-        screen.shape[2] == 3
-        img = Image.fromarray(screen, 'RGB')
-        img.save(imageName)
-    
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[1], 最多返回：[1,2,3]
     def pick_treasure(self, screen):
         advice_idx = []
         not_advice_idx = []
         for key in self.treasure_blacklist.keys():
-            for idx in range(1, 4):
-                loc = self.locs.treasures_locaion[idx]
-                oneTrasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
-                success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key], self.basic.confidence)
-                if success :
+            for idx in range(3):
+                loc = self.locs.treasures_location[idx]
+                one_treasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
+                success, X, Y, conf = find_icon_location(one_treasure, self.treasure_blacklist[key],
+                                                         self.basic.confidence)
+                if success:
                     not_advice_idx.append(idx)
+        logger.info(f'find treasure blacklist: {not_advice_idx}')
 
         if 2 < len(not_advice_idx):
-            return [1]
-        else :
-            for idx in range(1, 4):
+            return [0]
+        else:
+            for idx in range(3):
                 if idx not in not_advice_idx:
                     advice_idx.append(idx)
             return advice_idx
@@ -363,10 +355,10 @@ class Agent:
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    # default eng loc
+                    loc_page_right = (765, 418)
                     if self.lang == "chs":
                         loc_page_right = (1091, 479)
-                    if self.lang == "eng":
-                        loc_page_right = (765.418)
                     pyautogui.click(tuple_add(rect, loc_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
@@ -409,7 +401,7 @@ class Agent:
                     if self.surprise_in_mid:
                         x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
                     else:
-                        x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x                 
+                        x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x
                 else:
                     if self.surprise_in_mid:
                         x1, x2, x3 = last_x, (last_x + mid_x) // 2, mid_x
@@ -425,31 +417,28 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'member_not_ready':
-                logger.info(f" member_not_ready  during scrolling ")
                 self.select_members()
 
             if state == 'not_ready_dots':
-                logger.info(f" not_ready_dots  during scrolling lo ")
                 self.start_battle()
 
             if state == 'battle_ready':
-                logger.info(f" battle_ready  during scrolling lo ")
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
                 _, screen = find_lushi_window(self.title)
-                adive = self.pick_treasure(screen)
+                advice = self.pick_treasure(screen)
                 while True:
                     id = np.random.randint(1, 3)
-                    if id in adive:
+                    if id in advice:
                         treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
+                        logger.info(f"click treasure : {id} at locs {treasure_loc}")
                         break
-                
-                print(f"click treasure : {rect}, {treasure_loc}")
+
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
-                if self.debug :
-                    self.screen_record(state)
+                if self.debug:
+                    screenshot(self.title, state)
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
@@ -479,9 +468,11 @@ class Agent:
 
                 # visitor, pick mission record
                 if self.debug:
-                    self.screen_record(state)
+                    screenshot(self.title, state)
+
+                # TODO update later
                 if self.is_screenshot:
-                    screenshot(self.title)
+                    screenshot(self.title, state)
 
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
@@ -496,13 +487,13 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state in ['final_reward', 'final_reward2']:
-                reward_locs = eval(self.locs.rewards["all"])    # click all of 3， 4， 5 rewards location
+                reward_locs = eval(self.locs.rewards["all"])  # click all of 3， 4， 5 rewards location
                 for loc in reward_locs:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
 
-                if self.basic.screenshot_reward or self.debug : # record reward by image
-                    self.screen_record(state)
+                if self.basic.screenshot_reward or self.debug:  # record reward by image
+                    screenshot(self.title, state)
 
                 pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
                 pyautogui.click()
@@ -518,9 +509,9 @@ class Agent:
                 try:
                     self.run_pve()
                 except Exception as e:
-                    logger.error(f'错误：{e}')
+                    logger.error(f'错误：{e}', exc_info=True)
                     if self.is_screenshot:
-                        screenshot(self.title)
+                        screenshot(self.title, 'error')
                     restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()
@@ -528,18 +519,14 @@ class Agent:
     def run_pve(self):
         time.sleep(2)
         success, loc, rect = self.check_in_screen('mercenaries')
-
-        side = None
-        surprise_in_mid = False
         tic = time.time()
         state = ""
 
         while True:
-            currentTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
                 if self.is_screenshot:
-                    screenshot(self.title)
+                    screenshot(self.title, 'restart')
                 if state == 'not_ready_dots' or state == 'member_not_ready':
                     pyautogui.click(tuple_add(rect, self.locs.options))
                     pyautogui.click(tuple_add(rect, self.locs.surrender))
@@ -552,7 +539,7 @@ class Agent:
                 tic = time.time()
             else:
                 logger.info(
-                    f"[{currentTime}] Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
+                    f"Last state {state}, time taken: {time.time() - tic}")
 
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)

@@ -1,4 +1,6 @@
 # -*- coding: utf-8 -*-
+from types import SimpleNamespace
+
 import lushi
 import main_gui
 import unittest
@@ -29,7 +31,7 @@ class TestLushi(unittest.TestCase):
         config = {}
         
         try:
-            with open('config/default.yaml', 'r', encoding='utf-8') as f:
+            with open('config/locs_eng.yaml', 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
         except:
             return ""
@@ -41,7 +43,14 @@ class TestLushi(unittest.TestCase):
         config['screenshot_reward'] = True
         config['lang'] = 'EN-1024x768'
         config['treasure_blacklist'] = {}
+        config['lang'] = 'EN-1024x768'
+        config['reward_count_dropdown'] = 3
         return config
+
+    def test_treasure(self):
+        config = self.get_config()
+        locs = SimpleNamespace(**config['location'])
+        print(locs.rewards.get(config['reward_count_dropdown']))
     
     def get_screen(self, title):
         return find_lushi_window(title)

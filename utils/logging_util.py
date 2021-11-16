@@ -17,7 +17,7 @@ class LoggingUtil:
         self.logger.setLevel(logging.INFO)
 
         current_path = os.path.dirname(os.path.dirname(os.path.realpath(__file__)))
-        dt = datetime.strftime(datetime.now(), "%Y-%m-%d_%H")
+        dt = datetime.strftime(datetime.now(), "%Y-%m-%d")
         # print(current_path)
         # 指定文件输出路径，注意logs是个文件夹，一定要加上/，不然会导致输出路径错误，把log变成文件名的一部分了
         log_path = os.path.join(current_path, f'logs/{dt}')
