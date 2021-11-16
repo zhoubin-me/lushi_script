@@ -281,7 +281,7 @@ class Agent:
         advice_idx = []
         not_advice_idx = []
         for key in self.treasure_blacklist.keys():
-            for idx in range(1, 4):
+            for idx in range(3):
                 loc = self.locs.treasures_location[idx]
                 one_treasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
                 success, X, Y, conf = find_icon_location(one_treasure, self.treasure_blacklist[key],
@@ -291,9 +291,9 @@ class Agent:
         logger.info(f'find treasure blacklist: {not_advice_idx}')
 
         if 2 < len(not_advice_idx):
-            return [1]
+            return [0]
         else:
-            for idx in range(1, 4):
+            for idx in range(3):
                 if idx not in not_advice_idx:
                     advice_idx.append(idx)
             return advice_idx
@@ -432,9 +432,9 @@ class Agent:
                     id = np.random.randint(1, 3)
                     if id in advice:
                         treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
+                        logger.info(f"click treasure : {id} at locs {treasure_loc}")
                         break
 
-                logger.info(f"click treasure : {advice} at locs {treasure_loc}")
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
                 if self.debug:
