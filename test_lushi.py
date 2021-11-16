@@ -2,6 +2,9 @@
 import lushi
 import main_gui
 import unittest
+import os
+import cv2
+import numpy as np
 import yaml
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
 
@@ -12,6 +15,15 @@ class TestLushi(unittest.TestCase):
 
     def tearDown(self) -> None:
         return super().tearDown()
+
+    def get_save_image(self, to_gray = True):
+        imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", "treasure2.png")
+        src = cv2.imread(imgPath)
+        if to_gray:
+            image = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+        else:
+            image = np.array(src)
+        return image
 
     def get_config(self):
         config = {}
@@ -46,7 +58,15 @@ class TestLushi(unittest.TestCase):
         _, image = self.get_screen("RustDesk")
         re = agent.pick_treasure(image)
         print(re)
-        self.assertEqual(True, True) 
+        self.assertEqual(True, True)
+
+    def test_pick_visitor(self):
+        config = self.get_config()
+        agent = lushi.Agent(config)
+        _, image = self.get_screen("RustDesk")
+        re = agent.pick_visitor(image, rect)
+        print(re)
+        self.assertEqual(True, True)
 
 if __name__  == "__main__":
     unittest.main()

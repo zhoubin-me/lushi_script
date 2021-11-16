@@ -69,9 +69,14 @@
         <translation>Early Stop</translation>
     </message>
     <message>
-        <location filename="main_chs.py" line="397"/>
+        <location filename="main_chs.py" line="398"/>
         <source>BOSS奖励截图</source>
-        <translation>Screenshot Reward</translation>
+        <translation type="unfinished">Screenshot BOSS Reward</translation>
+    </message>
+    <message>
+        <location filename="main_chs.py" line="397"/>
+        <source>脚本出错截图</source>
+        <translation type="unfinished">Error Screenshot</translation>
     </message>
     <message>
         <location filename="main_chs.py" line="376"/>

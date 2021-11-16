@@ -37,7 +37,7 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-        self.debug = True # TODO check before commit
+        self.debug = False # TODO check before commit
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
@@ -464,7 +464,7 @@ class Agent:
 
             if state == 'visitor_list':
                 _, screen = find_lushi_window(self.title)
-                # advice = self.pick_visitor(screen, rect) # TODO test
+                advice = self.pick_visitor(screen, rect) # TODO test
                 is_in_whitelilst = False
                 for key in self.heros_whitelist.keys():
                     success, loc, rect = self.check_in_screen(key, prefix='heros_whitelist')
