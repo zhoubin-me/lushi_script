@@ -283,11 +283,12 @@ class Agent:
         for key in self.treasure_blacklist.keys():
             for idx in range(1, 4):
                 loc = self.locs.treasures_location[idx]
-                oneTrasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
-                success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key],
+                one_treasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
+                success, X, Y, conf = find_icon_location(one_treasure, self.treasure_blacklist[key],
                                                          self.basic.confidence)
                 if success:
                     not_advice_idx.append(idx)
+        logger.info(f'find treasure blacklist: {not_advice_idx}')
 
         if 2 < len(not_advice_idx):
             return [1]
@@ -416,27 +417,24 @@ class Agent:
                 pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'member_not_ready':
-                logger.info(f" member_not_ready  during scrolling ")
                 self.select_members()
 
             if state == 'not_ready_dots':
-                logger.info(f" not_ready_dots  during scrolling lo ")
                 self.start_battle()
 
             if state == 'battle_ready':
-                logger.info(f" battle_ready  during scrolling lo ")
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
                 _, screen = find_lushi_window(self.title)
-                adive = self.pick_treasure(screen)
+                advice = self.pick_treasure(screen)
                 while True:
                     id = np.random.randint(1, 3)
-                    if id in adive:
+                    if id in advice:
                         treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
                         break
 
-                print(f"click treasure : {rect}, {treasure_loc}")
+                logger.info(f"click treasure : {advice} at locs {treasure_loc}")
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
                 if self.debug:
@@ -522,14 +520,10 @@ class Agent:
     def run_pve(self):
         time.sleep(2)
         success, loc, rect = self.check_in_screen('mercenaries')
-
-        side = None
-        surprise_in_mid = False
         tic = time.time()
         state = ""
 
         while True:
-            currentTime = time.strftime("%Y-%m-%d %H:%M:%S", time.localtime())
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
                 if self.is_screenshot:
@@ -546,7 +540,7 @@ class Agent:
                 tic = time.time()
             else:
                 logger.info(
-                    f"[{currentTime}] Last state {state}, time taken: {time.time() - tic}, side: {side}, surprise_in_mid: {surprise_in_mid}")
+                    f"Last state {state}, time taken: {time.time() - tic}")
 
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)

@@ -15,6 +15,7 @@ import utils.logging_util
 
 logger = logging.getLogger()
 
+
 class LogUtil:
     def __init__(self, log_path):
         self.log_path = log_path
