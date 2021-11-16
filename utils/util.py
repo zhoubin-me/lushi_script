@@ -169,7 +169,7 @@ def restart_game(lang, battle_net_path, kill_existing=True):
     else:
         raise ValueError(f"Language {lang} not supported")
     if kill_existing:
-        proc_kill([hs])
+        proc_kill([bn, hs])
         time.sleep(5)
 
     while not proc_exist(bn):
