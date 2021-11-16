@@ -188,19 +188,18 @@ class Agent:
         n_my_hero = len(game.my_hero)
         is_even = n_my_hero % 2 == 0
         for i in range(n_my_hero):
+            x_offset = (mid_x - first_x) * (-n_my_hero // 2 + i + 1)
             if is_even:
-                x_offset = (mid_x - first_x) * (- 0.5 - n_my_hero // 2 + i + 1)
-            else:
-                x_offset = (mid_x - first_x) * (0 - n_my_hero // 2 + i)
+                x_offset -= (mid_x - first_x) // 2
             game.my_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         first_x, mid_x, last_x, y = self.locs.enemies
         n_enemy_hero = len(game.enemy_hero)
+        is_even = n_enemy_hero % 2 == 0
         for i in range(n_enemy_hero):
-            if n_enemy_hero % 2 == 0:
-                x_offset = (mid_x - first_x) * (- 0.5 - n_enemy_hero // 2 + i + 1)
-            else:
-                x_offset = (mid_x - first_x) * (0 - n_enemy_hero // 2 + i)
+            x_offset = (mid_x - first_x) * (-n_enemy_hero // 2 + i + 1)
+            if is_even:
+                x_offset -= (mid_x - first_x) // 2
             game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
@@ -530,6 +529,7 @@ class Agent:
                 if self.is_screenshot:
                     screenshot(self.title, 'restart')
                 if state == 'not_ready_dots' or state == 'member_not_ready':
+                    pyautogui.rightClick(tuple_add(rect, self.locs.empty))
                     pyautogui.click(tuple_add(rect, self.locs.options))
                     pyautogui.click(tuple_add(rect, self.locs.surrender))
                 elif state == 'map_not_ready':
