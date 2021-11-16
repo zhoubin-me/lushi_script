@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import random
 import traceback
 
 import pyautogui
@@ -428,12 +429,10 @@ class Agent:
             if state in ['treasure_list', 'treasure_replace']:
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_treasure(screen)
-                while True:
-                    id = np.random.randint(1, 3)
-                    if id in advice:
-                        treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
-                        logger.info(f"click treasure : {id} at locs {treasure_loc}")
-                        break
+
+                t_id = random.choice(advice)
+                treasure_loc = (self.locs.treasures[t_id], self.locs.treasures[-1])
+                logger.info(f"click treasure : {t_id} at locs {treasure_loc}")
 
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm

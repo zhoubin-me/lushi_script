@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+import random
 from types import SimpleNamespace
 
 import lushi
@@ -55,7 +56,12 @@ class TestLushi(unittest.TestCase):
         _, image = self.get_screen("RustDesk")
         re = agent.pick_treasure(image)
         print(re)
-        self.assertEqual(True, True) 
+        self.assertEqual(True, True)
+
+    def test_u(self):
+        advice = [0, 1, 2]
+        a = random.choice(advice)
+        print('a',a)
 
 if __name__  == "__main__":
     unittest.main()
