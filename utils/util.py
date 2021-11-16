@@ -84,19 +84,19 @@ if PLATFORM:
         return rect, image
 
 
-    def screenshot(title, file_name=None):
+    def screenshot(title, prefix='none'):
         hwnd = findTopWindow(title)
         rect = win32gui.GetWindowPlacement(hwnd)[-1]
         image = ImageGrab.grab(rect)
-        dt = datetime.strftime(datetime.now(), "%Y-%m-%d_%H")
+        dt = datetime.strftime(datetime.now(), "%Y-%m-%d")
         screenshot_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', dt, 'screenshot')
         if not os.path.exists(screenshot_path):
             os.makedirs(screenshot_path)
-        if file_name is None:
-            file_name = datetime.strftime(datetime.now(), '%H.%M.%S,%f')[:-3] + '.png'
+        time_second = datetime.strftime(datetime.now(), "%H.%M.%S,%f")[:-3]
+        file_name = f'{prefix}_{time_second}.png'
         full_file_name = os.path.join(screenshot_path, file_name)
         image.save(full_file_name)
-        logger.info(f'screenshot saved at {full_file_name}')
+        logger.info(f'screenshot {file_name} saved')
 
 
 

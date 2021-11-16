@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import traceback
 
 import pyautogui
 import cv2
@@ -275,24 +276,13 @@ class Agent:
                         if v > current_pos:
                             current_seq[k] = v - 1
 
-    def screen_record(self, prefix):
-        timeFormated = datetime.datetime.now().strftime("%Y-%m-%d_%H-%M")
-        imageName = f"{prefix}_{timeFormated}.png"
-        _, screen = find_lushi_window(self.title, to_gray=False)
-
-        isinstance(screen, np.ndarray)
-        len(screen.shape) == 3
-        screen.shape[2] == 3
-        img = Image.fromarray(screen, 'RGB')
-        img.save(imageName)
-
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[1], 最多返回：[1,2,3]
     def pick_treasure(self, screen):
         advice_idx = []
         not_advice_idx = []
         for key in self.treasure_blacklist.keys():
             for idx in range(1, 4):
-                loc = self.locs.treasures[idx]
+                loc = self.locs.treasures_location[idx]
                 oneTrasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
                 success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key],
                                                          self.basic.confidence)
@@ -364,10 +354,10 @@ class Agent:
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    # default eng loc
+                    loc_page_right = (765, 418)
                     if self.lang == "chs":
                         loc_page_right = (1091, 479)
-                    if self.lang == "eng":
-                        loc_page_right = (765.418)
                     pyautogui.click(tuple_add(rect, loc_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
@@ -450,7 +440,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
                 if self.debug:
-                    self.screen_record(state)
+                    screenshot(self.title, state)
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
@@ -480,9 +470,11 @@ class Agent:
 
                 # visitor, pick mission record
                 if self.debug:
-                    self.screen_record(state)
+                    screenshot(self.title, state)
+
+                # TODO update later
                 if self.is_screenshot:
-                    screenshot(self.title)
+                    screenshot(self.title, state)
 
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
@@ -503,7 +495,7 @@ class Agent:
                     pyautogui.click()
 
                 if self.basic.screenshot_reward or self.debug:  # record reward by image
-                    self.screen_record(state)
+                    screenshot(self.title, state)
 
                 pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
                 pyautogui.click()
@@ -519,9 +511,10 @@ class Agent:
                 try:
                     self.run_pve()
                 except Exception as e:
-                    logger.error(f'错误：{e}')
+
+                    logger.error(f'错误：{e}\n{traceback.print_exc()}')
                     if self.is_screenshot:
-                        screenshot(self.title)
+                        screenshot(self.title, 'error')
                     restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()
@@ -540,7 +533,7 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
                 if self.is_screenshot:
-                    screenshot(self.title)
+                    screenshot(self.title, 'restart')
                 if state == 'not_ready_dots' or state == 'member_not_ready':
                     pyautogui.click(tuple_add(rect, self.locs.options))
                     pyautogui.click(tuple_add(rect, self.locs.surrender))
