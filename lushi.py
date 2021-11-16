@@ -37,7 +37,7 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-        self.debug = False # TODO check before commit
+        self.debug = False  # TODO check before commit
         self.icons = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
@@ -93,7 +93,7 @@ class Agent:
         del screen
         loc = X, Y
         return success, loc, rect
-    
+
     # 传入图片，匹配子图
     def find_in_image(self, screen, name, prefix='icons'):
         try:
@@ -285,22 +285,23 @@ class Agent:
         screen.shape[2] == 3
         img = Image.fromarray(screen, 'RGB')
         img.save(imageName)
-    
+
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[1], 最多返回：[1,2,3]
     def pick_treasure(self, screen):
         advice_idx = []
         not_advice_idx = []
         for key in self.treasure_blacklist.keys():
             for idx in range(1, 4):
-                loc = self.locs.treasures_locaion[idx]
+                loc = self.locs.treasures[idx]
                 oneTrasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
-                success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key], self.basic.confidence)
-                if success :
+                success, X, Y, conf = find_icon_location(oneTrasure, self.treasure_blacklist[key],
+                                                         self.basic.confidence)
+                if success:
                     not_advice_idx.append(idx)
 
         if 2 < len(not_advice_idx):
             return [1]
-        else :
+        else:
             for idx in range(1, 4):
                 if idx not in not_advice_idx:
                     advice_idx.append(idx)
@@ -409,7 +410,7 @@ class Agent:
                     if self.surprise_in_mid:
                         x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
                     else:
-                        x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x                 
+                        x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x
                 else:
                     if self.surprise_in_mid:
                         x1, x2, x3 = last_x, (last_x + mid_x) // 2, mid_x
@@ -444,11 +445,11 @@ class Agent:
                     if id in adive:
                         treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
                         break
-                
+
                 print(f"click treasure : {rect}, {treasure_loc}")
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
-                if self.debug :
+                if self.debug:
                     self.screen_record(state)
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
@@ -496,12 +497,12 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state in ['final_reward', 'final_reward2']:
-                reward_locs = eval(self.locs.rewards["all"])    # click all of 3， 4， 5 rewards location
+                reward_locs = eval(self.locs.rewards["all"])  # click all of 3， 4， 5 rewards location
                 for loc in reward_locs:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
 
-                if self.basic.screenshot_reward or self.debug : # record reward by image
+                if self.basic.screenshot_reward or self.debug:  # record reward by image
                     self.screen_record(state)
 
                 pyautogui.moveTo(tuple_add(rect, self.locs.rewards['confirm']))
