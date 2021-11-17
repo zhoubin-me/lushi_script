@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import random
 import traceback
 
 import pyautogui
@@ -187,19 +188,18 @@ class Agent:
         n_my_hero = len(game.my_hero)
         is_even = n_my_hero % 2 == 0
         for i in range(n_my_hero):
+            x_offset = (mid_x - first_x) * (-n_my_hero // 2 + i + 1)
             if is_even:
-                x_offset = (mid_x - first_x) * (- 0.5 - n_my_hero // 2 + i + 1)
-            else:
-                x_offset = (mid_x - first_x) * (0 - n_my_hero // 2 + i)
+                x_offset -= (mid_x - first_x) // 2
             game.my_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         first_x, mid_x, last_x, y = self.locs.enemies
         n_enemy_hero = len(game.enemy_hero)
+        is_even = n_enemy_hero % 2 == 0
         for i in range(n_enemy_hero):
-            if n_enemy_hero % 2 == 0:
-                x_offset = (mid_x - first_x) * (- 0.5 - n_enemy_hero // 2 + i + 1)
-            else:
-                x_offset = (mid_x - first_x) * (0 - n_enemy_hero // 2 + i)
+            x_offset = (mid_x - first_x) * (-n_enemy_hero // 2 + i + 1)
+            if is_even:
+                x_offset -= (mid_x - first_x) // 2
             game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
@@ -428,12 +428,10 @@ class Agent:
             if state in ['treasure_list', 'treasure_replace']:
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_treasure(screen)
-                while True:
-                    id = np.random.randint(1, 3)
-                    if id in advice:
-                        treasure_loc = (self.locs.treasures[id], self.locs.treasures[-1])
-                        logger.info(f"click treasure : {id} at locs {treasure_loc}")
-                        break
+
+                t_id = random.choice(advice)
+                treasure_loc = (self.locs.treasures[t_id], self.locs.treasures[-1])
+                logger.info(f"click treasure : {t_id} at locs {treasure_loc}")
 
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
@@ -487,7 +485,10 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state in ['final_reward', 'final_reward2']:
-                reward_locs = eval(self.locs.rewards["all"])  # click all of 3， 4， 5 rewards location
+                reward_count = self.basic.reward_count_dropdown
+                reward_count = int(reward_count) if reward_count.isdigit() else reward_count
+
+                reward_locs = eval(self.locs.rewards[reward_count])  # click all of 3， 4， 5 rewards location
                 for loc in reward_locs:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     pyautogui.click()
@@ -528,6 +529,7 @@ class Agent:
                 if self.is_screenshot:
                     screenshot(self.title, 'restart')
                 if state == 'not_ready_dots' or state == 'member_not_ready':
+                    pyautogui.rightClick(tuple_add(rect, self.locs.empty))
                     pyautogui.click(tuple_add(rect, self.locs.options))
                     pyautogui.click(tuple_add(rect, self.locs.surrender))
                 elif state == 'map_not_ready':

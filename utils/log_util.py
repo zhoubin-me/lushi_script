@@ -1,17 +1,12 @@
 import logging
-import sys
-
 from hearthstone.enums import CardType, Zone, GameTag
 from hslog import LogParser, packets
 from hslog.export import EntityTreeExporter
-import os
-
 from entity.game_entity import GameEntity
 from entity.hero_entity import HeroEntity
 from entity.spell_entity import SpellEntity
-from utils.util import HEROS
-import entity.cards as ecards
-import utils.logging_util
+
+# import entity.cards as ecards
 
 logger = logging.getLogger()
 
@@ -57,15 +52,15 @@ class LogUtil:
                 owner = e.tags.get(GameTag.LETTUCE_ABILITY_OWNER)
                 # print(e.card_id)
                 if owner in self.game_entity.hero_entities.keys():
-                    hcid = self.game_entity.hero_entities[owner].card_id[:-3]
-                    cid = e.card_id[:-3]
-                    cname = 'ecards.' + hcid + '.' + cid + '.' + cid + '(e)'
+                    # hcid = self.game_entity.hero_entities[owner].card_id[:-3]
+                    # cid = e.card_id[:-3]
+                    # cname = 'ecards.' + hcid + '.' + cid + '.' + cid + '(e)'
                     # print(cname)
-                    try:
-                        spell_entity = eval(cname)
-                    except Exception as ex:
-                        logger.warning(ex)
-                        spell_entity = SpellEntity(e)
+                    # try:
+                    #     spell_entity = eval(cname)
+                    # except Exception as ex:
+                    #     logger.warning(ex)
+                    spell_entity = SpellEntity(e)
                     # spell_entity = SpellEntity(e)
                     self.game_entity.hero_entities[owner].add_spell(spell_entity)
                 pass

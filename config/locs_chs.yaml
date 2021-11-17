@@ -1,11 +1,11 @@
 # coordinations of buttons etc.
 location:
   # hero battle field locations
-  heros: [ 677, 807, 943, 641 ] #  [first_x, mid_x, last_x, y]
+  heros: [ 680, 810, 940, 641 ] #  [first_x, mid_x, last_x, y]
   # hero skills locations
   skills: [ 653, 801, 963, 450 ] # [first_x, mid_x, last_x, y]
   # enemy battle field locations
-  enemies: [ 677, 807, 943, 285 ] # [first_x, mid_x, last_x, y]
+  enemies: [ 680, 810, 940, 285 ] # [first_x, mid_x, last_x, y]
 
   # boss list locations
   boss: [ 405, 696, 916, 350, 667 ] # [first_x, mid_x, last_x, upper_y, lower_y]
