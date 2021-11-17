@@ -78,8 +78,16 @@ location:
   give_up: [ 613, 598 ]
   # give up confirm button
   give_up_cfm: [ 434, 464 ] # [x, y]
-
+  # allowable error of coordinates distances
+  coordinate_error: 90
+  # hero's treasure location, [left_x, top_y, right_x, bottom_y]
   treasures_location:
     0: [305, 200, 540, 540]
     1: [520, 200, 750, 540]
     2: [740, 200, 970, 540]
+  
+  # visitor location, [left_x, top_y, right_x, bottom_y]
+  visitors_location:
+    0: [200, 235, 370, 458]
+    1: [425, 235, 580, 458]
+    2: [630, 235, 800, 458] 

@@ -105,7 +105,7 @@ class Agent:
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
         del screen
         loc = X, Y
-        return success, loc
+        return success, loc, conf
 
     def scan_surprise_loc(self, rect):
         # time.sleep(5)
@@ -276,7 +276,7 @@ class Agent:
                         if v > current_pos:
                             current_seq[k] = v - 1
 
-    # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[1], 最多返回：[1,2,3]
+    # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[0], 最多返回：[0,1,2]
     def pick_treasure(self, screen):
         advice_idx = []
         not_advice_idx = []
@@ -298,36 +298,53 @@ class Agent:
                     advice_idx.append(idx)
             return advice_idx
 
-    # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中这不选，如果白名单没命中，黑名单全命中，则随机选
-    def pick_visitor(self, screen, rect):
+    # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中则不选，如果白名单没命中，黑名单全命中，则随机选
+    def pick_visitor(self, screen):
         is_in_whitelist = False
         is_in_blacklist = False
         idx_whiteList = []
+        idx_blackList = []
         for key in self.heros_whitelist.keys():
-            success, loc = self.find_in_image(screen, key, prefix='heros_whitelist')
+            success, loc, conf = self.find_in_image(screen, key, prefix='heros_whitelist')
             if success:
                 is_in_whitelist = True
-                for idx, vloc in self.locs.visitors:
-                    if vloc[0] < loc[0] and loc[1] < vloc[2]:
-                        idx_whiteList.append(idx)
+                dist = 1024
+                the_index = 0
+                for idx, v_loc in self.locs.visitors_location.items():
+                    new_dist =  abs(loc[0] - v_loc[2])
+                    if new_dist < dist:    # right_x - right_x 
+                        the_index = idx
+                        dist = new_dist
+                
+                idx_whiteList.append(the_index)
 
-        if is_in_whitelist:
-            visitor_id = np.random.randint(0, 3)
-            visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-            pyautogui.click(tuple_add(rect, visitor_loc))
+        if is_in_whitelist and 0 < len(idx_whiteList):
+            return idx_whiteList
 
         for key in self.heros_blacklist.keys():
-            success, loc = self.find_in_image(screen, key, prefix='heros_blacklist')
+            success, loc, conf = self.find_in_image(screen, key, prefix='heros_blacklist')
             if success:
                 is_in_blacklist = True
-                return loc
+                dist = 1024
+                the_index = 0
+                for idx, v_loc in self.locs.visitors_location.items():
+                    new_dist =  abs(loc[0] - v_loc[2])
+                    if new_dist < dist:    # right_x - right_x 
+                        the_index = idx
+                        dist = new_dist
 
-        if not is_in_whitelist:
-            visitor_id = np.random.randint(0, 3)
-            visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-            pyautogui.click(tuple_add(rect, visitor_loc))
+                idx_blackList.append(the_index)
 
-        pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
+        if is_in_whitelist:
+            if 2 < len(idx_blackList):
+                return [0, 1, 2]
+            else :
+                advice_idx = []
+                for idx in range(3):
+                    if idx not in idx_blackList:
+                        advice_idx.append(idx)
+                return advice_idx 
+
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -451,25 +468,13 @@ class Agent:
             if state == 'visitor_list':
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_visitor(screen, rect) # TODO test
-                is_in_whitelilst = False
-                for key in self.heros_whitelist.keys():
-                    success, loc, rect = self.check_in_screen(key, prefix='heros_whitelist')
-                    if success:
-                        is_in_whitelilst = True
-                        pyautogui.click(tuple_add(rect, loc))
-                        break
-
-                if not is_in_whitelilst:
-                    visitor_id = np.random.randint(0, 3)
-                    visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
-                    pyautogui.click(tuple_add(rect, visitor_loc))
-
+                t_id = random.choice(advice)
+                visitor_loc = (self.locs.visitors[t_id], self.locs.visitors[-1])
+                logger.info(f"click visitor : {t_id} at locs {visitor_loc}")
+                pyautogui.click(tuple_add(rect, visitor_loc))
+                
                 # visitor, pick mission record
-                if self.debug:
-                    screenshot(self.title, state)
-
-                # TODO update later
-                if self.is_screenshot:
+                if self.debug or self.is_screenshot:
                     screenshot(self.title, state)
 
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
