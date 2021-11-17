@@ -86,7 +86,7 @@ location:
   # campfire button
   campfire: [ 641, 669 ]
   # exit campfire
-  campfire_exit: [ 1438, 440 ]
+  campfire_exit: [ 1275, 770 ]
   # task locations x
   tasks_x: [ 588, 988 ] # [first_x, last_x]
   # task locations y

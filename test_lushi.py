@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import random
+import time
 from types import SimpleNamespace
 
 import pyautogui
@@ -19,11 +20,11 @@ class TestLushi(unittest.TestCase):
     def tearDown(self) -> None:
         return super().tearDown()
 
-    def get_config(self):
+    def get_config(self, lang='eng'):
         config = {}
 
         try:
-            with open('config/locs_eng.yaml', 'r', encoding='utf-8') as f:
+            with open(f'config/locs_{lang}.yaml', 'r', encoding='utf-8') as f:
                 config = yaml.safe_load(f)
         except:
             return ""
@@ -61,7 +62,7 @@ class TestLushi(unittest.TestCase):
         print(re)
         self.assertEqual(True, True)
 
-    def test_u(self):
+    def test_hero_pos(self):
         a = [680, 810, 630, 240]  # 680, 810
         b = [465, 575]  # 偶数
         first_x = a[0]
@@ -86,6 +87,25 @@ class TestLushi(unittest.TestCase):
         # 694 694                1005
         # 807                    1135
 
+    def test_submit_task(self):
+        config = self.get_config(lang='eng')
+        self.locs = SimpleNamespace(**config['location'])
+        rect, img = find_lushi_window('hearthstone')
+        pyautogui.PAUSE = 0.5
+        for y in self.locs.tasks_y:
+            for x in self.locs.tasks_x:
+                # do task
+                pyautogui.click(tuple_add(rect, (x, y)))
+                pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
+                pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
+                pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
+                pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
+        # exit the campfire
+        pyautogui.click(tuple_add(rect, self.locs.empty))
+        # select first first boss of map
+        pyautogui.click(tuple_add(rect, self.locs.first_boss))
 
 if __name__ == "__main__":
     unittest.main()
