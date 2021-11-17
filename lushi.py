@@ -492,8 +492,11 @@ class Agent:
                     self.run_pve()
                 except Exception as e:
                     logger.error(f'错误：{e}', exc_info=True)
-                    if self.is_screenshot:
-                        screenshot(self.title, 'error')
+                    try:
+                        if self.is_screenshot:
+                            screenshot(self.title, 'error')
+                    except:
+                        pass
                     restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()

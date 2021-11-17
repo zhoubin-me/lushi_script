@@ -172,25 +172,26 @@ def restart_game(lang, battle_net_path, kill_existing=True):
         proc_kill([bn, hs])
         time.sleep(5)
 
-    while not proc_exist(bn):
-        logger.info('attempt to start Battle.net')
-        win32api.ShellExecute(0, 'open', battle_net_path,
-                              '--exec=\"launch WTCG\"',
-                              '', 1)
-        time.sleep(10)
-
-    logger.info('Battle.net start success')
-
     while not proc_exist(hs):
-        logger.info('attempt to start Hearthstone')
-        win32api.ShellExecute(0, 'open', battle_net_path,
-                              '--exec=\"launch WTCG\"',
-                              '', 1)
-        time.sleep(10)
-    logger.info('Hearthstone start success')
-    time.sleep(5)
-    set_top_window(title)
-    logger.info('done')
+        while not proc_exist(bn):
+            logger.info('attempt to start Battle.net')
+            win32api.ShellExecute(0, 'open', battle_net_path,
+                                  '--exec=\"launch WTCG\"',
+                                  '', 1)
+            time.sleep(10)
+
+        logger.info('Battle.net start success')
+
+        while not proc_exist(hs):
+            logger.info('attempt to start Hearthstone')
+            win32api.ShellExecute(0, 'open', battle_net_path,
+                                  '--exec=\"launch WTCG\"',
+                                  '', 1)
+            time.sleep(10)
+        logger.info('Hearthstone start success')
+        time.sleep(5)
+        set_top_window(title)
+        logger.info('done')
 
 
 def analyse_battle_field(region, screen, digits):
