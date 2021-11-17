@@ -137,6 +137,7 @@ class Agent:
     def task_submit(self, rect):
 
         if self.basic.auto_tasks:
+            logger.info('Start submit task...')
             # select Camp Fire
             pyautogui.click(tuple_add(rect, self.locs.campfire))
             pyautogui.click(tuple_add(rect, self.locs.start_game))
@@ -267,8 +268,9 @@ class Agent:
                                                          self.basic.confidence)
                 if success:
                     not_advice_idx.append(idx)
+        # 去重
+        not_advice_idx = list(set(not_advice_idx))
         logger.info(f'find treasure blacklist: {not_advice_idx}')
-
         if 2 < len(not_advice_idx):
             return [0]
         else:
@@ -415,7 +417,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
                 if self.debug:
-                    screenshot(self.title, state)
+                    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
