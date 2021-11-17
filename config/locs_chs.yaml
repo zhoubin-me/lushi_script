@@ -83,3 +83,17 @@ location:
     1: [ 827, 278, 1065, 620 ]
     2: [ 1080, 276, 1319, 617 ]
 
+  # campfire button
+  campfire: [ 641, 669 ]
+  # exit campfire
+  campfire_exit: [ 1438, 440 ]
+  # task locations x
+  tasks_x: [ 588, 988 ] # [first_x, last_x]
+  # task locations y
+  tasks_y: [ 329, 474, 660 ] # [first_y, mid_y, last_y]
+  # tasks abandon button
+  tasks_abandon: [ 548, 719 ]
+  # tasks abandon cancel button
+  tasks_abandon_cancel: [ 928, 544 ]
+  # first boss
+  first_boss: [ 654, 431 ]

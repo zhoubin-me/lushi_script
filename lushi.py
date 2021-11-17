@@ -135,44 +135,25 @@ class Agent:
         return None
 
     def task_submit(self, rect):
-        if self.basic.auto_tasks and self.lang == "chs":
-            # time.sleep(5)
+
+        if self.basic.auto_tasks:
             # select Camp Fire
-            pyautogui.click(tuple_add(rect, (641, 669)))
-            pyautogui.click(tuple_add(rect, (1302, 744)))
-
-            # first task
-            pyautogui.click(tuple_add(rect, (588, 329)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
-            # second task
-            pyautogui.click(tuple_add(rect, (988, 336)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
-            # third task
-            pyautogui.click(tuple_add(rect, (602, 474)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
-            # forth task
-            pyautogui.click(tuple_add(rect, (988, 474)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
+            pyautogui.click(tuple_add(rect, (self.locs.campfire[0], self.locs.campfire[1])))
+            pyautogui.click(tuple_add(rect, (self.locs.start_game[0], self.locs.start_game[1])))
+            for y in self.locs.tasks_y:
+                for x in self.locs.tasks_x:
+                    # do task
+                    pyautogui.click(tuple_add(rect, (x, y)))
+                    pyautogui.click(tuple_add(rect, (self.locs.tasks_abandon[0], self.locs.tasks_abandon[1])))
+                    pyautogui.click(tuple_add(rect, (self.locs.tasks_abandon_cancel[0],
+                                                     self.locs.tasks_abandon_cancel[1])))
+                    pyautogui.click(tuple_add(rect, (self.locs.tasks_abandon_cancel[0],
+                                                     self.locs.tasks_abandon_cancel[1])))
+                    pyautogui.click(tuple_add(rect, (self.locs.campfire_exit[0], self.locs.campfire_exit[1])))
             # exit the campfire
-            pyautogui.click(tuple_add(rect, (1438, 440)))
+            pyautogui.click(tuple_add(rect, (self.locs.campfire_exit[0], self.locs.campfire_exit[1])))
             # select first first boss of map
-            pyautogui.click(tuple_add(rect, (654, 431)))
+            pyautogui.click(tuple_add(rect, (self.locs.first_boss[0], self.locs.first_boss[1])))
 
     def start_battle(self):
 
