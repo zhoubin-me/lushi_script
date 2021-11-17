@@ -543,7 +543,7 @@
            </font>
           </property>
           <property name="text">
-           <string>自动提交任务（仅ZH-1600x900有效）</string>
+           <string>自动提交任务</string>
           </property>
          </widget>
         </item>
