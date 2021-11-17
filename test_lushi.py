@@ -73,7 +73,6 @@ class TestLushi(unittest.TestCase):
         print(re)
         self.assertEqual(True, True)
 
-<<<<<<< HEAD
     def test_pick_visitor(self):
         config = self.get_config()
         agent = lushi.Agent(config)
@@ -81,7 +80,7 @@ class TestLushi(unittest.TestCase):
         re = agent.pick_visitor(image, rect)
         print(re)
         self.assertEqual(True, True)
-=======
+
     def test_u(self):
         a = [680, 810, 630, 240]  # 680, 810
         b = [465, 575]  # 偶数
@@ -107,7 +106,6 @@ class TestLushi(unittest.TestCase):
         # 694 694                1005
         # 807                    1135
 
->>>>>>> 115e3c3e6f96902aca5ec5aade163e07faaa940d
 
 if __name__ == "__main__":
     unittest.main()
