@@ -1,0 +1,85 @@
+# coordinations of buttons etc.
+location:
+  # hero battle field locations
+  heros: [ 680, 810, 940, 641 ] #  [first_x, mid_x, last_x, y]
+  # hero skills locations
+  skills: [ 653, 801, 963, 450 ] # [first_x, mid_x, last_x, y]
+  # enemy battle field locations
+  enemies: [ 680, 810, 940, 285 ] # [first_x, mid_x, last_x, y]
+
+  # boss list locations
+  boss: [ 405, 696, 916, 350, 667 ] # [first_x, mid_x, last_x, upper_y, lower_y]
+
+  # treasures locations
+  treasures: [ 707, 960, 1200, 376 ] # [first_x, mid_x, last_x, y]
+  # treasure collection button
+  treasures_collect: [ 968, 765 ] # [x, y]
+
+  # visitors locations
+  visitors: [ 545, 790, 1042, 420 ] # [first_x, mid_x, last_x, y]
+  # visitor confirm button
+  visitors_confirm: [ 791, 688 ] # [x, y]
+
+  # heros on hand locations
+  members: [ 622, 1000, 900 ] # [first_x, last_x, y]
+  members_distance: 110
+  # drag on hand hero to this location
+  dragto: [ 1213, 564 ] # [x, y]
+
+  # focus area before battle
+  focus: [ 420, 650, 900, 453 ] # [first_x, mid_x, last_x, y]
+
+  # final boss reward locations, depending on rewards count
+  rewards:
+    5: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430)" # [(x1, y1), ... ]
+    4: "(660, 314), (554, 687), (1010, 794), (1117, 405)" # [(x1, y1), ... ]
+    3: "(688, 247), (900, 572), (470, 561)" # [(x1, y1), ... ]
+    all: "(608, 706), (1034, 720), (1117, 371), (846, 311), (541, 430), (660, 314), (554, 687), (1010, 794), (1117, 405), (688, 247), (900, 572), (470, 561)"
+    # confirm button after reward collection
+    confirm: [ 806, 525 ] #[x, y]
+
+  # last boss location on map
+  final_boss: [ 646, 227 ]
+  # last confirm after finishing the map
+  final_confirm: [ 794, 779 ]
+
+  # empty location to click when waiting
+  empty: [ 1488, 921 ]
+  # empty location to click when waiting during battles
+  empty_battle: [ 620, 750 ]
+  # mouse location during scroll
+  scroll: [ 1011, 764 ]
+  # travel point confirm button
+  travel: [ 1090, 674 ] #[x, y]
+  # start point campfire on the map
+  start_point: [ 646, 712 ] # [x, y]
+
+  # team locations
+  teams: [ 390, 600, 820, 330, 450, 600 ] # [first_x, mid_x, last_x, first_y, mid_y, last_y]
+  # team select confirm button
+  team_select: [ 1190, 800 ] # [x, y]
+  # team lock button
+  team_lock: [ 704, 572 ]
+
+  # start game button, on boss selected or path selected
+  start_game: [ 1250, 732 ] # [x, y]
+  # start battle button, on skill selection finished
+  start_battle: [ 1327, 454 ] # [x, y]
+
+  # option button
+  options: [ 1580, 920 ] # [x, y]
+  # surrender button
+  surrender: [ 815, 350 ] # [x, y]
+  # view team members button
+  view_team: [ 647, 885 ]
+  # give up button
+  give_up: [ 929, 706 ]
+  # give up confirm button
+  give_up_cfm: [ 712, 560 ]
+  pvp_reward: [ 804, 471 ]
+
+  treasures_location:
+    0: [ 570, 280, 813, 620 ]
+    1: [ 827, 278, 1065, 620 ]
+    2: [ 1080, 276, 1319, 617 ]
+
