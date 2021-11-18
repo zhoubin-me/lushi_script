@@ -336,17 +336,15 @@ class Agent:
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
-                    # default eng loc
-                    loc_page_right = (765, 418)
-                    if self.lang == "chs":
-                        loc_page_right = (1091, 479)
-                    pyautogui.click(tuple_add(rect, loc_page_right))
+
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
                 else:
                     x_id = self.basic.boss_id % 3
                     y_id = self.basic.boss_id // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
@@ -444,10 +442,6 @@ class Agent:
                     visitor_id = np.random.randint(0, 3)
                     visitor_loc = (self.locs.visitors[visitor_id], self.locs.visitors[-1])
                     pyautogui.click(tuple_add(rect, visitor_loc))
-
-                # visitor, pick mission record
-                if self.debug:
-                    screenshot(self.title, state)
 
                 # TODO update later
                 if self.is_screenshot:

@@ -62,6 +62,14 @@ class TestLushi(unittest.TestCase):
         print(re)
         self.assertEqual(True, True)
 
+    def test_loc_click(self):
+        config = self.get_config(lang='chs')
+        self.locs = SimpleNamespace(**config['location'])
+        rect, img = find_lushi_window('炉石传说')
+        pyautogui.PAUSE = 0.5
+        pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+        pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+
     def test_hero_pos(self):
         a = [680, 810, 630, 240]  # 680, 810
         b = [465, 575]  # 偶数
