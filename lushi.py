@@ -278,7 +278,7 @@ class Agent:
                 if idx not in not_advice_idx:
                     advice_idx.append(idx)
             return advice_idx
-        
+
         return [0, 1, 2] # 兜底返回
 
     # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中则不选，如果白名单没命中，黑名单全命中，则随机选
@@ -295,10 +295,10 @@ class Agent:
                 the_index = 0
                 for idx, v_loc in self.locs.visitors_location.items():
                     new_dist =  abs(loc[0] - v_loc[2])
-                    if new_dist < dist:    # right_x - right_x 
+                    if new_dist < dist:    # right_x - right_x
                         the_index = idx
                         dist = new_dist
-                
+
                 idx_whiteList.append(the_index)
 
         if is_in_whitelist and 0 < len(idx_whiteList):
@@ -312,7 +312,7 @@ class Agent:
                 the_index = 0
                 for idx, v_loc in self.locs.visitors_location.items():
                     new_dist =  abs(loc[0] - v_loc[2])
-                    if new_dist < dist:    # right_x - right_x 
+                    if new_dist < dist:    # right_x - right_x
                         the_index = idx
                         dist = new_dist
 
@@ -326,7 +326,7 @@ class Agent:
                 for idx in range(3):
                     if idx not in idx_blackList:
                         advice_idx.append(idx)
-                return advice_idx 
+                return advice_idx
 
         return [0, 1, 2]    # 兜底返回
 
@@ -356,17 +356,15 @@ class Agent:
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
-                    # default eng loc
-                    loc_page_right = (765, 418)
-                    if self.lang == "chs":
-                        loc_page_right = (1091, 479)
-                    pyautogui.click(tuple_add(rect, loc_page_right))
+
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
                 else:
                     x_id = self.basic.boss_id % 3
                     y_id = self.basic.boss_id // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
