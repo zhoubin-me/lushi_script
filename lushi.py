@@ -388,9 +388,7 @@ class Agent:
                         x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
 
                 for x in (x1, x2, x3):
-                    pyautogui.moveTo(tuple_add(rect, (x, y)))
-                    pyautogui.mouseDown()
-                    pyautogui.mouseUp()
+                    pyautogui.click(tuple_add(rect, (x, y)))
 
             if state in ['goto', 'show', 'teleport', 'start_game']:
                 pyautogui.click(tuple_add(rect, self.locs.start_game))
