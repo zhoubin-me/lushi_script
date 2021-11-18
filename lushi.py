@@ -290,8 +290,8 @@ class Agent:
                     not_advice_idx.append(idx)
         logger.info(f'find treasure blacklist: {not_advice_idx}')
 
-        if 2 < len(not_advice_idx):
-            return [0]
+        if 2 < len(not_advice_idx) or 1 > len(not_advice_idx):
+            return [0, 1, 2]
         else:
             for idx in range(3):
                 if idx not in not_advice_idx:
