@@ -6,14 +6,14 @@ A:完全没问题，英语不要太差，善用百度能解决大部分问题。
 
 ### 1.运行pip intall指令时的常见问题
 
+Q：这些东西下载来有什么用？  
+A：这些是脚本运行时的依赖库，不可或缺。  
+
 Q:在cmd中运行pip install指令时跳出黄字警告怎么办  
 A:这个是正常现象不需要管。  
 
 Q:在cmd中运行pip install指令时出现一长串的红色字符怎么办？  
 A：说明下载失败了，尝试多运行几次pip install指令，直到全部显示Requirement already satisfied既可。
-
-Q：这些东西下载来有什么用？  
-A：这些是脚本运行时的依赖库，不可或缺。  
 
 Q: 在cmd中运行pip install指令时显示 'pip' 不是内部或外部命令，也不是可运行的程序或批处理文件是为什么？  
 A：说明你没安装Python，可以直接百度python官网或者去微软商店里面下载。  
@@ -31,8 +31,6 @@ A: 依赖包安装缺失，请运行文件夹下的install.bat
 Q: 出现 ImportError: DLL load failed while importing win32api: 找不到指定的模块怎么办
 A: [查看该回答](https://blog.csdn.net/qq_36834256/article/details/105870593)
 
-Q: 提示ModuleNotFoundError: No module named 'hearthstone'怎么办
-A: 在你当前的python环境中运行 `pip install -r requirements.txt -i https://pypi.douban.com/simple/` 
 
 ### 2.安装相关软件的注意事项-
 Q: 安装Python时有什么要注意的？  
@@ -56,12 +54,18 @@ A: ~~旧版本适用：脚本的设置文件是config_chs.yaml和config_eng.yaml
 
   
 
-
 ### 4.Power.log相关问题
+
+Q: 为什么脚本一到上佣兵环节就不动了
+
+A: 检查配置中的炉石路径是否正确，并检查炉石路径下的Logs文件夹里面是否有Power.log文件
+
+
 Q: 我没有找到Power.log文件怎么办
 
 A1: Power.log一旦游戏战斗开始就会自动出现，所以只要你炉石路径填对了，脚本就能正常运行。
-A2: 如果你在Logs/目录下没有找到Power.log（指对战开始后），那稍微有一些麻烦。你需要到C:\Users\你的用户\AppData\Local\Blizzard\Hearthstone目录下新建一个叫log.config的文件（如果已经有就不用新建了），然后把下面这段代码放进去（如果已经有[Power]相关则更改相关设置）:
+A2: 如果你在Logs/目录下没有找到Power.log（指对战开始后），可以先用记牌器软件（HDT，炉石官方助手，炉石盒子）启动一次炉石传说，以后就会自动生成。
+A2: 如果你不想下载记牌器软件，那稍微有一些麻烦。你需要到C:\Users\你的用户\AppData\Local\Blizzard\Hearthstone目录下新建一个叫log.config的文件（如果已经有就不用新建了），然后把下面这段代码放进去（如果已经有[Power]相关则更改相关设置）:
 ```yaml
 [Power]
 LogLevel=1
@@ -73,14 +77,6 @@ Verbose=True
 
 关于炉石log的更多信息可以查看这个 [Reddit帖子](https://www.reddit.com/r/hearthstone/comments/268fkk/simple_hearthstone_logging_see_your_complete_play/) 。
 
-Q: 我设置了日志路径，但还是提示找不到文件（FileNotFoundError）
-
-A: ~~请确保config.yaml文件中的路径正确(盘符后面需要添加双斜杠)~~
-```
-示例：
-hs_log: [ "D:\\", "Hearthstone", "Logs", "Power.log" ]
-```
-A: 现在这个路径已经无需配置，但是需要通过GUI指定战网和炉石路径
 
 ### 5.奇怪问题，例如莫名其妙退出
 Q: 为啥闪退?为啥不动?为啥...?
@@ -98,3 +94,7 @@ A: 查看文件路径，避免中文路径
 Q: 无法选择1600*900分辨率
 
 A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomment-966912310
+
+### 8.卡营火
+由于连续点击地图会拖动导致，可以修改default.yaml中的delay
+![image](https://user-images.githubusercontent.com/46051884/142219998-f2626f5c-47c3-4550-a80d-86d65a367c77.png)

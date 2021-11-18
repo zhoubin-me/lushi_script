@@ -135,44 +135,24 @@ class Agent:
         return None
 
     def task_submit(self, rect):
-        if self.basic.auto_tasks and self.lang == "chs":
-            # time.sleep(5)
+
+        if self.basic.auto_tasks:
+            logger.info('Start submit task...')
             # select Camp Fire
-            pyautogui.click(tuple_add(rect, (641, 669)))
-            pyautogui.click(tuple_add(rect, (1302, 744)))
-
-            # first task
-            pyautogui.click(tuple_add(rect, (588, 329)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
-            # second task
-            pyautogui.click(tuple_add(rect, (988, 336)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
-            # third task
-            pyautogui.click(tuple_add(rect, (602, 474)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
-            # forth task
-            pyautogui.click(tuple_add(rect, (988, 474)))
-            pyautogui.click(tuple_add(rect, (548, 719)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (928, 544)))
-            pyautogui.click(tuple_add(rect, (1438, 440)))
-
+            pyautogui.click(tuple_add(rect, self.locs.campfire))
+            pyautogui.click(tuple_add(rect, self.locs.start_game))
+            for y in self.locs.tasks_y:
+                for x in self.locs.tasks_x:
+                    # do task
+                    pyautogui.click(tuple_add(rect, (x, y)))
+                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
+                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                    pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
             # exit the campfire
-            pyautogui.click(tuple_add(rect, (1438, 440)))
+            pyautogui.click(tuple_add(rect, self.locs.empty))
             # select first first boss of map
-            pyautogui.click(tuple_add(rect, (654, 431)))
+            pyautogui.click(tuple_add(rect, self.locs.first_boss))
 
     def start_battle(self):
 
@@ -288,8 +268,9 @@ class Agent:
                                                          self.basic.confidence)
                 if success:
                     not_advice_idx.append(idx)
+        # 去重
+        not_advice_idx = list(set(not_advice_idx))
         logger.info(f'find treasure blacklist: {not_advice_idx}')
-
         if 2 < len(not_advice_idx) or 1 > len(not_advice_idx):
             return [0, 1, 2]
         else:
@@ -297,6 +278,8 @@ class Agent:
                 if idx not in not_advice_idx:
                     advice_idx.append(idx)
             return advice_idx
+        
+        return [0, 1, 2] # 兜底返回
 
     # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中则不选，如果白名单没命中，黑名单全命中，则随机选
     def pick_visitor(self, screen):
@@ -454,7 +437,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
                 if self.debug:
-                    screenshot(self.title, state)
+                    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
@@ -477,8 +460,6 @@ class Agent:
                 # visitor, pick mission record
                 if self.debug or self.is_screenshot:
                     screenshot(self.title, state)
-
-                return
 
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
@@ -519,8 +500,11 @@ class Agent:
                     self.run_pve()
                 except Exception as e:
                     logger.error(f'错误：{e}', exc_info=True)
-                    if self.is_screenshot:
-                        screenshot(self.title, 'error')
+                    try:
+                        if self.is_screenshot:
+                            screenshot(self.title, 'error')
+                    except:
+                        pass
                     restart_game(self.lang, self.basic.bn_path, False)
         else:
             self.run_pve()

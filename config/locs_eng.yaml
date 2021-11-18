@@ -91,3 +91,18 @@ location:
     0: [200, 235, 370, 458]
     1: [425, 235, 580, 458]
     2: [630, 235, 800, 458] 
+
+  # campfire button
+  campfire: [ 373, 578 ]
+  # exit campfire
+  campfire_exit: [ 934, 657 ]
+  # task locations x
+  tasks_x: [ 313, 713 ] # [first_x, last_x]
+  # task locations y
+  tasks_y: [ 278, 423, 574 ] # [first_y, mid_y, last_y]
+  # tasks abandon button
+  tasks_abandon: [ 286, 608 ]
+  # tasks abandon cancel button
+  tasks_abandon_cancel: [ 600, 480 ]
+  # first boss
+  first_boss: [ 373, 370 ]
