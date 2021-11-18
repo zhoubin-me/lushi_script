@@ -335,7 +335,7 @@ class Agent:
 
                 idx_blackList.append(the_index)
 
-        if is_in_whitelist:
+        if is_in_blacklist:
             if 2 < len(idx_blackList) or 1 > len(idx_blackList):
                 return [0, 1, 2]
             else :
@@ -345,6 +345,7 @@ class Agent:
                         advice_idx.append(idx)
                 return advice_idx 
 
+        return [0, 1, 2]    # 兜底返回
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -476,6 +477,8 @@ class Agent:
                 # visitor, pick mission record
                 if self.debug or self.is_screenshot:
                     screenshot(self.title, state)
+
+                return
 
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
 
