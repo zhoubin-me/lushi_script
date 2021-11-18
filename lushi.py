@@ -336,7 +336,7 @@ class Agent:
                 idx_blackList.append(the_index)
 
         if is_in_whitelist:
-            if 2 < len(idx_blackList):
+            if 2 < len(idx_blackList) or 1 > len(idx_blackList):
                 return [0, 1, 2]
             else :
                 advice_idx = []
@@ -472,7 +472,7 @@ class Agent:
                 visitor_loc = (self.locs.visitors[t_id], self.locs.visitors[-1])
                 logger.info(f"click visitor : {t_id} at locs {visitor_loc}")
                 pyautogui.click(tuple_add(rect, visitor_loc))
-                
+
                 # visitor, pick mission record
                 if self.debug or self.is_screenshot:
                     screenshot(self.title, state)
