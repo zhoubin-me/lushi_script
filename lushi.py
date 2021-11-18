@@ -467,7 +467,7 @@ class Agent:
 
             if state == 'visitor_list':
                 _, screen = find_lushi_window(self.title)
-                advice = self.pick_visitor(screen, rect) # TODO test
+                advice = self.pick_visitor(screen) # TODO test
                 t_id = random.choice(advice)
                 visitor_loc = (self.locs.visitors[t_id], self.locs.visitors[-1])
                 logger.info(f"click visitor : {t_id} at locs {visitor_loc}")
