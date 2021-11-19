@@ -1,19 +1,17 @@
+import csv
 import logging
+import os
+import platform
 import sys
+import time
 from datetime import datetime
 
 import cv2
-import pyautogui
-from PIL import ImageGrab, Image
 import numpy as np
-import platform
-import os
 import psutil
-import time
+import pyautogui
 import win32api
-from PyQt5.QtWidgets import *
-import csv
-import utils.logging_util
+from PIL import ImageGrab
 
 logger = logging.getLogger()
 
@@ -264,29 +262,6 @@ def analyse_battle_field(region, screen, digits):
 
 def tuple_add(x, y):
     return x[0] + y[0], x[1] + y[1]
-
-
-class DropLineEdit(QLineEdit):  # support drag
-    def __init__(self, parent=None):
-        super(DropLineEdit, self).__init__(parent)
-        # self.setAcceptDrops(True)
-        self.setDragEnabled(True)
-
-    def dragEnterEvent(self, e):
-        if e.mimeData().hasText():
-            e.accept()
-        else:
-            e.ignore()
-
-    def dropEvent(self, e):
-        if e.mimeData().hasText():
-            file_path = e.mimeData().text()
-            file_path = file_path.split('\n')
-            # print(filePath[0])  # only read the first file
-            file_path = file_path[0].split('///')  # remove file:///
-            self.setText(file_path[1])  # save file path into QLineEdit
-        else:
-            e.ignore()
 
 
 if __name__ == "__main__":

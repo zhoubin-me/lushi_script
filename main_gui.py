@@ -8,18 +8,15 @@ import sys
 import threading
 import traceback
 
-from utils.extendedcombobox import ExtendedComboBox
-
 import PyQt5
 import keyboard
 import pinyin
 import yaml
 from PyQt5 import uic, QtCore, QtWidgets
-from PyQt5.QtCore import QStringListModel, Qt, QSortFilterProxyModel
+from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
-
-
+from utils.ui import ExtendedComboBox
 from utils.util import HEROS
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
@@ -48,7 +45,6 @@ def stop_thread(thread):
     _async_raise(thread.ident, SystemExit)
 
 
-
 class Ui(QMainWindow):
     def __init__(self):
         super(Ui, self).__init__()
@@ -66,12 +62,12 @@ class Ui(QMainWindow):
 
         self.boss_id = self.findChild(QSpinBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
-        #self.reward_count = self.findChild(QSpinBox, 'boss_reward')
+        # self.reward_count = self.findChild(QSpinBox, 'boss_reward')
         self.reward_count_dropdown = self.findChild(QComboBox, 'reward')
         self.reward_count_dropdown.addItem('3')
         self.reward_count_dropdown.addItem('4')
         self.reward_count_dropdown.addItem('5')
-        self.reward_count_dropdown.addItem('all')   # 都点一遍
+        self.reward_count_dropdown.addItem('all')  # 都点一遍
         self.bn_path = self.findChild(QLineEdit, 'bn_path')
         self.hs_path = self.findChild(QLineEdit, 'hs_path')
         self.bn_path_find = self.findChild(QToolButton, 'load_path')
@@ -90,10 +86,8 @@ class Ui(QMainWindow):
         self.load = self.findChild(QPushButton, 'load')  # Find the button
         self.load.clicked.connect(self.loadButtonPressed)  # Click event
 
+        self.hero_dropdown = (self.findChild(ExtendedComboBox, 'hero_list'))
 
-        self.hero_dropdown=(self.findChild(ExtendedComboBox, 'hero_list'))
-       
-        
         if self.ui_lang == 'chs':
             heroes_sorted = {k: v[0] for k, v in sorted(
                 HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
@@ -145,8 +139,6 @@ class Ui(QMainWindow):
         self.hero_info = {}
         self.config = {}
         self.load_config('config/default.yaml')
-
-
 
         self.show()
 
@@ -293,7 +285,7 @@ class Ui(QMainWindow):
             if k == 'boss_id':
                 self.boss_id.setValue(v + 1)
             if k == 'team_id':
-                self.team_id.setValue(v + 1) 
+                self.team_id.setValue(v + 1)
             if k == 'reward_count_dropdown':
                 self.reward_count_dropdown.setCurrentText(f"{v}")
             if k == 'bn_path':
@@ -329,7 +321,7 @@ class Ui(QMainWindow):
     def save_config(self):
         self.config['boss_id'] = self.boss_id.value() - 1
         self.config['team_id'] = self.team_id.value() - 1
-        #self.config['reward_count'] = self.reward_count.value()
+        # self.config['reward_count'] = self.reward_count.value()
         self.config['bn_path'] = self.bn_path.text()
         self.config['hs_path'] = self.hs_path.text()
         self.config['auto_restart'] = self.auto_restart.isChecked()
@@ -349,7 +341,6 @@ class Ui(QMainWindow):
             hero_index = hero_order_list.index(v[0])
             new_hero_info[k] = [v[0], v[1], v[2], hero_index]
         self.config['hero'] = new_hero_info
-
 
     def saveButtonPressed(self):
         self.save_config()
@@ -378,7 +369,7 @@ class Ui(QMainWindow):
                 Auto Restart: {self.config['auto_restart']}\n
                 Early Stop: {self.config['early_stop']}\n
                 Auto Task: {self.config['auto_tasks']}\n
-                Is Screenshot: {self.config['is_screenshot']}\n
+                Error Screenshot: {self.config['is_screenshot']}\n
                 Language & Resolution: {self.config['lang']}\n
                 Heroes:\n
                 {hero_text}
@@ -424,23 +415,10 @@ class Ui(QMainWindow):
 
     def retranslateUi(self):  # generate from python -m PyQt5.uic.pyuic main_chs.ui -o main_chs_ui.py
         _translate = QtCore.QCoreApplication.translate
-        # MainWindow.setWindowTitle(_translate("MainWindow", "MainWindow"))
+        # MainWindow.setWindowTitle(_translate("MainWindow", "Hearthstone script (Ctrl+Q to stop)"))
         self.load.setText(_translate("MainWindow", "加载配置"))
         self.save.setText(_translate("MainWindow", "保存配置"))
         self.run.setText(_translate("MainWindow", "运行脚本"))
-        self.label_4.setText(_translate("MainWindow", "战网路径"))
-        self.label.setText(_translate("MainWindow", "关卡选择序号"))
-        self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
-        self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
-        self.label_5.setText(_translate("MainWindow", "炉石路径"))
-        self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
-        self.load_path2.setText(_translate("MainWindow", "..."))
-        self.load_path.setText(_translate("MainWindow", "..."))
-        self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
-        self.screenshot_reward.setText(_translate("MainWindow", "BOSS奖励截图"))
-        self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
-        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
-        #self.is_screenshot.setText(_translate("MainWindow", "脚本出错截图"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
         self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
         self.r321.setText(_translate("MainWindow", "3, 2, 1"))
@@ -457,22 +435,23 @@ class Ui(QMainWindow):
         self.godown.setText(_translate("MainWindow", "下移"))
         self.modify.setText(_translate("MainWindow", "修改"))
         self.label_9.setText(_translate("MainWindow", "当前英雄技能顺序:"))
-        self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
-        self.label_5.setText(_translate("MainWindow", "炉石路径"))
-        self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
-        self.load_path.setText(_translate("MainWindow", "..."))
-        self.load_path2.setText(_translate("MainWindow", "..."))
-        self.label_4.setText(_translate("MainWindow", "战网路径"))
-        self.label.setText(_translate("MainWindow", "关卡选择序号"))
-        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务（仅ZH-1600x900有效）"))
-        self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
         self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
+        self.label_5.setText(_translate("MainWindow", "炉石路径"))
+        self.load_path.setText(_translate("MainWindow", "..."))
+        self.label.setText(_translate("MainWindow", "关卡选择序号"))
+        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
         self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
-        self.is_screenshot.setText(_translate("MainWindow", "脚本出错截图"))
+        self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
+        self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
         self.screenshot_reward.setText(_translate("MainWindow", "BOSS奖励截图"))
+        self.label_4.setText(_translate("MainWindow", "战网路径"))
+        self.is_screenshot.setText(_translate("MainWindow", "脚本出错截图"))
+        self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
+        self.load_path2.setText(_translate("MainWindow", "..."))
         self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
         self.actionEnglish.setText(_translate("MainWindow", "English"))
         self.actionChinese.setText(_translate("MainWindow", "Chinese"))
+
 
 if __name__ == '__main__':
     os.chdir(os.path.abspath(os.path.dirname(os.path.realpath(__file__))))
