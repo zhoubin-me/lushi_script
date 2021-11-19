@@ -455,6 +455,7 @@ class Agent:
                 logger.info(f"click visitor : {t_id} at locs {visitor_loc}")
                 pyautogui.click(tuple_add(rect, visitor_loc))
 
+                time.sleep(1) # 多次截屏没有 截住
                 # visitor, pick mission record
                 if self.debug or self.is_screenshot:
                     screenshot(self.title, state)
