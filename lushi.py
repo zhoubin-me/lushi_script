@@ -279,14 +279,12 @@ class Agent:
                     advice_idx.append(idx)
             return advice_idx
 
-        return [0, 1, 2] # 兜底返回
-
     # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中则不选，如果白名单没命中，黑名单全命中，则随机选
     def pick_visitor(self, screen):
         is_in_whitelist = False
         is_in_blacklist = False
-        idx_whiteList = []
-        idx_blackList = []
+        idx_white_list = []
+        idx_black_list = []
         for key in self.heros_whitelist.keys():
             success, loc, conf = self.find_in_image(screen, key, prefix='heros_whitelist')
             if success:
@@ -294,15 +292,17 @@ class Agent:
                 dist = 1024
                 the_index = 0
                 for idx, v_loc in self.locs.visitors_location.items():
-                    new_dist =  abs(loc[0] - v_loc[2])
-                    if new_dist < dist:    # right_x - right_x
+                    new_dist = abs(loc[0] - v_loc[2])
+                    if new_dist < dist:  # right_x - right_x
                         the_index = idx
                         dist = new_dist
 
-                idx_whiteList.append(the_index)
+                idx_white_list.append(the_index)
 
-        if is_in_whitelist and 0 < len(idx_whiteList):
-            return idx_whiteList
+        # 去重
+        idx_white_list = list(set(idx_white_list))
+        if is_in_whitelist and 0 < len(idx_white_list):
+            return idx_white_list
 
         for key in self.heros_blacklist.keys():
             success, loc, conf = self.find_in_image(screen, key, prefix='heros_blacklist')
@@ -311,24 +311,27 @@ class Agent:
                 dist = 1024
                 the_index = 0
                 for idx, v_loc in self.locs.visitors_location.items():
-                    new_dist =  abs(loc[0] - v_loc[2])
-                    if new_dist < dist:    # right_x - right_x
+                    new_dist = abs(loc[0] - v_loc[2])
+                    if new_dist < dist:  # right_x - right_x
                         the_index = idx
                         dist = new_dist
 
-                idx_blackList.append(the_index)
+                idx_black_list.append(the_index)
+
+        # 去重
+        idx_black_list = list(set(idx_black_list))
 
         if is_in_blacklist:
-            if 2 < len(idx_blackList) or 1 > len(idx_blackList):
+            if 2 < len(idx_black_list) or 1 > len(idx_black_list):
                 return [0, 1, 2]
-            else :
+            else:
                 advice_idx = []
                 for idx in range(3):
-                    if idx not in idx_blackList:
+                    if idx not in idx_black_list:
                         advice_idx.append(idx)
                 return advice_idx
 
-        return [0, 1, 2]    # 兜底返回
+        return [0, 1, 2]  # 兜底返回
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -447,7 +450,7 @@ class Agent:
 
             if state == 'visitor_list':
                 _, screen = find_lushi_window(self.title)
-                advice = self.pick_visitor(screen) # TODO test
+                advice = self.pick_visitor(screen)
                 t_id = random.choice(advice)
                 visitor_loc = (self.locs.visitors[t_id], self.locs.visitors[-1])
                 logger.info(f"click visitor : {t_id} at locs {visitor_loc}")
