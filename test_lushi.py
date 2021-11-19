@@ -8,6 +8,9 @@ import pyautogui
 import lushi
 import main_gui
 import unittest
+import os
+import cv2
+import numpy as np
 import yaml
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc
 
@@ -19,6 +22,17 @@ class TestLushi(unittest.TestCase):
 
     def tearDown(self) -> None:
         return super().tearDown()
+
+    def get_save_image(self, idx = 0, to_gray = True):
+        # 罗卡拉 英雄, 英雄列表， 宝藏列表， 香蕉英雄列表
+        imageNames = ["reward_2021-11-15_05-23.png", "reward_2021-11-15_04-14.png", "reward_2021-11-15_20-28.png", "reward_2021-11-15_10-20.png"]
+        imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", imageNames[idx])
+        src = cv2.imread(imgPath)
+        if to_gray:
+            image = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
+        else:
+            image = np.array(src)
+        return image
 
     def get_config(self, lang='eng'):
         config = {}
@@ -38,6 +52,10 @@ class TestLushi(unittest.TestCase):
         config['treasure_blacklist'] = {}
         config['lang'] = 'EN-1024x768'
         config['reward_count_dropdown'] = 3
+        config['hero'] = {}
+        config['hs_path'] = 'C:/Program Files (x86)/Hearthstone/Hearthstone.exe'
+        config['delay'] = 0.5
+        config['confidence'] = 0.8
         return config
 
     def test_treasure(self):
@@ -57,8 +75,18 @@ class TestLushi(unittest.TestCase):
     def test_pick_treasure(self):
         config = self.get_config()
         agent = lushi.Agent(config)
-        _, image = self.get_screen("RustDesk")
+        # _, image = self.get_screen("RustDesk")
+        image = self.get_save_image(2)
         re = agent.pick_treasure(image)
+        print(re)
+        self.assertEqual(True, True)
+
+    def test_pick_visitor(self):
+        config = self.get_config()
+        agent = lushi.Agent(config)
+        # _, image = self.get_screen("RustDesk")
+        image = self.get_save_image(3)
+        re = agent.pick_visitor(image)
         print(re)
         self.assertEqual(True, True)
 
