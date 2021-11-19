@@ -23,9 +23,10 @@ class TestLushi(unittest.TestCase):
     def tearDown(self) -> None:
         return super().tearDown()
 
-    def get_save_image(self, idx = 0, to_gray = True):
+    def get_save_image(self, idx=0, to_gray=True):
         # 罗卡拉 英雄, 英雄列表， 宝藏列表， 香蕉英雄列表
-        imageNames = ["reward_2021-11-15_05-23.png", "reward_2021-11-15_04-14.png", "reward_2021-11-15_20-28.png", "reward_2021-11-15_10-20.png"]
+        imageNames = ["reward_2021-11-15_05-23.png", "reward_2021-11-15_04-14.png", "reward_2021-11-15_20-28.png",
+                      "reward_2021-11-15_10-20.png"]
         imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", imageNames[idx])
         src = cv2.imread(imgPath)
         if to_gray:
@@ -142,6 +143,11 @@ class TestLushi(unittest.TestCase):
         pyautogui.click(tuple_add(rect, self.locs.empty))
         # select first first boss of map
         pyautogui.click(tuple_add(rect, self.locs.first_boss))
+
+    def test_any(self):
+        a = [1, 2, 3]
+        print(f'asdadasd sd {a}')
+
 
 if __name__ == "__main__":
     unittest.main()

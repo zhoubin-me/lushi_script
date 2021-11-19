@@ -25,7 +25,6 @@ logger = logging.getLogger()
 
 class Agent:
     def __init__(self, cfg):
-        self.is_screenshot = cfg.get('is_screenshot') or False
         if cfg['lang'].startswith('EN'):
             self.lang = 'eng'
             self.loc_file = 'config/locs_eng.yaml'
@@ -156,7 +155,7 @@ class Agent:
 
     def start_battle(self):
 
-        logger.info("Scanning battlefield")
+        logger.info("Start battle, scanning battlefield")
 
         rect, screen = find_lushi_window(self.title)
 
@@ -207,6 +206,7 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.empty))
 
     def select_members(self):
+        logger.info("Start select members")
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
         del screen
@@ -302,6 +302,7 @@ class Agent:
         # 去重
         idx_white_list = list(set(idx_white_list))
         if is_in_whitelist and 0 < len(idx_white_list):
+            logger.info(f'find visitor white list {idx_white_list}')
             return idx_white_list
 
         for key in self.heros_blacklist.keys():
@@ -322,6 +323,7 @@ class Agent:
         idx_black_list = list(set(idx_black_list))
 
         if is_in_blacklist:
+            logger.info(f'find visitor black list {idx_black_list}')
             if 2 < len(idx_black_list) or 1 > len(idx_black_list):
                 return [0, 1, 2]
             else:
@@ -347,13 +349,16 @@ class Agent:
                 tic = time.time()
 
             if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok']:
+                logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, loc))
 
             if state == 'travel':
+                logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, loc))
                 pyautogui.click(tuple_add(rect, self.locs.travel))
 
             if state == 'boss_list':
+                logger.info('find boss list, try to click')
                 if self.basic.boss_id > 5:
                     id_standard = (self.basic.boss_id - 6) * 2
                     x_id = id_standard % 3
@@ -372,6 +377,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'team_list':
+                logger.info(f'find {state}, try to click')
                 x_id = self.basic.team_id % 3
                 y_id = self.basic.team_id // 3
 
@@ -381,6 +387,7 @@ class Agent:
                 time.sleep(7)  # avoid too low speed of entering map action to skip task_submit and scan_surprise
                 self.task_submit(rect)
                 # if self.basic.boss_id != 0:
+                time.sleep(1)
                 surprise_loc = self.scan_surprise_loc(rect)
 
                 if surprise_loc is not None:
@@ -396,6 +403,7 @@ class Agent:
                     logger.info(f'Surprise side {self.side}, surprise in middile {self.surprise_in_mid}')
 
             if state == 'map_not_ready':
+                logger.info(f'find {state}, try to click next map')
                 first_x, mid_x, last_x, y = self.locs.focus
                 if self.side is None:
                     self.side = 'left'
@@ -414,18 +422,23 @@ class Agent:
                     pyautogui.click(tuple_add(rect, (x, y)))
 
             if state in ['goto', 'show', 'teleport', 'start_game']:
+                logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'member_not_ready':
+                logger.info(f'find {state}, try to click')
                 self.select_members()
 
             if state == 'not_ready_dots':
+                logger.info(f'find {state}, try to click')
                 self.start_battle()
 
             if state == 'battle_ready':
+                logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
+                logger.info(f'find {state}, try to click')
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_treasure(screen)
 
@@ -435,13 +448,15 @@ class Agent:
 
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
-                if self.debug:
+                if self.debug or self.basic.screenshot_treasure:
                     screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
             if state in ['destroy', 'blue_portal', 'boom']:
+                logger.info(f'find {state}, try to click')
                 if self.basic.early_stop:
+                    logger.info("Early stopping")
                     pyautogui.click(tuple_add(rect, self.locs.view_team))
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
@@ -449,6 +464,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'visitor_list':
+                logger.info(f'find {state}, try to click')
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_visitor(screen)
                 t_id = random.choice(advice)
@@ -457,7 +473,7 @@ class Agent:
                 pyautogui.click(tuple_add(rect, visitor_loc))
 
                 # visitor, pick mission record
-                if self.debug or self.is_screenshot:
+                if self.debug or self.basic.screenshot_visitor:
                     screenshot(self.title, state)
 
                 pyautogui.click(tuple_add(rect, self.locs.visitors_confirm))
@@ -473,6 +489,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
 
             if state in ['final_reward', 'final_reward2']:
+                logger.info(f'find {state}, try to click')
                 reward_count = self.basic.reward_count_dropdown
                 reward_count = int(reward_count) if reward_count.isdigit() else reward_count
 
@@ -488,6 +505,7 @@ class Agent:
                 pyautogui.click()
 
             if state == 'final_confirm':
+                logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, self.locs.final_confirm))
 
         return success, tic, state, rect
@@ -497,10 +515,13 @@ class Agent:
             while True:
                 try:
                     self.run_pve()
+                except AssertionError as e:
+                    logger.error(f'错误：请删除炉石路径下的Logs/Power.log再重新打开!!!!')
+                    break
                 except Exception as e:
                     logger.error(f'错误：{e}', exc_info=True)
                     try:
-                        if self.is_screenshot:
+                        if self.basic.screenshot_error:
                             screenshot(self.title, 'error')
                     except:
                         pass
@@ -517,7 +538,7 @@ class Agent:
         while True:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
-                if self.is_screenshot:
+                if self.basic.screenshot_error:
                     screenshot(self.title, 'restart')
                 if state == 'not_ready_dots' or state == 'member_not_ready':
                     pyautogui.rightClick(tuple_add(rect, self.locs.empty))
@@ -531,8 +552,7 @@ class Agent:
                     restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
-                logger.info(
-                    f"Last state {state}, time taken: {time.time() - tic}")
+                logger.info(f"Last state {state}, time taken: {time.time() - tic}")
 
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)
