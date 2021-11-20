@@ -456,6 +456,7 @@ class Agent:
             if state in ['destroy', 'blue_portal', 'boom']:
                 logger.info(f'find {state}, try to click')
                 if self.basic.early_stop:
+                    time.sleep(1)
                     logger.info("Early stopping")
                     pyautogui.click(tuple_add(rect, self.locs.view_team))
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
@@ -483,6 +484,8 @@ class Agent:
 
                 logger.info("Visitors Selected")
                 if self.basic.early_stop:
+                    # 休眠2秒再退出，免得太卡导致失败
+                    time.sleep(2)
                     logger.info("Early stopping")
                     pyautogui.click(tuple_add(rect, self.locs.view_team))
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
