@@ -64,7 +64,9 @@ A: 检查配置中的炉石路径是否正确，并检查炉石路径下的Logs�
 Q: 我没有找到Power.log文件怎么办
 
 A1: Power.log一旦游戏战斗开始就会自动出现，所以只要你炉石路径填对了，脚本就能正常运行。
+
 A2: 如果你在Logs/目录下没有找到Power.log（指对战开始后），可以先用记牌器软件（HDT，炉石官方助手，炉石盒子）启动一次炉石传说，以后就会自动生成。
+
 A2: 如果你不想下载记牌器软件，那稍微有一些麻烦。你需要到C:\Users\你的用户\AppData\Local\Blizzard\Hearthstone目录下新建一个叫log.config的文件（如果已经有就不用新建了），然后把下面这段代码放进去（如果已经有[Power]相关则更改相关设置）:
 ```yaml
 [Power]
@@ -96,10 +98,20 @@ Q: 无法选择1600*900分辨率
 A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomment-966912310
 
 ### 8.卡营火
+
 由于连续点击地图会拖动导致，可以修改default.yaml中的delay
 ![image](https://user-images.githubusercontent.com/46051884/142219998-f2626f5c-47c3-4550-a80d-86d65a367c77.png)
 
 
-### 9.can not get name of process psutil.AccessDenied (pid=1804)
+### 9.总结不上怪
+
+依次排查 power.log是否能正确生成, 炉石战网路径是否正确 
+
+
+### 10.can not get name of process psutil.AccessDenied (pid=1804)
 
 请使用管理员权限打开脚本
+
+
+### 11 启动程序出现 raise assertionerror()
+需要删除power.log重新进入游戏
