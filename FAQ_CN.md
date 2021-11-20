@@ -98,3 +98,8 @@ A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomme
 ### 8.卡营火
 由于连续点击地图会拖动导致，可以修改default.yaml中的delay
 ![image](https://user-images.githubusercontent.com/46051884/142219998-f2626f5c-47c3-4550-a80d-86d65a367c77.png)
+
+
+### 9.can not get name of process psutil.AccessDenied (pid=1804)
+
+请使用管理员权限打开脚本
