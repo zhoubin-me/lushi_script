@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>580</width>
+    <width>619</width>
     <height>456</height>
    </rect>
   </property>
@@ -23,7 +23,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>Hearthstone script (Ctrl+Q to stop)</string>
+   <string>Q群：832946624(Ctrl+Q to stop)</string>
   </property>
   <widget class="QWidget" name="centralwidget">
    <property name="sizePolicy">
@@ -712,7 +712,7 @@
          </widget>
         </item>
         <item row="4" column="3">
-         <widget class="QCheckBox" name="is_screenshot">
+         <widget class="QCheckBox" name="screenshot_error">
           <property name="sizePolicy">
            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
             <horstretch>0</horstretch>
@@ -751,6 +751,42 @@
           </property>
          </widget>
         </item>
+        <item row="4" column="5">
+         <widget class="QCheckBox" name="screenshot_visitor">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>神秘人截图</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="6">
+         <widget class="QCheckBox" name="screenshot_treasure">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>宝藏截图</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
      </layout>
@@ -762,8 +798,8 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>580</width>
-     <height>22</height>
+     <width>619</width>
+     <height>23</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">
