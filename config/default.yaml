@@ -24,7 +24,7 @@ hero:
 hs_path: C:/Program Files (x86)/Hearthstone/Hearthstone.exe
 lang: ZH-1600x900
 longest_waiting: 80
-reward_count_dropdown: '5'
+reward_count_dropdown: 'all'
 screenshot_error: true
 screenshot_reward: false
 screenshot_treasure: false
