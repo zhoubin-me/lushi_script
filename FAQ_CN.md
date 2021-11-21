@@ -97,7 +97,7 @@ Q: 无法选择1600*900分辨率
 
 A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomment-966912310
 
-### 8.卡营火
+### 8.卡营火(此条目一般不会再0.4.2后的版本发生)
 
 由于连续点击地图会拖动导致，可以修改default.yaml中的delay
 ![image](https://user-images.githubusercontent.com/46051884/142219998-f2626f5c-47c3-4550-a80d-86d65a367c77.png)
