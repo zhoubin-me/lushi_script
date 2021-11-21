@@ -107,7 +107,7 @@ A：可以参考https://github.com/zhoubin-me/lushi_script/issues/131#issuecomme
 
 依次排查 power.log是否能正确生成, 炉石战网路径是否正确，队伍配置是否和游戏中一样
 
-另外要目前发现游戏内好友互动，观战，打完天梯再打佣兵等都有可能导致脚本卡在不上怪阶段，此时需要退出游戏重进
+另外目前发现游戏内好友互动，观战，打完天梯再打佣兵等都有可能导致脚本卡在不上怪阶段，此时需要退出游戏重进
 
 
 ### 10.can not get name of process psutil.AccessDenied (pid=1804)
