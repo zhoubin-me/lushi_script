@@ -19,3 +19,4 @@ PyYAML
 PyQt5
 pinyin
 keyboard
+imutils

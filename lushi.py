@@ -16,7 +16,7 @@ from types import SimpleNamespace
 
 from utils.log_util import LogUtil
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot
-from utils.images import get_sub_np_array
+from utils.images import get_sub_np_array, images_to_full_map
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -95,6 +95,17 @@ class Agent:
         loc = X, Y
         return success, loc, rect
 
+    # 检查并获取图片
+    def check_and_screen(self, name, prefix='icons'):
+        rect, screen = find_lushi_window(self.title)
+        try:
+            icon = getattr(self, prefix)[name]
+        except:
+            return False, None, None
+        success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
+        loc = X, Y
+        return success, loc, rect, screen
+
     # 传入图片，匹配子图
     def find_in_image(self, screen, name, prefix='icons'):
         try:
@@ -109,6 +120,7 @@ class Agent:
     def scan_surprise_loc(self, rect):
         # time.sleep(5)
         logger.info('Scanning surprise')
+        logger.info(rect)
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
@@ -121,14 +133,23 @@ class Agent:
             if time.time() - tic > 10:
                 return
 
+        screen_images = []
         for _ in range(10):
-            pyautogui.scroll(60)
-            success, loc, rect = self.check_in_screen('surprise')
+            success, loc, rect, the_img = self.check_and_screen('surprise')
+            _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
+            # the_img.save("first_img.png")
+            the_map_loc = self.locs.map_location
+            sub_img = get_sub_np_array(the_img, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+            screen_images.append(sub_img)
             if success:
                 for _ in range(10):
-                    pyautogui.scroll(-60)
+                    pyautogui.scroll(-200)
                 logger.info(f"Found surprise during scrolling {loc}")
+                full_map = images_to_full_map(screen_images)
+                cv2.imwrite("full_map_res.jpg", full_map)
                 return loc
+            
+            pyautogui.scroll(200) # 先截图，再滑
 
         logger.info("Did not found any surprise")
         return None

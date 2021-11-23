@@ -108,3 +108,5 @@ location:
   tasks_abandon_cancel: [ 600, 480 ]
   # first boss
   first_boss: [ 373, 370 ]
+  # map locations, leftt_x, top_y, left_x, bottom_y
+  map_location: [58, 100, 690, 670]

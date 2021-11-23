@@ -142,6 +142,9 @@ class TestLushi(unittest.TestCase):
         # select first first boss of map
         pyautogui.click(tuple_add(rect, self.locs.first_boss))
 
+    def test_scan_surprise_loc(self): 
+        return None
+
     def test_any(self):
         a = [1, 2, 3]
         print(f'asdadasd sd {a}')
