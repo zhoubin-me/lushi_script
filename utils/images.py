@@ -6,8 +6,8 @@ from utils.img_match import Stitcher
 
 def get_sub_np_array(np_array, x1, y1, x2, y2):
     roiImg = np_array[y1:y2, x1:x2]
-    img = Image.fromarray(roiImg) # TODO check before commit
-    img.save("test1.png")
+    # img = Image.fromarray(roiImg) # TODO check before commit
+    # img.save("test1.png")
     return roiImg
 
 
@@ -50,15 +50,11 @@ def images_to_full_map(images):
     i = 0
     for img in images :
         i = i + 1
-        # print(i, c)
         if 1 == i:
-            # first = img_rotaion(imageA)
             first = img
-            # first = imutils.resize(first, height=400)
             continue
         else:
             second = img
-            # second = imutils.resize(second, height=400)
 
         if (first is not None and second is not None):
             # 把图像叠合在一起以构建全景图
