@@ -143,13 +143,13 @@ class Agent:
             screen_images.append(sub_img)
             if success:
                 for _ in range(10):
-                    pyautogui.scroll(-200)
+                    pyautogui.scroll(-60)
                 logger.info(f"Found surprise during scrolling {loc}")
                 full_map = images_to_full_map(screen_images)
                 cv2.imwrite("full_map_res.jpg", full_map)
                 return loc
             
-            pyautogui.scroll(200) # 先截图，再滑
+            pyautogui.scroll(60) # 先截图，再滑
 
         logger.info("Did not found any surprise")
         return None
