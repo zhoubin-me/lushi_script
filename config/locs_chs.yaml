@@ -96,12 +96,14 @@ location:
   # exit campfire
   campfire_exit: [ 1275, 770 ]
   # task locations x
-  tasks_x: [ 588, 988 ] # [first_x, last_x]
+  tasks_x: [988, 588] # [last_x, first_x]
   # task locations y
-  tasks_y: [ 329, 474, 660 ] # [first_y, mid_y, last_y]
+  tasks_y: [660, 474, 329] # [last_y, mid_y, first_y]
   # tasks abandon button
   tasks_abandon: [ 548, 719 ]
   # tasks abandon cancel button
   tasks_abandon_cancel: [ 928, 544 ]
   # first boss
   first_boss: [ 654, 431 ]
+  # map locations, leftt_x, top_y, left_x, bottom_y
+  map_location: [260, 100, 996, 780]

@@ -71,10 +71,13 @@ if PLATFORM:
             return False
 
 
-    def find_lushi_window(title, to_gray=True):
+    def find_lushi_window(title, to_gray=True, raw=False):
         hwnd = findTopWindow(title)
         rect = win32gui.GetWindowPlacement(hwnd)[-1]
         image = ImageGrab.grab(rect)
+        if raw:
+            image = cv2.cvtColor(np.array(image),cv2.COLOR_RGB2BGR)
+            return rect, image
         if to_gray:
             image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
         else:

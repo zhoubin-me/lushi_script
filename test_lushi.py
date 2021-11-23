@@ -76,7 +76,6 @@ class TestLushi(unittest.TestCase):
     def test_pick_treasure(self):
         config = self.get_config()
         agent = lushi.Agent(config)
-        # _, image = self.get_screen("RustDesk")
         image = self.get_save_image(2)
         re = agent.pick_treasure(image)
         print(re)
@@ -85,7 +84,6 @@ class TestLushi(unittest.TestCase):
     def test_pick_visitor(self):
         config = self.get_config()
         agent = lushi.Agent(config)
-        # _, image = self.get_screen("RustDesk")
         image = self.get_save_image(3)
         re = agent.pick_visitor(image)
         print(re)
@@ -143,6 +141,9 @@ class TestLushi(unittest.TestCase):
         pyautogui.click(tuple_add(rect, self.locs.empty))
         # select first first boss of map
         pyautogui.click(tuple_add(rect, self.locs.first_boss))
+
+    def test_scan_surprise_loc(self): 
+        return None
 
     def test_any(self):
         a = [1, 2, 3]
