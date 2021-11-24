@@ -19,7 +19,7 @@ Q: 在cmd中运行pip install指令时显示 'pip' 不是内部或外部命令�
 A：说明你没安装Python，可以直接百度python官网或者去微软商店里面下载。  
 
 Q: psutil依赖包下载完成后显示安装失败了,重试了好几次还是一样是为什么？  
-A: 说明你安装的Python版本过高，可以下载[Micsoft Visaul C++](https://download.visualstudio.microsoft.com/download/pr/d3cbdace-2bb8-4dc5-a326-2c1c0f1ad5ae/9B9DD72C27AB1DB081DE56BB7B73BEE9A00F60D14ED8E6FDE45DAB3E619B5F04/VC_redist.x64.exe)后再次运行指令即可,也可以直接重新安装旧版的Python 3.7 或者Python 3.8  
+A: 说明你安装的Python版本过高，可以下载[Micsoft Visaul C++](https://download.visualstudio.microsoft.com/download/pr/d3cbdace-2bb8-4dc5-a326-2c1c0f1ad5ae/9B9DD72C27AB1DB081DE56BB7B73BEE9A00F60D14ED8E6FDE45DAB3E619B5F04/VC_redist.x64.exe)后再次运行指令即可,也可以直接重新安装旧版的Python 3.6.x   
 
 Q:下载速度实在是太慢了，有没有什么解决办法？  
 A:可以尝试使用运行以下指令来运行  
@@ -34,7 +34,7 @@ A: [查看该回答](https://blog.csdn.net/qq_36834256/article/details/105870593
 
 ### 2.安装相关软件的注意事项-
 Q: 安装Python时有什么要注意的？  
-A: 如果没有特殊需求强烈建议安装Python 3.7或者Python 3.8版本，建议使用微软商店或者去Python官网下载安装。  
+A: 使用了opencv专利算法(`SIFT`和`SURF`)，需使用 `Python 3.6.x` 版本，建议使用微软商店或者去Python官网下载安装。  
 
 Q: 安装[Anaconda3](https://www.anaconda.com/products/individual#windows)时有什么需要注意的？  
 A: 安装时请仔细看清每一步，确保在Advanced Options界面时勾选Add Anaconda3 to the system PATH environment variable选项（该选项默认是不勾选的）以确保脚本的正常运行。  
