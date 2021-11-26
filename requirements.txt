@@ -5,6 +5,7 @@ hslog==1.16.1
 MouseInfo
 numpy
 opencv-python==3.4.1.15
+opencv-contrib-python==3.4.1.15 
 Pillow
 psutil
 PyAutoGUI
