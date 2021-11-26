@@ -7,7 +7,7 @@ This script is to save your liver damage from Mercenaries mode of Hearthstone.
 
 It is only for study purpose, you will take your own legal responsibility if you commercialize it or earn profit.
 
-For discussion, welcome to join our [Discord Group](https://discord.gg/g8gxdwJ4).
+For discussion, welcome to join our [Discord Group](https://discord.gg/RJDxjaqp8P).
 
 For bug reporting, please go to [Issues](https://github.com/zhoubin-me/lushi_script/issues) page to submit.
 
