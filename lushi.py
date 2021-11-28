@@ -516,8 +516,8 @@ class Agent:
                     logger.info(f'chose the  {min_loc}, to start game')
                     pyautogui.click(tuple_add(rect, (min_loc[0], min_loc[1])))
                     # check start_game:
-                    success, loc, _ = self.check_in_screen("start_game")
-                    if success:
+                    success, loc, _ = self.check_in_screen("map_not_ready")
+                    if not success:
                         return
                     else :
                        pyautogui.click(tuple_add(rect, self.locs.map_back))
