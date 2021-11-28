@@ -494,7 +494,7 @@ class Agent:
                     # 翻了地图要回来
                     for i in range(-10,10):
                         _, screen = find_lushi_raw_window(self.title)
-                        circles = get_burning_green_circles(screen, 55, 110)
+                        circles = get_burning_green_circles(screen, 60, 110)
                         if circles is not None and len(circles) > 0 :
                             break
 
