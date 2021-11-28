@@ -419,14 +419,14 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                   'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close']
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done']
         '''
         if success:
             if state != text:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok']:
+            if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok', 'done']:
                 logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, loc))
 
@@ -486,6 +486,7 @@ class Agent:
                 _, screen = find_lushi_raw_window(self.title)
                 the_map_loc = self.locs.map_location # 只选取部分
                 screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+                cv2.imwrite("test_sub_scrr.png", screen)
                 circles = get_burning_green_circles(screen, 55, 110)
                 if self.surprise_relative_loc is None : # 找下 漩涡的相对坐标
                     # success, loc, rect, the_img = self.check_and_screen('surprise')
@@ -494,7 +495,9 @@ class Agent:
                     # 翻了地图要回来
                     for i in range(-10,10):
                         _, screen = find_lushi_raw_window(self.title)
-                        circles = get_burning_green_circles(screen, 60, 110)
+                        the_map_loc = self.locs.map_location # 只选取部分
+                        screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+                        circles = get_burning_green_circles(screen, 55, 110)
                         if circles is not None and len(circles) > 0 :
                             break
 
@@ -512,7 +515,8 @@ class Agent:
                         if new_dist < dist:  # right_x - right_x
                             min_loc = v_loc
                             dist = new_dist
- 
+                    min_loc[1] = min_loc[1] + the_map_loc[1] # sub image y ++
+                    min_loc[0] = min_loc[0] + the_map_loc[0]
                     logger.info(f'chose the  {min_loc}, to start game')
                     pyautogui.click(tuple_add(rect, (min_loc[0], min_loc[1])))
                     # check start_game:

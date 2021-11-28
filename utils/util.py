@@ -100,7 +100,7 @@ if PLATFORM:
         screenshot_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', dt, 'screenshot')
         if not os.path.exists(screenshot_path):
             os.makedirs(screenshot_path)
-        time_second = datetime.strftime(datetime.now(), "%H：%M.%S,%f")[:-3]
+        time_second = datetime.strftime(datetime.now(), "%H-%M.%S,%f")[:-3]
         file_name = f'{prefix}_{time_second}.png'
         full_file_name = os.path.join(screenshot_path, file_name)
         image.save(full_file_name)
