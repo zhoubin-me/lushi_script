@@ -148,7 +148,7 @@ class Agent:
                     pyautogui.scroll(-60)
                 logger.info(f"Found surprise during scrolling {loc}")
                 full_map = images_to_full_map(screen_images)
-                cv2.imwrite("full_map_res.jpg", full_map)
+                # cv2.imwrite("full_map_res3.jpg", full_map) # TODO rmove before submit
                 return loc
             
             pyautogui.scroll(60) # 先截图，再滑
@@ -197,7 +197,7 @@ class Agent:
                     pyautogui.scroll(-60)
                 logger.info(f"Found surprise during scrolling {loc}")
                 full_map = images_to_full_map(screen_images)
-                cv2.imwrite("full_map_res.jpg", full_map) # TODO remove befre commit 
+                # cv2.imwrite("full_map_res2.jpg", full_map) # TODO remove befre commit 
                 return loc
             
             pyautogui.scroll(60) # 先截图，再滑

@@ -80,8 +80,7 @@ def get_burning_green_circles(img, minRad = 55, maxRad = 110, withBlue = True):
         upper_blue = np.array([120, 255, 255])
         mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
         res2 = cv2.bitwise_and(img, img, mask=mask2)
-        # cv2.blur(res2),(10,20))
-        cv2.imwrite("tetsts11_blue.png", res2)
+        # cv2.imwrite("tetsts11_blue.png", res2)
 
     # define range of burning green color in HSV
     lower_green = np.array([55, 50, 50])
@@ -101,7 +100,6 @@ def get_burning_green_circles(img, minRad = 55, maxRad = 110, withBlue = True):
 
     gay_img = cv2.cvtColor(dst, cv2.COLOR_BGRA2GRAY)
     the_img = cv2.blur(gay_img, (4, 4))  # 模糊，去噪点
-    cv2.imwrite("tetsts11.png", the_img)
     circles = cv2.HoughCircles(the_img, cv2.HOUGH_GRADIENT, 1, 35,
                                param1=100, param2=30, minRadius=minRad, maxRadius=maxRad)
     if circles is None:
@@ -112,7 +110,7 @@ def get_burning_green_circles(img, minRad = 55, maxRad = 110, withBlue = True):
         cv2.circle(img, (i[0], i[1]), i[2], (0, 255, 0), 2)
         cv2.circle(img, (i[0], i[1]), 2, (0, 0, 255), 3)
 
-    cv2.imwrite("gar_img111.png", img)
+    # cv2.imwrite("gar_img111.png", img) # TODO remove before submit
     return circles
 
 
