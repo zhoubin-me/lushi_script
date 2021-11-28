@@ -69,17 +69,19 @@ def images_to_full_map(images):
 
     return result
 
-# 获取图中闪亮的绿色圆圈, eng: 100, 200
-def get_burning_green_circles(img, minRad, maxRad):
+# 获取图中闪亮的绿色圆圈, 55, 110
+def get_burning_green_circles(img, minRad = 55, maxRad = 110, withBlue = True):
     # Convert BGR to HSV
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
     # cv2.imwrite("test_origin11.png", img)
 
-    lower_blue = np.array([100, 65, 65])
-    upper_blue = np.array([120, 255, 255])
-    mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
-    res2 = cv2.bitwise_and(img, img, mask=mask2)
-    # cv2.blur(res2),(10,20))
+    if withBlue:
+        lower_blue = np.array([108, 65, 65])
+        upper_blue = np.array([120, 255, 255])
+        mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
+        res2 = cv2.bitwise_and(img, img, mask=mask2)
+        # cv2.blur(res2),(10,20))
+        cv2.imwrite("tetsts11_blue.png", res2)
 
     # define range of burning green color in HSV
     lower_green = np.array([55, 50, 50])
@@ -91,10 +93,14 @@ def get_burning_green_circles(img, minRad, maxRad):
     # Bitwise-AND mask and original image
     res = cv2.bitwise_and(img, img, mask=mask)
 
-    dst = cv2.addWeighted(res, 0.5, res2, 0.5, 0)   # 图片组合
+    dts = None
+    if withBlue:
+        dst = cv2.addWeighted(res, 0.5, res2, 0.5, 0)   # 图片组合
+    else:
+        dst = res
 
     gay_img = cv2.cvtColor(dst, cv2.COLOR_BGRA2GRAY)
-    the_img = cv2.medianBlur(gay_img, 7)  # 进行中值模糊，去噪点
+    the_img = cv2.blur(gay_img, (4, 4))  # 模糊，去噪点
     cv2.imwrite("tetsts11.png", the_img)
     circles = cv2.HoughCircles(the_img, cv2.HOUGH_GRADIENT, 1, 35,
                                param1=100, param2=30, minRadius=minRad, maxRadius=maxRad)

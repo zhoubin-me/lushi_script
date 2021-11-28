@@ -163,9 +163,13 @@ class Agent:
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
-            success, loc, rect = self.check_in_screen(img_name)
+            success, loc, rect = self.check_in_screen("surprise")
             if success:
                 logger.info(f"Found surprise at start {loc}")
+                return loc
+            success, loc, rect = self.check_in_screen("off_surprise")
+            if success:
+                logger.info(f"Found off surprise at start {loc}")
                 return loc
             if self.check_in_screen('start_point')[0]:
                 break
@@ -176,7 +180,12 @@ class Agent:
 
         screen_images = []
         for i in range(10):
-            success, loc, rect, the_img = self.check_and_screen(img_name)
+            success, loc, rect, the_img = self.check_and_screen("surprise")
+            if not success:
+                success, loc, rect = self.check_in_screen("off_surprise")
+            if success:
+                logger.info(f"Found off surprise at start {loc}")
+                return loc
             if 0 == i % 2:
                 _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
                 # the_img.save("first_img.png")
@@ -188,7 +197,7 @@ class Agent:
                     pyautogui.scroll(-60)
                 logger.info(f"Found surprise during scrolling {loc}")
                 full_map = images_to_full_map(screen_images)
-                cv2.imwrite("full_map_res.jpg", full_map)
+                cv2.imwrite("full_map_res.jpg", full_map) # TODO remove befre commit 
                 return loc
             
             pyautogui.scroll(60) # 先截图，再滑
@@ -477,7 +486,7 @@ class Agent:
                 _, screen = find_lushi_raw_window(self.title)
                 the_map_loc = self.locs.map_location # 只选取部分
                 screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
-                circles = get_burning_green_circles(screen, 10, 300)
+                circles = get_burning_green_circles(screen, 55, 110)
                 if self.surprise_relative_loc is None : # 找下 漩涡的相对坐标
                     # success, loc, rect, the_img = self.check_and_screen('surprise')
                     surprise_loc = self.scan_surprise_in_map_loc(rect, img_name='off_surprise')
@@ -485,7 +494,7 @@ class Agent:
                     # 翻了地图要回来
                     for i in range(-10,10):
                         _, screen = find_lushi_raw_window(self.title)
-                        circles = get_burning_green_circles(screen, 10, 300)
+                        circles = get_burning_green_circles(screen, 55, 110)
                         if circles is not None and len(circles) > 0 :
                             break
 
@@ -503,10 +512,16 @@ class Agent:
                         if new_dist < dist:  # right_x - right_x
                             min_loc = v_loc
                             dist = new_dist
-                    
+ 
                     logger.info(f'chose the  {min_loc}, to start game')
                     pyautogui.click(tuple_add(rect, (min_loc[0], min_loc[1])))
-                    return
+                    # check start_game:
+                    success, loc, _ = self.check_in_screen("start_game")
+                    if success:
+                        return
+                    else :
+                       pyautogui.click(tuple_add(rect, self.locs.map_back))
+                       return
 
                 # 兜底action
                 first_x, mid_x, last_x, y = self.locs.focus

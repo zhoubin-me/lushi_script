@@ -77,10 +77,11 @@ class TestImage(unittest.TestCase):
                 print(f"test get_sub_image idx: {idx}, sub_key: {key}, suc: {success}, score: {conf}\n")
 
     def test_get_burning_green_circles(self):
-        screen = self.get_save_image( to_gray=False, imageName= "map_boss.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "map_boss.png")
+        screen = self.get_save_image( to_gray=False, imageName= "cn_map2.png")
         # screen = self.get_save_image( to_gray=False, imageName= "map_blue.png")
         
-        imgMap = get_burning_green_circles(screen, 10, 300)
+        imgMap = get_burning_green_circles(screen, 55, 110)
         print(imgMap)
 
     def test_get_burning_blue_lines(self):
