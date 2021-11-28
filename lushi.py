@@ -15,8 +15,8 @@ from PIL import Image
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot
-from utils.images import get_sub_np_array, images_to_full_map
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window
+from utils.images import get_sub_np_array, images_to_full_map, get_burning_green_circles, get_burning_blue_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -48,6 +48,7 @@ class Agent:
         self.start_seq = {}
         self.side = None
         self.surprise_in_mid = False
+        self.surprise_relative_loc = None
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -117,14 +118,14 @@ class Agent:
         loc = X, Y
         return success, loc, conf
 
-    def scan_surprise_loc(self, rect):
+    def scan_surprise_loc(self, rect, img_name = 'surprise'):
         # time.sleep(5)
         logger.info('Scanning surprise')
         logger.info(rect)
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
-            success, loc, rect = self.check_in_screen('surprise')
+            success, loc, rect = self.check_in_screen(img_name)
             if success:
                 logger.info(f"Found surprise at start {loc}")
                 return loc
@@ -135,7 +136,7 @@ class Agent:
 
         screen_images = []
         for _ in range(10):
-            success, loc, rect, the_img = self.check_and_screen('surprise')
+            success, loc, rect, the_img = self.check_and_screen(img_name)
             _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
             # the_img.save("first_img.png")
             the_map_loc = self.locs.map_location
@@ -161,14 +162,20 @@ class Agent:
             # select Camp Fire
             pyautogui.click(tuple_add(rect, self.locs.campfire))
             pyautogui.click(tuple_add(rect, self.locs.start_game))
-            for y in self.locs.tasks_y:
-                for x in self.locs.tasks_x:
-                    # do task
-                    pyautogui.click(tuple_add(rect, (x, y)))
-                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
-                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
-                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
-                    pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
+            # check if a task finish
+            _, img = find_lushi_window(self.title, to_gray=False, raw=True)
+            lines = get_burning_blue_lines(img)
+            if None is not lines and 0 < len(lines) and False :
+                logger.info("some task finished ... ")
+                for y in self.locs.tasks_y:
+                    for x in self.locs.tasks_x:
+                        # do task
+                        pyautogui.click(tuple_add(rect, (x, y)))
+                        pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
+                        pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                        pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                        pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
+
             # exit the campfire
             pyautogui.click(tuple_add(rect, self.locs.empty))
             # select first first boss of map
@@ -410,6 +417,7 @@ class Agent:
                 # if self.basic.boss_id != 0:
                 time.sleep(1)
                 surprise_loc = self.scan_surprise_loc(rect)
+                self.surprise_relative_loc = surprise_loc
 
                 if surprise_loc is not None:
                     if surprise_loc[0] < self.locs.start_point[0]:
@@ -425,6 +433,37 @@ class Agent:
 
             if state == 'map_not_ready':
                 logger.info(f'find {state}, try to click next map')
+                _, screen = find_lushi_raw_window(self.title)
+                circles = get_burning_green_circles(screen, 10, 300)
+                print(circles)
+                if self.surprise_relative_loc is None : # 找下 漩涡的相对坐标
+                    # success, loc, rect, the_img = self.check_and_screen('surprise')
+                    surprise_loc = self.scan_surprise_loc(rect, img_name='off_surprise')
+                    self.surprise_relative_loc = surprise_loc
+                    # 翻了地图要回来
+                    for i in range(-10,10):
+                        _, screen = find_lushi_raw_window(self.title)
+                        circles = get_burning_green_circles(screen, 10, 300)
+                        if circles is not None and len(circles) > 0 :
+                            cv2.imwrite("full_map_res.jpg", screen)
+                            break
+
+                        if i < 0:
+                            pyautogui.scroll(-60)
+                        else :
+                            pyautogui.scroll(60)
+                
+                if circles is not None and 0 < len(circles):
+                    dist = 1024
+                    the_index = 0
+                    for idx, v_loc in circles:
+                        new_dist = abs(loc[0] - v_loc[2])
+                        if new_dist < dist:  # right_x - right_x
+                            the_index = idx
+                            dist = new_dist
+                    pyautogui.click(tuple_add(rect, (locl[0], y)))
+                    return
+
                 first_x, mid_x, last_x, y = self.locs.focus
                 if self.side is None:
                     self.side = 'left'

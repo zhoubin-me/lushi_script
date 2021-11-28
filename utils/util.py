@@ -84,6 +84,13 @@ if PLATFORM:
             image = np.array(image)
         return rect, image
 
+    def find_lushi_raw_window(title):
+        hwnd = findTopWindow(title)
+        rect = win32gui.GetWindowPlacement(hwnd)[-1]
+        image = ImageGrab.grab(rect)
+        img = cv2.cvtColor(np.array(image), cv2.COLOR_RGB2BGR)
+        del image
+        return rect, img
 
     def screenshot(title, prefix='none'):
         hwnd = findTopWindow(title)
@@ -93,7 +100,7 @@ if PLATFORM:
         screenshot_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', dt, 'screenshot')
         if not os.path.exists(screenshot_path):
             os.makedirs(screenshot_path)
-        time_second = datetime.strftime(datetime.now(), "%H.%M.%S,%f")[:-3]
+        time_second = datetime.strftime(datetime.now(), "%H：%M.%S,%f")[:-3]
         file_name = f'{prefix}_{time_second}.png'
         full_file_name = os.path.join(screenshot_path, file_name)
         image.save(full_file_name)
