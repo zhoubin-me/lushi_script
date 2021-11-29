@@ -16,7 +16,7 @@ from types import SimpleNamespace
 
 from utils.log_util import LogUtil
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window
-from utils.images import get_sub_np_array, images_to_full_map, get_burning_green_circles, get_burning_blue_lines
+from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -120,8 +120,7 @@ class Agent:
 
     def scan_surprise_loc(self, rect, img_name = 'surprise'):
         # time.sleep(5)
-        logger.info('Scanning surprise')
-        logger.info(rect)
+        logger.info(f'Scanning surprise, rect: {rect}')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
@@ -147,7 +146,7 @@ class Agent:
                 for _ in range(10):
                     pyautogui.scroll(-60)
                 logger.info(f"Found surprise during scrolling {loc}")
-                full_map = images_to_full_map(screen_images)
+                # full_map = images_to_full_map(screen_images)
                 # cv2.imwrite("full_map_res3.jpg", full_map) # TODO rmove before submit
                 return loc
             
@@ -158,18 +157,17 @@ class Agent:
 
     def scan_surprise_in_map_loc(self, rect, img_name = 'surprise'):
         # time.sleep(5)
-        logger.info('Scanning surprise')
-        logger.info(rect)
+        logger.info(f'Scanning surprise, rect: {rect}')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
             success, loc, rect = self.check_in_screen("surprise")
             if success:
-                logger.info(f"Found surprise at start {loc}")
+                logger.info(f"Found surprise at {loc}")
                 return loc
             success, loc, rect = self.check_in_screen("off_surprise")
             if success:
-                logger.info(f"Found off surprise at start {loc}")
+                logger.info(f"Found off surprise at {loc}")
                 return loc
             if self.check_in_screen('start_point')[0]:
                 break
@@ -184,7 +182,7 @@ class Agent:
             if not success:
                 success, loc, rect = self.check_in_screen("off_surprise")
             if success:
-                logger.info(f"Found off surprise at start {loc}")
+                logger.info(f"Found off/on surprise at  {loc}")
                 return loc
             if 0 == i % 2:
                 _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
@@ -195,8 +193,7 @@ class Agent:
             if success:
                 for _ in range(10):
                     pyautogui.scroll(-60)
-                logger.info(f"Found surprise during scrolling {loc}")
-                full_map = images_to_full_map(screen_images)
+                # full_map = images_to_full_map(screen_images)
                 # cv2.imwrite("full_map_res2.jpg", full_map) # TODO remove befre commit 
                 return loc
             
@@ -487,7 +484,6 @@ class Agent:
                 _, screen = find_lushi_raw_window(self.title)
                 the_map_loc = self.locs.map_location # 只选取部分
                 screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
-                cv2.imwrite("test_sub_scrr.png", screen)
                 circles = get_burning_green_circles(screen, 55, 110)
                 if self.surprise_relative_loc is None : # 找下 漩涡的相对坐标
                     # success, loc, rect, the_img = self.check_and_screen('surprise')
@@ -593,6 +589,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
                 else:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
+                self.surprise_relative_loc = None # 漩涡已选择
 
             if state == 'visitor_list':
                 logger.info(f'find {state}, try to click')
@@ -614,6 +611,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.empty))
 
                 logger.info("Visitors Selected")
+                self.surprise_relative_loc = None # 漩涡已选择
                 if self.basic.early_stop:
                     # 休眠2秒再退出，免得太卡导致失败
                     time.sleep(2)
@@ -688,7 +686,6 @@ class Agent:
             else:
                 logger.info(f"Last state {state}, time taken: {time.time() - tic}")
 
-            logger.info(f"all state {self.states} ===")
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)
                 if success:
