@@ -682,6 +682,7 @@ class Agent:
             else:
                 logger.info(f"Last state {state}, time taken: {time.time() - tic}")
 
+            logger.info(f"all state {self.states} ===")
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)
                 if success:
