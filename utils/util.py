@@ -120,7 +120,7 @@ elif platform.system() == 'Darwin':
         for win in windows:
             if 'Hearthstone Hearthstone' in '%s %s' % (win[Quartz.kCGWindowOwnerName], win.get(Quartz.kCGWindowName, '')):
                 w = win['kCGWindowBounds']
-                rect = [w['X'], w['Y'], w['X']+1600, w['Y']+900]
+                rect = [w['X'], w['Y'], w['X']+w['Width'], w['Y']+w['Height']]
                 break
         image = ImageGrab.grab(rect)
         if raw:
@@ -137,7 +137,7 @@ elif platform.system() == 'Darwin':
         for win in windows:
             if 'Hearthstone Hearthstone' in '%s %s' % (win[Quartz.kCGWindowOwnerName], win.get(Quartz.kCGWindowName, '')):
                 w = win['kCGWindowBounds']
-                rect = [w['X'], w['Y'], w['X']+1600, w['Y']+900]
+                rect = [w['X'], w['Y'], w['X']+w['Width'], w['Y']+w['Height']]
                 break
         image = ImageGrab.grab(rect)
         dt = datetime.strftime(datetime.now(), "%Y-%m-%d")
