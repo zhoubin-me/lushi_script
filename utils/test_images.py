@@ -78,7 +78,8 @@ class TestImage(unittest.TestCase):
 
     def test_get_burning_green_circles(self):
         # screen = self.get_save_image( to_gray=False, imageName= "map_boss.png")
-        screen = self.get_save_image( to_gray=False, imageName= "cn_map2.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "cn_map2.png")
+        screen = self.get_save_image( to_gray=False, imageName= "en_map3.png")
         # screen = self.get_save_image( to_gray=False, imageName= "map_blue.png")
         
         imgMap = get_burning_green_circles(screen, 55, 110)

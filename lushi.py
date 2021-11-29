@@ -52,7 +52,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -432,6 +432,7 @@ class Agent:
 
             if state == 'travel':
                 logger.info(f'find {state}, try to click')
+                self.surprise_relative_loc = None # 进地图清空
                 pyautogui.click(tuple_add(rect, loc))
                 pyautogui.click(tuple_add(rect, self.locs.travel))
 
@@ -508,13 +509,18 @@ class Agent:
                 
                 if circles is not None and 0 < len(circles):
                     loc = self.surprise_relative_loc
-                    dist = 1024
                     min_loc = None
-                    for v_loc in circles[0, :]:  # 遍历矩阵每一行的数据
-                        new_dist = abs(loc[0] - v_loc[0])
-                        if new_dist < dist:  # right_x - right_x
-                            min_loc = v_loc
-                            dist = new_dist
+                    if None != loc and 0 < len(loc) :
+                        dist = 1024
+                        for v_loc in circles[0, :]:  # 遍历矩阵每一行的数据
+                            new_dist = abs(loc[0] - (v_loc[0] + the_map_loc[0]))
+                            if new_dist < dist:  # right_x - right_x
+                                min_loc = v_loc
+                                dist = new_dist
+                    else :
+                        locs = circles[0, :]
+                        min_loc = locs[-1]
+                    
                     min_loc[1] = min_loc[1] + the_map_loc[1] # sub image y ++
                     min_loc[0] = min_loc[0] + the_map_loc[0]
                     logger.info(f'chose the  {min_loc}, to start game')
