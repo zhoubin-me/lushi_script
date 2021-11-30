@@ -15,8 +15,8 @@ from PIL import Image
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot
-from utils.images import get_sub_np_array, images_to_full_map
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window
+from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -48,10 +48,11 @@ class Agent:
         self.start_seq = {}
         self.side = None
         self.surprise_in_mid = False
+        self.surprise_relative_loc = None
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -117,14 +118,13 @@ class Agent:
         loc = X, Y
         return success, loc, conf
 
-    def scan_surprise_loc(self, rect):
+    def scan_surprise_loc(self, rect, img_name = 'surprise'):
         # time.sleep(5)
-        logger.info('Scanning surprise')
-        logger.info(rect)
+        logger.info(f'Scanning surprise, rect: {rect}')
         pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
         tic = time.time()
         while True:
-            success, loc, rect = self.check_in_screen('surprise')
+            success, loc, rect = self.check_in_screen(img_name)
             if success:
                 logger.info(f"Found surprise at start {loc}")
                 return loc
@@ -134,19 +134,67 @@ class Agent:
                 return
 
         screen_images = []
-        for _ in range(10):
-            success, loc, rect, the_img = self.check_and_screen('surprise')
-            _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
-            # the_img.save("first_img.png")
-            the_map_loc = self.locs.map_location
-            sub_img = get_sub_np_array(the_img, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
-            screen_images.append(sub_img)
+        for i in range(10):
+            success, loc, rect, the_img = self.check_and_screen(img_name)
+            if 0 == i % 2 or success:
+                _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
+                # the_img.save("first_img.png")
+                the_map_loc = self.locs.map_location
+                sub_img = get_sub_np_array(the_img, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+                screen_images.append(sub_img)
             if success:
                 for _ in range(10):
                     pyautogui.scroll(-60)
                 logger.info(f"Found surprise during scrolling {loc}")
-                full_map = images_to_full_map(screen_images)
-                cv2.imwrite("full_map_res.jpg", full_map)
+                # full_map = images_to_full_map(screen_images)
+                # cv2.imwrite("full_map_res3.jpg", full_map) # TODO rmove before submit
+                return loc
+            
+            pyautogui.scroll(60) # 先截图，再滑
+
+        logger.info("Did not found any surprise")
+        return None
+
+    def scan_surprise_in_map_loc(self, rect, img_name = 'surprise'):
+        # time.sleep(5)
+        logger.info(f'Scanning surprise, rect: {rect}')
+        pyautogui.moveTo(tuple_add(rect, self.locs.scroll))
+        tic = time.time()
+        while True:
+            success, loc, rect = self.check_in_screen("surprise")
+            if success:
+                logger.info(f"Found surprise at {loc}")
+                return loc
+            success, loc, rect = self.check_in_screen("off_surprise")
+            if success:
+                logger.info(f"Found off surprise at {loc}")
+                return loc
+            if self.check_in_screen('start_point')[0]:
+                break
+            if self.check_in_screen('map_not_ready')[0]:
+                break
+            if time.time() - tic > 10:
+                return
+
+        screen_images = []
+        for i in range(10):
+            success, loc, rect, the_img = self.check_and_screen("surprise")
+            if not success:
+                success, loc, rect = self.check_in_screen("off_surprise")
+            if success:
+                logger.info(f"Found off/on surprise at  {loc}")
+                return loc
+            if 0 == i % 2:
+                _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
+                # the_img.save("first_img.png")
+                the_map_loc = self.locs.map_location
+                sub_img = get_sub_np_array(the_img, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+                screen_images.append(sub_img)
+            if success:
+                for _ in range(10):
+                    pyautogui.scroll(-60)
+                # full_map = images_to_full_map(screen_images)
+                # cv2.imwrite("full_map_res2.jpg", full_map) # TODO remove befre commit 
                 return loc
             
             pyautogui.scroll(60) # 先截图，再滑
@@ -161,14 +209,21 @@ class Agent:
             # select Camp Fire
             pyautogui.click(tuple_add(rect, self.locs.campfire))
             pyautogui.click(tuple_add(rect, self.locs.start_game))
-            for y in self.locs.tasks_y:
-                for x in self.locs.tasks_x:
-                    # do task
-                    pyautogui.click(tuple_add(rect, (x, y)))
-                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
-                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
-                    pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
-                    pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
+            # check if a task finish
+            time.sleep(1)
+            _, img = find_lushi_window(self.title, to_gray=False, raw=True)
+            lines = get_burning_blue_lines(img)
+            if None is not lines and 0 < len(lines) :
+                logger.info("some task finished ... ")
+                for y in self.locs.tasks_y:
+                    for x in self.locs.tasks_x:
+                        # do task
+                        pyautogui.click(tuple_add(rect, (x, y)))
+                        pyautogui.click(tuple_add(rect, self.locs.tasks_abandon))
+                        pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                        pyautogui.click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                        pyautogui.click(tuple_add(rect, self.locs.campfire_exit))
+
             # exit the campfire
             pyautogui.click(tuple_add(rect, self.locs.empty))
             # select first first boss of map
@@ -362,19 +417,20 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                   'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close']
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done']
         '''
         if success:
             if state != text:
                 state = text
                 tic = time.time()
 
-            if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok']:
+            if state in ['mercenaries', 'box', 'team_lock', 'close', 'ok', 'done']:
                 logger.info(f'find {state}, try to click')
                 pyautogui.click(tuple_add(rect, loc))
 
             if state == 'travel':
                 logger.info(f'find {state}, try to click')
+                self.surprise_relative_loc = None # 进地图清空
                 pyautogui.click(tuple_add(rect, loc))
                 pyautogui.click(tuple_add(rect, self.locs.travel))
 
@@ -410,6 +466,7 @@ class Agent:
                 # if self.basic.boss_id != 0:
                 time.sleep(1)
                 surprise_loc = self.scan_surprise_loc(rect)
+                self.surprise_relative_loc = surprise_loc
 
                 if surprise_loc is not None:
                     if surprise_loc[0] < self.locs.start_point[0]:
@@ -425,6 +482,55 @@ class Agent:
 
             if state == 'map_not_ready':
                 logger.info(f'find {state}, try to click next map')
+                _, screen = find_lushi_raw_window(self.title)
+                the_map_loc = self.locs.map_location # 只选取部分
+                screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+                circles = get_burning_green_circles(screen, 55, 110)
+                if self.surprise_relative_loc is None : # 找下 漩涡的相对坐标
+                    # success, loc, rect, the_img = self.check_and_screen('surprise')
+                    surprise_loc = self.scan_surprise_in_map_loc(rect, img_name='off_surprise')
+                    self.surprise_relative_loc = surprise_loc
+                    # 翻了地图要回来
+                    for i in range(-10,10):
+                        _, screen = find_lushi_raw_window(self.title)
+                        the_map_loc = self.locs.map_location # 只选取部分
+                        screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])  # [230, 80, 810, 620]
+                        circles = get_burning_green_circles(screen, 55, 110)
+                        if circles is not None and len(circles) > 0 :
+                            break
+
+                        if i < 0:
+                            pyautogui.scroll(-60)
+                        else :
+                            pyautogui.scroll(60)
+                
+                if circles is not None and 0 < len(circles):
+                    loc = self.surprise_relative_loc
+                    min_loc = None
+                    if None != loc and 0 < len(loc) :
+                        dist = 1024
+                        for v_loc in circles[0, :]:  # 遍历矩阵每一行的数据
+                            new_dist = abs(loc[0] - (v_loc[0] + the_map_loc[0]))
+                            if new_dist < dist:  # right_x - right_x
+                                min_loc = v_loc
+                                dist = new_dist
+                    else :
+                        locs = circles[0, :]
+                        min_loc = locs[-1]
+                    
+                    min_loc[1] = min_loc[1] + the_map_loc[1] # sub image y ++
+                    min_loc[0] = min_loc[0] + the_map_loc[0]
+                    logger.info(f'chose the  {min_loc}, to start game')
+                    pyautogui.click(tuple_add(rect, (min_loc[0], min_loc[1])))
+                    # check start_game:
+                    success, loc, _ = self.check_in_screen("map_not_ready")
+                    if not success:
+                        return
+                    else :
+                       pyautogui.click(tuple_add(rect, self.locs.map_back))
+                       return
+
+                # 兜底action
                 first_x, mid_x, last_x, y = self.locs.focus
                 if self.side is None:
                     self.side = 'left'
@@ -484,6 +590,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
                 else:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
+                self.surprise_relative_loc = None # 漩涡已选择
 
             if state == 'visitor_list':
                 logger.info(f'find {state}, try to click')
@@ -505,6 +612,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.empty))
 
                 logger.info("Visitors Selected")
+                self.surprise_relative_loc = None # 漩涡已选择
                 if self.basic.early_stop:
                     # 休眠2秒再退出，免得太卡导致失败
                     time.sleep(2)

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 from utils.util import find_lushi_window, find_icon_location
-from utils.images import get_sub_np_array
+from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines
 import yaml
 from types import SimpleNamespace
 import cv2
@@ -38,8 +38,12 @@ class TestImage(unittest.TestCase):
     def get_screen(self, title):
         return find_lushi_window(title)
 
-    def get_save_image(self, to_gray = True):
-        imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", "treasure2.png")
+    def get_save_image(self, to_gray = True, imageName = "treasure2.png", lang="en"):
+        a_path = "imgs_eng_1024x768"
+        if "en" != lang :
+            a_path = "imgs_chs_1600x900"
+
+        imgPath = os.path.join(".", "resource", a_path, "img", imageName)
         src = cv2.imread(imgPath)
         if to_gray:
             image = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -75,6 +79,23 @@ class TestImage(unittest.TestCase):
                 # success, X, Y, conf = match_sub_image(subImage, imgMap[key], 0.75)
                 success, X, Y, conf = find_icon_location(subImage, imgMap[key], 0.75)
                 print(f"test get_sub_image idx: {idx}, sub_key: {key}, suc: {success}, score: {conf}\n")
+
+    def test_get_burning_green_circles(self):
+        # screen = self.get_save_image( to_gray=False, imageName= "map_boss.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "cn_map2.png")
+        screen = self.get_save_image( to_gray=False, imageName= "en_map3.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "map_blue.png")
+        
+        imgMap = get_burning_green_circles(screen, 55, 110)
+        print(imgMap)
+
+    def test_get_burning_blue_lines(self):
+        screen = self.get_save_image( to_gray=False, imageName= "campfir1.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "map_blue.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "cn_campfire1.png", lang="cn")
+        
+        imgMap = get_burning_blue_lines(screen, 10, 300)
+        print(imgMap)
 
 if __name__  == "__main__":
     unittest.main()

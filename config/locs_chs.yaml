@@ -107,3 +107,5 @@ location:
   first_boss: [ 654, 431 ]
   # map locations, leftt_x, top_y, left_x, bottom_y
   map_location: [260, 100, 996, 780]
+  # 地图界面，返回按钮坐标，x，y
+  map_back: [1325, 885]
