@@ -210,6 +210,7 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.campfire))
             pyautogui.click(tuple_add(rect, self.locs.start_game))
             # check if a task finish
+            time.sleep(1)
             _, img = find_lushi_window(self.title, to_gray=False, raw=True)
             lines = get_burning_blue_lines(img)
             if None is not lines and 0 < len(lines) :

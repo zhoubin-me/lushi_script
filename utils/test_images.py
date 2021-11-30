@@ -38,8 +38,12 @@ class TestImage(unittest.TestCase):
     def get_screen(self, title):
         return find_lushi_window(title)
 
-    def get_save_image(self, to_gray = True, imageName = "treasure2.png"):
-        imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", imageName)
+    def get_save_image(self, to_gray = True, imageName = "treasure2.png", lang="en"):
+        a_path = "imgs_eng_1024x768"
+        if "en" != lang :
+            a_path = "imgs_chs_1600x900"
+
+        imgPath = os.path.join(".", "resource", a_path, "img", imageName)
         src = cv2.imread(imgPath)
         if to_gray:
             image = cv2.cvtColor(src, cv2.COLOR_BGR2GRAY)
@@ -86,8 +90,9 @@ class TestImage(unittest.TestCase):
         print(imgMap)
 
     def test_get_burning_blue_lines(self):
-        # screen = self.get_save_image( to_gray=False, imageName= "campfir1.png")
-        screen = self.get_save_image( to_gray=False, imageName= "map_blue.png")
+        screen = self.get_save_image( to_gray=False, imageName= "campfir1.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "map_blue.png")
+        # screen = self.get_save_image( to_gray=False, imageName= "cn_campfire1.png", lang="cn")
         
         imgMap = get_burning_blue_lines(screen, 10, 300)
         print(imgMap)
