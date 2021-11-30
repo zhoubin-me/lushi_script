@@ -10,7 +10,8 @@ import cv2
 import numpy as np
 import psutil
 import pyautogui
-import win32api
+pyautogui.PAUSE = 2.5
+# import win32api
 from PIL import ImageGrab
 
 logger = logging.getLogger()
@@ -49,7 +50,7 @@ def read_hero_data():
 
 HEROS = read_hero_data()
 
-if PLATFORM:
+if not platform.system() == 'Darwin':
     import win32gui
     from utils.winguiauto import findTopWindow
 
@@ -101,18 +102,53 @@ if PLATFORM:
 
 
 
-# elif platform.system() == 'Darwin':
-#     import psutil
-#     from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
-#
-#     def find_lushi_window(title):
-#         for p in psutil.process_iter():
-#             if p.name == title:
-#                 pid = p.pid
-#                 app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
-#                 app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
-#         else:
-#             raise ValueError("Hearthstone is not running")
+elif platform.system() == 'Darwin':
+    import psutil
+    import Quartz
+    from Cocoa import NSRunningApplication, NSApplicationActivateIgnoringOtherApps
+
+    def set_top_window(title):
+        for process in psutil.process_iter():
+            if process.name() == 'Hearthstone':
+                pid = process.pid
+                app = NSRunningApplication.runningApplicationWithProcessIdentifier_(pid)
+                app.activateWithOptions_(NSApplicationActivateIgnoringOtherApps)
+                break
+
+    def find_lushi_window(title, to_gray=True, raw=False):
+        windows = Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListExcludeDesktopElements | Quartz.kCGWindowListOptionOnScreenOnly, Quartz.kCGNullWindowID)
+        for win in windows:
+            if 'Hearthstone Hearthstone' in '%s %s' % (win[Quartz.kCGWindowOwnerName], win.get(Quartz.kCGWindowName, '')):
+                w = win['kCGWindowBounds']
+                rect = [w['X'], w['Y'], w['X']+w['Width'], w['Y']+w['Height']]
+                break
+        image = ImageGrab.grab(rect)
+        if raw:
+            image = cv2.cvtColor(np.array(image),cv2.COLOR_RGB2BGR)
+            return rect, image
+        if to_gray:
+            image = cv2.cvtColor(np.array(image), cv2.COLOR_BGR2GRAY)
+        else:
+            image = np.array(image)
+        return rect, image
+
+    def screenshot(title, prefix='none'):
+        windows = Quartz.CGWindowListCopyWindowInfo(Quartz.kCGWindowListExcludeDesktopElements | Quartz.kCGWindowListOptionOnScreenOnly, Quartz.kCGNullWindowID)
+        for win in windows:
+            if 'Hearthstone Hearthstone' in '%s %s' % (win[Quartz.kCGWindowOwnerName], win.get(Quartz.kCGWindowName, '')):
+                w = win['kCGWindowBounds']
+                rect = [w['X'], w['Y'], w['X']+w['Width'], w['Y']+w['Height']]
+                break
+        image = ImageGrab.grab(rect)
+        dt = datetime.strftime(datetime.now(), "%Y-%m-%d")
+        screenshot_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), 'logs', dt, 'screenshot')
+        if not os.path.exists(screenshot_path):
+            os.makedirs(screenshot_path)
+        time_second = datetime.strftime(datetime.now(), "%H.%M.%S,%f")[:-3]
+        file_name = f'{prefix}_{time_second}.png'
+        full_file_name = os.path.join(screenshot_path, file_name)
+        image.save(full_file_name)
+        logger.info(f'screenshot {file_name} saved')
 else:
     raise ValueError(f"Plafform {platform.platform()} is not supported yet")
 
