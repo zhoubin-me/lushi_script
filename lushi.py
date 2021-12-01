@@ -436,12 +436,34 @@ class Agent:
 
             if state == 'boss_list':
                 logger.info('find boss list, try to click')
-                if self.basic.boss_id > 5:
+                if self.basic.boss_id > 11:
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
+                elif self.basic.boss_id > 8:
+                    the_id = self.basic.boss_id - 6
+                    x_id = the_id % 3
+                    y_id = the_id // 3
+                    loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
+                elif self.basic.boss_id > 5:
                     id_standard = (self.basic.boss_id - 6) * 2
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
 
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
@@ -450,6 +472,9 @@ class Agent:
                     y_id = self.basic.boss_id // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
