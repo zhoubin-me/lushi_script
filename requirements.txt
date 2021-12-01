@@ -4,8 +4,8 @@ hearthstone-data==124497.1
 hslog==1.16.1
 MouseInfo
 numpy
-opencv-python==3.4.1.15
-opencv-contrib-python==3.4.1.15 
+opencv-python
+opencv-contrib-python
 Pillow
 psutil
 PyAutoGUI
