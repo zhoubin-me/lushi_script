@@ -436,12 +436,34 @@ class Agent:
 
             if state == 'boss_list':
                 logger.info('find boss list, try to click')
-                if self.basic.boss_id > 5:
+                if self.basic.boss_id > 11:
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
+                elif self.basic.boss_id > 8:
+                    the_id = self.basic.boss_id - 6
+                    x_id = the_id % 3
+                    y_id = the_id // 3
+                    loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
+                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
+                elif self.basic.boss_id > 5:
                     id_standard = (self.basic.boss_id - 6) * 2
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
 
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
@@ -450,6 +472,9 @@ class Agent:
                     y_id = self.basic.boss_id // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
+                    pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
+                    time.sleep(0.5)
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
@@ -524,29 +549,26 @@ class Agent:
                     pyautogui.click(tuple_add(rect, (min_loc[0], min_loc[1])))
                     # check start_game:
                     success, loc, _ = self.check_in_screen("map_not_ready")
-                    if not success:
-                        return
-                    else :
+                    if success:
                        pyautogui.click(tuple_add(rect, self.locs.map_back))
-                       return
 
-                # 兜底action
-                first_x, mid_x, last_x, y = self.locs.focus
-                if self.side is None:
-                    self.side = 'left'
-                if self.side == 'left':
-                    if self.surprise_in_mid:
-                        x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
+                else: # 兜底action
+                    first_x, mid_x, last_x, y = self.locs.focus
+                    if self.side is None:
+                        self.side = 'left'
+                    if self.side == 'left':
+                        if self.surprise_in_mid:
+                            x1, x2, x3 = first_x, (first_x + mid_x) // 2, mid_x
+                        else:
+                            x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x
                     else:
-                        x1, x2, x3 = mid_x, (first_x + mid_x) // 2, first_x
-                else:
-                    if self.surprise_in_mid:
-                        x1, x2, x3 = last_x, (last_x + mid_x) // 2, mid_x
-                    else:
-                        x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
+                        if self.surprise_in_mid:
+                            x1, x2, x3 = last_x, (last_x + mid_x) // 2, mid_x
+                        else:
+                            x1, x2, x3 = mid_x, (last_x + mid_x) // 2, last_x
 
-                for x in (x1, x2, x3):
-                    pyautogui.click(tuple_add(rect, (x, y)))
+                    for x in (x1, x2, x3):
+                        pyautogui.click(tuple_add(rect, (x, y)))
 
             if state in ['goto', 'show', 'teleport', 'start_game']:
                 logger.info(f'find {state}, try to click')
