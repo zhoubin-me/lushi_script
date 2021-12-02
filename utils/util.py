@@ -11,7 +11,7 @@ import numpy as np
 import psutil
 import pyautogui
 pyautogui.PAUSE = 2.5
-# import win32api
+import win32api # TODO check it before commit
 from PIL import ImageGrab
 
 logger = logging.getLogger()
