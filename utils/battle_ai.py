@@ -23,10 +23,13 @@ class BattleAi:
         return ba
 
     @staticmethod
-    def analyze_score(my_list, enemy_list):
+    def analyze_score(my_list, enemy_list, skip_our_health = False):
         """
         我方尽量不死，且血量最多，敌方尽量死且剩余血量最少
-        我方数量 * (我方血量最低值 + 我方血量总值)   -  (敌方血量最高值 + 敌方血量总值) * 敌方数量
+        score = 我方数量 * (我方血量最低值 + 我方血量总值)   -  (敌方血量最高值 + 敌方血量总值) * 敌方数量
+
+        skip_our_health: 自己扛的住，不考虑生存，伤害最大策略。 
+        score = -  (敌方血量最高值 + 敌方血量总值) * 敌方数量
         """
         my_health = [x.get_health() for x in my_list if x.get_health() > 0]
         enemy_health = [x.get_health() for x in enemy_list if x.get_health() > 0]
@@ -36,30 +39,67 @@ class BattleAi:
         enemy_cnt = len(enemy_health)
         enemy_max_health = max(enemy_health) if len(enemy_health) > 0 else 0
         enemy_health = sum(enemy_health) if len(enemy_health) > 0 else 0
-        score = my_cnt * (my_min_health + my_sum_health) - (enemy_max_health + enemy_health) * enemy_cnt
-        return score
+        if skip_our_health == True :
+            score = - (enemy_max_health + enemy_health) * enemy_cnt
+            return score
+        else :
+            score =  my_cnt * (my_min_health + my_sum_health) - (enemy_max_health + enemy_health) * enemy_cnt
+            return score
 
     @staticmethod
-    def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity]):
+    def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity], stratege_intervene = "normal"):
+        if "kill_big" == stratege_intervene : # 先干最大的
+            boss_id = -1
+            max_health = 0
+            i = 0
+            for e_hero in enemy_hero:
+                if e_hero.get_max_health() > max_health:
+                    boss_id  = i
+                i += 1
+            return [boss_id, boss_id, boss_id]
+        elif "kill_min" == stratege_intervene : # 先干最小的
+            suite_id = -1
+            min_health = 10000
+            i = 0
+            for e_hero in enemy_hero:
+                if e_hero.get_max_health() < min_health:
+                    suite_id  = i
+                i += 1
+            return [suite_id, suite_id, suite_id]
+        else : # normal, max_dmg
+            optimal_strategy = ((-1 << 25), [1, 1, 1])
+            for idx in list(itertools.product(range(len(enemy_hero)), repeat=len(my_hero))):
+                my = copy.deepcopy(my_hero)
+                enemy = copy.deepcopy(enemy_hero)
+                for i, target in enumerate(idx):
+                    my[i].basic_attack(enemy[target], my[i].atk)
+                for i, e in enumerate(enemy):
+                    if e.get_health() > 0:
+                        my_min_health_hero = BattleAi.find_min_health(my)
+                        if my_min_health_hero is None:
+                            continue
+                        e.basic_attack(my_min_health_hero, e.atk)
+                score = -999999
+                if "max_dmg" == stratege_intervene:
+                    score = BattleAi.analyze_score(my, enemy, True)
+                else :
+                    score = BattleAi.analyze_score(my, enemy)
+                if score > optimal_strategy[0]:
+                    optimal_strategy = (score, idx)
 
-        optimal_strategy = ((-1 << 25), [1, 1, 1])
-        for idx in list(itertools.product(range(len(enemy_hero)), repeat=len(my_hero))):
-            my = copy.deepcopy(my_hero)
-            enemy = copy.deepcopy(enemy_hero)
-            for i, target in enumerate(idx):
-                my[i].basic_attack(enemy[target], my[i].atk)
-            for i, e in enumerate(enemy):
-                if e.get_health() > 0:
-                    my_min_health_hero = BattleAi.find_min_health(my)
-                    if my_min_health_hero is None:
-                        continue
-                    e.basic_attack(my_min_health_hero, e.atk)
+            return {k: v for k, v in enumerate(optimal_strategy[1])}
 
-            score = BattleAi.analyze_score(my, enemy)
-            if score > optimal_strategy[0]:
-                optimal_strategy = (score, idx)
-
-        return {k: v for k, v in enumerate(optimal_strategy[1])}
+    @staticmethod
+    def battle_boss(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity]):
+        boss_id = -1
+        max_health = 0
+        i = 0
+        for e_hero in enemy_hero:
+            if e_hero.get_max_health() > max_health:
+                boss_id  = i
+            i += 1
+        
+        return [boss_id, boss_id, boss_id]
 
     @staticmethod
     def find_min_health(heros):

@@ -17,7 +17,7 @@ from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.ui import ExtendedComboBox
-from utils.util import HEROS
+from utils.util import HEROS, get_hero_color_by_id 
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -265,15 +265,15 @@ class Ui(QMainWindow):
         if self.hero_dropdown.currentText() not in str_list and len(str_list) < 6:
             str_list.append(self.hero_dropdown.currentText())
             if self.ui_lang == 'eng':
-                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
+                kv = [(k, v[0], v[1], v[4]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
             else:
-                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
-            idx, name_chs, name_eng = kv[0]
+                kv = [(k, v[0], v[1], v[4]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
+            idx, name_chs, name_eng, lettuce_role = kv[0]
             index = len(str_list) - 1
             if self.ui_lang == 'chs':
-                self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index]
+                self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
             elif self.ui_lang == 'eng':
-                self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index]
+                self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
             self.slm.setStringList(str_list)
 
     def load_config(self, path):
@@ -310,6 +310,10 @@ class Ui(QMainWindow):
                 self.early_stop.setChecked(v)
             if k == 'lang':
                 self.lang.setCurrentText(v)
+            if k == 'battle_stratege':
+                self.battle_stratege = v
+            if k == 'battle_boss_stratege':
+                self.battle_boss_stratege = v
             if k == 'ui_lang':
                 self.ui_lang = v
                 if v == 'chs':
@@ -317,12 +321,17 @@ class Ui(QMainWindow):
                 elif v == 'eng':
                     self.tiggerEnglish()
             if k == 'hero':
-                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][-1])}
+                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][3])}
                 self.hero_info = {}
                 for k, v in hero_ordered.items():
-                    self.hero_info[k] = [v[0], v[1], v[2], v[3]]
+                    self.hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.slm.setStringList(str_list)
+            if k == 'boss_hero':
+                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][3])}
+                self.boss_hero_info = {}
+                for k, v in hero_ordered.items():
+                    self.boss_hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
 
     def save_config(self):
         self.config['boss_id'] = self.boss_id.value() - 1
@@ -347,7 +356,12 @@ class Ui(QMainWindow):
         hero_order_list = self.slm.stringList()
         for k, v in self.hero_info.items():
             hero_index = hero_order_list.index(v[0])
-            new_hero_info[k] = [v[0], v[1], v[2], hero_index]
+            color = 0
+            for hk, hv in HEROS.items():
+                if k == hk:
+                    color = hv[4]
+                    break
+            new_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
         self.config['hero'] = new_hero_info
 
     def saveButtonPressed(self):

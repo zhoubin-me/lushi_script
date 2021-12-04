@@ -11,16 +11,19 @@ hero:
   - Ragnaros
   - 2, 3, 1
   - 0
+  - 3
   LETL_030H:
   - "\u8FE6\u987F\u7537\u7235"
   - Baron Geddon
   - 2, 3, 1
+  - 1
   - 1
   SWL_01H:
   - "\u5B89\u4E1C\u5C3C\u8FBE\u65AF"
   - Antonidas
   - 2, 1, 3
   - 2
+  - 1
 hs_path: C:/Program Files (x86)/Hearthstone/Hearthstone.exe
 lang: ZH-1600x900
 longest_waiting: 80

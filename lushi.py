@@ -15,7 +15,7 @@ from PIL import Image
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window
+from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window, get_hero_color_by_id
 from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
@@ -45,10 +45,13 @@ class Agent:
         self.heros_blacklist = {}
         self.game = None
         self.skill_seq_cache = {}
+        self.boss_skill_seq_cache = {}
         self.start_seq = {}
         self.side = None
         self.surprise_in_mid = False
         self.surprise_relative_loc = None
+        self.battle_stratege = "normal"
+        self.battle_boss_stratege = "normal"
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -77,9 +80,17 @@ class Agent:
         self.heros = {}
         for k, v in hero_info.items():
             spell_order = [int(x) - 1 for x in v[2].split(',')]
-            self.heros[k] = [v[0], v[1], spell_order, v[3]]
+            self.heros[k] = [v[0], v[1], spell_order, v[3], get_hero_color_by_id(k)]
             self.skill_seq_cache[k] = v[-2]
         del cfg['hero']
+        # boss encounter hero
+        boss_hero_info = cfg['boss_hero']
+        self.boss_heros = {}
+        for k, v in boss_hero_info.items():
+            spell_order = [int(x) - 1 for x in v[2].split(',')]
+            self.boss_heros[k] = [v[0], v[1], spell_order, v[3], get_hero_color_by_id(k)]
+            self.boss_skill_seq_cache[k] = v[-2]
+        del cfg['boss_hero']
         cfg['hs_log'] = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
         self.basic = SimpleNamespace(**cfg)
         pyautogui.PAUSE = self.basic.delay
@@ -230,10 +241,10 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.first_boss))
 
     def start_battle(self):
-
         logger.info("Start battle, scanning battlefield")
-
         rect, screen = find_lushi_window(self.title)
+        # check if battle boss
+        battle_stratege = "normal" # normal, max_dmg, kill_big, kill_min
 
         del self.log_util
         self.log_util = LogUtil(self.basic.hs_log)
@@ -257,7 +268,7 @@ class Agent:
                 x_offset -= (mid_x - first_x) // 2
             game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
-        strategy = BattleAi.battle(game.my_hero, game.enemy_hero)
+        strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege) # [0,1,1]
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
         for hero_i, h in enumerate(game.my_hero):
@@ -270,7 +281,7 @@ class Agent:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
             else:
                 skill_loc = None
-                skill_seq = self.heros[card_id][-2]
+                skill_seq = self.heros[card_id][2]
                 for skill_id in skill_seq:
                     skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
                     if skill_cooldown_round == 0:
@@ -286,11 +297,28 @@ class Agent:
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
         del screen
+        print("start battle enemy: ")
+        enemy_blue_count = 0
+        enemy_green_count = 0
+        enemy_red_count = 0
+        for hero in game.enemy_hero:
+            print(hero)
+            if hero.get_lettuce_role() == 1:
+                enemy_blue_count += 1
+            elif hero.get_lettuce_role() == 2:
+                enemy_green_count += 1
+            elif hero.get_lettuce_role() == 3:
+                enemy_red_count += 1
+        normal = True
+        risk_num = 2 # 颜色克制的敌人回避数量阈值，大于该数值则需要调整上场英雄
+        if risk_num < enemy_blue_count or risk_num < enemy_green_count or risk_num < enemy_red_count:
+            normal = False
+
         hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in self.heros]
         if len(hero_in_battle) < 3:
             current_seq = {h.card_id[:-3]: i for i, h in enumerate(game.setaside_hero)}
-            heros_sorted = {k: v[-1] for k, v in sorted(
-                self.heros.items(), key=lambda item: item[1][-1])}
+            heros_sorted = {k: v[3] for k, v in sorted(
+                self.heros.items(), key=lambda item: item[1][3])}
             card_id_seq = list(heros_sorted.keys())
             card_id_seq = [x for x in card_id_seq if x in current_seq]
 
@@ -298,7 +326,34 @@ class Agent:
                 if len(card_id_seq) > 0:
 
                     cards_in_hand = len(card_id_seq)
-                    card_id = card_id_seq.pop(0)
+                    card_id = -1
+                    i = 0
+                    if normal:
+                        card_id = card_id_seq.pop(0)
+                    elif enemy_blue_count > risk_num:
+                        for k in card_id_seq:
+                            if int(self.heros[k][4]) != 3:
+                                card_id = k
+                                del card_id_seq[i]
+                                break
+                            i +=1
+                    elif enemy_green_count > risk_num:
+                        for k in card_id_seq:
+                            if int(self.heros[k][4]) != 1:
+                                card_id = k
+                                del card_id_seq[i]
+                                break
+                            i +=1
+                    elif enemy_red_count > risk_num:
+                        for k in card_id_seq:
+                            if int(self.heros[k][4]) != 2:
+                                card_id = k
+                                del card_id_seq[i]
+                                break
+                            i +=1
+                    
+                    if card_id == -1: # 兜底
+                        card_id = card_id_seq.pop(0)
 
                     first_x, last_x, y = self.locs.members
                     mid_x = (first_x + last_x) // 2
