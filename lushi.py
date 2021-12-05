@@ -16,7 +16,7 @@ from types import SimpleNamespace
 
 from utils.log_util import LogUtil
 from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window, get_hero_color_by_id
-from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines
+from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines, get_burning_blue_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -84,13 +84,16 @@ class Agent:
             self.skill_seq_cache[k] = v[-2]
         del cfg['hero']
         # boss encounter hero
-        boss_hero_info = cfg['boss_hero']
         self.boss_heros = {}
-        for k, v in boss_hero_info.items():
-            spell_order = [int(x) - 1 for x in v[2].split(',')]
-            self.boss_heros[k] = [v[0], v[1], spell_order, v[3], get_hero_color_by_id(k)]
-            self.boss_skill_seq_cache[k] = v[-2]
-        del cfg['boss_hero']
+        if 'boss_key' in cfg:
+            boss_hero_info = cfg['boss_hero']
+            for k, v in boss_hero_info.items():
+                spell_order = [int(x) - 1 for x in v[2].split(',')]
+                self.boss_heros[k] = [v[0], v[1], spell_order, v[3], get_hero_color_by_id(k)]
+                self.boss_skill_seq_cache[k] = v[-2]
+            del cfg['boss_hero']
+        else:
+            self.boss_heros = self.heros
         cfg['hs_log'] = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
         self.basic = SimpleNamespace(**cfg)
         pyautogui.PAUSE = self.basic.delay
@@ -292,7 +295,7 @@ class Agent:
             pyautogui.click(game.enemy_hero[enemy_id].pos)
             pyautogui.click(tuple_add(rect, self.locs.empty))
 
-    def select_members(self):
+    def select_members(self, battle_boss = False):
         logger.info("Start select members")
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
@@ -631,12 +634,25 @@ class Agent:
 
             if state == 'member_not_ready':
                 logger.info(f'find {state}, try to click')
-                self.select_members()
+                _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
+                lines = get_burning_blue_lines(the_img)
+                screenshot(self.title, state) # TODO commit before 
+                battle_boss = False
+                if 2 < len(lines):
+                    battle_boss = True
+                    logger.info(f'[{state}] battle boss')
+                self.select_members(battle_boss)
 
             if state == 'not_ready_dots':
                 logger.info(f'find {state}, try to click')
                 # check if battle boss
+                _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
+                lines = get_burning_blue_lines(the_img)
                 battle_boss = False
+                if 2 < len(lines):
+                    battle_boss = True
+                    logger.info(f'[{state}] battle boss')
+
                 self.start_battle(rect, battle_boss)
 
             if state == 'battle_ready':

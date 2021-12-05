@@ -149,14 +149,14 @@ def get_burning_blue_lines(img, minRad = 10, maxRad = 100):
 def get_dark_brown_lines(img, minRad = 10, maxRad = 110):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    lower_blue = np.array([4, 10, 10]) # 0 - 10, x - x, 10 - 180
-    upper_blue = np.array([10, 255, 100])
-    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    lower_color = np.array([4, 10, 10]) # 0 - 10, x - x, 10 - 180
+    upper_color = np.array([10, 255, 100])
+    mask = cv2.inRange(hsv, lower_color, upper_color)
     res = cv2.bitwise_and(img, img, mask=mask)
 
-    lower_blue = np.array([150, 10, 10])
-    upper_blue = np.array([180, 255, 100])
-    mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
+    lower_color = np.array([150, 10, 10])
+    upper_color = np.array([180, 255, 100])
+    mask2 = cv2.inRange(hsv, lower_color, upper_color)
     res2 = cv2.bitwise_and(img, img, mask=mask2)
 
     dst = cv2.addWeighted(res, 1, res2, 1, 0)   # 图片组合
