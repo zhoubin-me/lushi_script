@@ -15,7 +15,7 @@ from PIL import Image
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window, get_hero_color_by_id
+from utils.util import BOSS_ID_MAP, find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window, get_hero_color_by_id
 from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines, get_burning_blue_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
@@ -50,8 +50,9 @@ class Agent:
         self.side = None
         self.surprise_in_mid = False
         self.surprise_relative_loc = None
+        self.lettuce_role_limit = 0
         self.battle_stratege = "normal"
-        self.battle_boss_stratege = "normal"
+        self.boss_battle_stratege = "normal"
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -85,7 +86,7 @@ class Agent:
         del cfg['hero']
         # boss encounter hero
         self.boss_heros = {}
-        if 'boss_key' in cfg:
+        if 'boss_hero' in cfg:
             boss_hero_info = cfg['boss_hero']
             for k, v in boss_hero_info.items():
                 spell_order = [int(x) - 1 for x in v[2].split(',')]
@@ -494,14 +495,18 @@ class Agent:
 
             if state == 'boss_list':
                 logger.info('find boss list, try to click')
-                if self.basic.boss_id > 11:
+                the_boss_id = 0
+                if self.basic.boss_id in BOSS_ID_MAP:
+                    the_boss_id = BOSS_ID_MAP[self.basic.boss_id]
+                if the_boss_id > 14:
+                    # boss 13
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     time.sleep(0.5)
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
-                elif self.basic.boss_id > 8:
-                    the_id = self.basic.boss_id - 6
+                elif the_boss_id > 8:
+                    the_id = the_boss_id - 9
                     x_id = the_id % 3
                     y_id = the_id // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
@@ -512,8 +517,8 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
-                elif self.basic.boss_id > 5:
-                    id_standard = (self.basic.boss_id - 6) * 2
+                elif the_boss_id > 5:
+                    id_standard = (the_boss_id - 6) * 2
                     x_id = id_standard % 3
                     y_id = id_standard // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
@@ -526,8 +531,8 @@ class Agent:
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
                 else:
-                    x_id = self.basic.boss_id % 3
-                    y_id = self.basic.boss_id // 3
+                    x_id = the_boss_id % 3
+                    y_id = the_boss_id // 3
                     loc = (self.locs.boss[x_id], self.locs.boss[3 + y_id])
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_left))
                     time.sleep(0.5)

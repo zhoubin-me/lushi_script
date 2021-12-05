@@ -50,6 +50,32 @@ def read_hero_data():
 
 HEROS = read_hero_data()
 
+def get_boss_id_map():
+    the_map = {
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 3,
+        "5": 4,
+        "6": 5,
+        
+        "1-7": 6,
+        "1-8": 7,
+        "1-9": 8,
+
+        "7": 9,
+        "8": 10,
+        "9": 11,
+        "10": 12,
+        "11": 13,
+        "12": 14,
+
+        "13": 15,
+    }
+    return the_map
+
+BOSS_ID_MAP = get_boss_id_map()
+
 if not platform.system() == 'Darwin':
     import win32gui
     from utils.winguiauto import findTopWindow

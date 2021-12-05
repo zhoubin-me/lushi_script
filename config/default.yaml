@@ -34,3 +34,7 @@ screenshot_treasure: false
 screenshot_visitor: false
 team_id: 1
 ui_lang: chs
+battle_stratege: normal
+boss_battle_stratege: normal
+lettuce_role_limit: 3
+
