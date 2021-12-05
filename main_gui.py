@@ -78,6 +78,7 @@ class Ui(QMainWindow):
         self.lang_dropdown.addItem('EN-1024x768')
         self.lang_dropdown.addItem('ZH-1600x900')
         self.current_order = self.findChild(QLabel, 'current_order')
+        self.boss_current_order = self.findChild(QLabel, 'boss_current_order')
         self.battle_stratege_dropdown = self.findChild(QComboBox, 'battle_stratege')
         self.boss_battle_stratege_dropdown = self.findChild(QComboBox, 'boss_battle_stratege')
         self.lettuce_role_limit_dropdown = self.findChild(QComboBox, 'lettuce_role_limit')
@@ -230,13 +231,13 @@ class Ui(QMainWindow):
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_boss_hero_clicked(self, index):
-        self.hero_index = index.row()
-        str_list = self.slm.stringList()
-        if 0 <= self.hero_index < len(str_list):
-            name = str_list[self.hero_index]
-            for k, v in self.hero_info.items():
+        self.boss_hero_index = index.row()
+        str_list = self.boss_slm.stringList()
+        if 0 <= self.boss_hero_index < len(str_list):
+            name = str_list[self.boss_hero_index]
+            for k, v in self.boss_hero_info.items():
                 if v[0] == name:
-                    self.current_order.setText(self.hero_info[k][2])
+                    self.boss_current_order.setText(self.boss_hero_info[k][2])
                     break
 
     def on_load_path_click_hs(self):
@@ -402,6 +403,18 @@ class Ui(QMainWindow):
                     break
             new_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
         self.config['hero'] = new_hero_info
+
+        new_boss_hero_info = {}
+        boss_hero_order_list = self.boss_slm.stringList()
+        for k, v in self.boss_hero_info.items():
+            hero_index = boss_hero_order_list.index(v[0])
+            color = 0
+            for hk, hv in HEROS.items():
+                if k == hk:
+                    color = hv[4]
+                    break
+            new_boss_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
+        self.config['boss_hero'] = new_boss_hero_info
 
     def saveButtonPressed(self):
         self.save_config()

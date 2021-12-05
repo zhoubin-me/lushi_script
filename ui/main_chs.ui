@@ -925,6 +925,19 @@
             </property>
            </widget>
           </item>
+          <item row="10" column="1">
+           <widget class="QLabel" name="boss_current_order">
+            <property name="font">
+             <font>
+              <family>Microsoft YaHei UI</family>
+              <pointsize>9</pointsize>
+             </font>
+            </property>
+            <property name="text">
+             <string/>
+            </property>
+           </widget>
+          </item>
          </layout>
         </item>
        </layout>
