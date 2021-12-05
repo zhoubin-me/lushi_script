@@ -7,7 +7,7 @@ import cv2
 def get_sub_np_array(np_array, x1, y1, x2, y2):
     roiImg = np_array[y1:y2, x1:x2]
     # img = Image.fromarray(roiImg) # TODO check before commit
-    # img.save("test1.png")
+    # img.save("sub_image_debug.png")
     return roiImg
 
 
@@ -127,6 +127,47 @@ def get_burning_blue_lines(img, minRad = 10, maxRad = 100):
     canney_edges = cv2.Canny(res2,100,200) # 检查出 高亮边缘
 
     lines = cv2.HoughLines(canney_edges,1,np.pi/180,200)
+    if lines is None:
+        return []
+    
+    # for line in lines:
+    #     rho,theta = line[0]
+    #     a = np.cos(theta)
+    #     b = np.sin(theta)
+    #     x0 = a*rho
+    #     y0 = b*rho
+    #     x1 = int(x0 + 1000*(-b))
+    #     y1 = int(y0 + 1000*(a))
+    #     x2 = int(x0 - 1000*(-b))
+    #     y2 = int(y0 - 1000*(a))
+    #     cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
+    # cv2.imwrite("gar_img111.png", img)
+
+    return lines
+
+# 获取图中深棕直线
+def get_dark_brown_lines(img, minRad = 10, maxRad = 110):
+    hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
+
+    lower_blue = np.array([4, 10, 10]) # 0 - 10, x - x, 10 - 180
+    upper_blue = np.array([10, 255, 100])
+    mask = cv2.inRange(hsv, lower_blue, upper_blue)
+    res = cv2.bitwise_and(img, img, mask=mask)
+
+    lower_blue = np.array([150, 10, 10])
+    upper_blue = np.array([180, 255, 100])
+    mask2 = cv2.inRange(hsv, lower_blue, upper_blue)
+    res2 = cv2.bitwise_and(img, img, mask=mask2)
+
+    dst = cv2.addWeighted(res, 1, res2, 1, 0)   # 图片组合
+
+    gay_img = cv2.cvtColor(dst, cv2.COLOR_BGRA2GRAY)
+
+    ret, binary = cv2.threshold(gay_img, 0, 255, cv2.THRESH_OTSU | cv2.THRESH_BINARY)
+    kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (6, 6))
+    dst = cv2.dilate(binary, kernel)
+
+    lines = cv2.HoughLines(dst,1,np.pi/180,92)
     if lines is None:
         return []
     

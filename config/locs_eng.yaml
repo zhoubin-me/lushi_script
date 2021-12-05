@@ -112,3 +112,5 @@ location:
   map_location: [58, 100, 690, 670]
   # map back button x,y
   map_back: [960, 758]
+  # check if battle boss
+  boss_battlefield: [402, 42, 644, 172]

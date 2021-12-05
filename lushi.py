@@ -240,11 +240,11 @@ class Agent:
             # select first first boss of map
             pyautogui.click(tuple_add(rect, self.locs.first_boss))
 
-    def start_battle(self):
+    def start_battle(self, rect, battle_boss = False):
         logger.info("Start battle, scanning battlefield")
-        rect, screen = find_lushi_window(self.title)
+        # rect, screen = find_lushi_window(self.title)
         # check if battle boss
-        battle_stratege = "normal" # normal, max_dmg, kill_big, kill_min
+        battle_stratege = self.battle_stratege # normal, max_dmg, kill_big, kill_min
 
         del self.log_util
         self.log_util = LogUtil(self.basic.hs_log)
@@ -635,7 +635,9 @@ class Agent:
 
             if state == 'not_ready_dots':
                 logger.info(f'find {state}, try to click')
-                self.start_battle()
+                # check if battle boss
+                battle_boss = False
+                self.start_battle(rect, battle_boss)
 
             if state == 'battle_ready':
                 logger.info(f'find {state}, try to click')

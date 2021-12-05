@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 import unittest
 from utils.util import find_lushi_window, find_icon_location
-from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines
+from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines, get_dark_brown_lines
 import yaml
 from types import SimpleNamespace
 import cv2
@@ -95,6 +95,16 @@ class TestImage(unittest.TestCase):
         # screen = self.get_save_image( to_gray=False, imageName= "cn_campfire1.png", lang="cn")
         
         imgMap = get_burning_blue_lines(screen, 10, 300)
+        print(imgMap)
+
+    def test_get_dark_brown_lines(self):
+        # screen = self.get_save_image( to_gray=False, imageName= "battle_boss.png")
+        screen = self.get_save_image( to_gray=False, imageName= "batle_en_1.png")
+        config, locs = self.gen_config()
+        print(config, locs.boss_battlefield)
+        loc =  locs.boss_battlefield
+        subImage = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3]) 
+        imgMap = get_dark_brown_lines(subImage)
         print(imgMap)
 
 if __name__  == "__main__":

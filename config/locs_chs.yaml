@@ -109,3 +109,5 @@ location:
   map_location: [260, 100, 996, 780]
   # 地图界面，返回按钮坐标，x，y
   map_back: [1325, 885]
+  # 打boss时，对战场地检测区域, leftt_x, top_y, left_x, bottom_y
+  boss_battlefield: [402, 0, 644, 172]
