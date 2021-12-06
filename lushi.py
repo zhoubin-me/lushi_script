@@ -16,7 +16,7 @@ from types import SimpleNamespace
 
 from utils.log_util import LogUtil
 from utils.util import BOSS_ID_MAP, find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, screenshot, find_lushi_raw_window, get_hero_color_by_id
-from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines, get_burning_blue_lines
+from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines, get_burning_blue_lines, get_dark_brown_lines
 from utils.battle_ai import BattleAi
 import utils.logging_util
 
@@ -245,7 +245,7 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.first_boss))
 
     def start_battle(self, rect, battle_boss = False):
-        logger.info("Start battle, scanning battlefield")
+        logger.info(f"Start battle, boss ? {battle_boss}, scanning battlefield")
         # rect, screen = find_lushi_window(self.title)
         # check if battle boss
         battle_stratege = self.basic.battle_stratege # normal, max_dmg, kill_big, kill_min
@@ -277,7 +277,7 @@ class Agent:
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege) # [0,1,1]
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
-        standby_heros = self.my_hero
+        standby_heros = self.heros
         if battle_boss :
             standby_heros = self.boss_heros
         for hero_i, h in enumerate(game.my_hero):
@@ -302,7 +302,7 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.empty))
 
     def select_members(self, battle_boss = False):
-        logger.info("Start select members")
+        logger.info(f"Start select members, battle_boss ? {battle_boss}")
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
         del screen
@@ -647,8 +647,10 @@ class Agent:
 
             if state == 'member_not_ready':
                 logger.info(f'find {state}, try to click')
-                _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
-                lines = get_burning_blue_lines(the_img)
+                _, screen = find_lushi_window(self.title, to_gray=False, raw=True)
+                loc = self.locs.boss_battlefield
+                subImage = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3]) 
+                lines = get_dark_brown_lines(subImage)
                 screenshot(self.title, state) # TODO commit before 
                 battle_boss = False
                 if 2 < len(lines):
@@ -659,8 +661,10 @@ class Agent:
             if state == 'not_ready_dots':
                 logger.info(f'find {state}, try to click')
                 # check if battle boss
-                _, the_img = find_lushi_window(self.title, to_gray=False, raw=True)
-                lines = get_burning_blue_lines(the_img)
+                _, screen = find_lushi_window(self.title, to_gray=False, raw=True)
+                loc = self.locs.boss_battlefield
+                subImage = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3]) 
+                lines = get_dark_brown_lines(subImage)
                 battle_boss = False
                 if 2 < len(lines):
                     battle_boss = True
