@@ -127,12 +127,12 @@ class Ui(QMainWindow):
         self.modify = self.findChild(QPushButton, 'modify')
         self.modify.clicked.connect(self.modifyButtonPressed)  # Click event
 
-        # self.boss_go_up = self.findChild(QPushButton, 'boss_goup')
-        # self.boss_go_up.clicked.connect(self.upButtonPressed)  # Click event
-        # self.boss_go_down = self.findChild(QPushButton, 'boss_godown')
-        # self.boss_go_down.clicked.connect(self.downButtonPressed)  # Click event
-        # self.boss_modify = self.findChild(QPushButton, 'boss_modify')
-        # self.modify.clicked.connect(self.modifyButtonPressed)  # Click event
+        self.boss_go_up = self.findChild(QPushButton, 'boss_goup')
+        self.boss_go_up.clicked.connect(self.upBossButtonPressed)  # Click event
+        self.boss_go_down = self.findChild(QPushButton, 'boss_godown')
+        self.boss_go_down.clicked.connect(self.downBossButtonPressed)  # Click event
+        self.boss_modify = self.findChild(QPushButton, 'boss_modify')
+        self.boss_modify.clicked.connect(self.modifyBossButtonPressed)  # Click event
 
         self.radio_buttons = []
         for radio_text in ['321', '312', '213', '231', '123', '132']:
@@ -262,6 +262,13 @@ class Ui(QMainWindow):
                 self.hero_index]
             self.slm.setStringList(str_list)
 
+    def upBossButtonPressed(self):
+        str_list = self.boss_slm.stringList()
+        if 1 <= self.boss_hero_index < len(str_list):
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index - 1] = str_list[self.boss_hero_index - 1], str_list[
+                self.boss_hero_index]
+            self.boss_slm.setStringList(str_list)
+
     def downButtonPressed(self):
         str_list = self.slm.stringList()
         if 0 <= self.hero_index < len(str_list) - 1:
@@ -269,14 +276,34 @@ class Ui(QMainWindow):
                 self.hero_index]
             self.slm.setStringList(str_list)
 
+    def downBossButtonPressed(self):
+        str_list = self.boss_slm.stringList()
+        if 0 <= self.boss_hero_index < len(str_list) - 1:
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index + 1] = str_list[self.boss_hero_index + 1], str_list[
+                self.boss_hero_index]
+            self.boss_slm.setStringList(str_list)
+
     def delButtonPressed(self):
         str_list = self.slm.stringList()
+        b_hero_str_list = self.boss_slm.stringList()
         if 0 <= self.hero_index < len(str_list):
             name = str_list.pop(self.hero_index)
+            i = 0
+            for v in b_hero_str_list:
+                if v == name:
+                   b_hero_str_list.pop(i)
+                   break
+                i += 1 
             self.slm.setStringList(str_list)
+            self.boss_slm.setStringList(b_hero_str_list)
             for k, v in self.hero_info.items():
                 if v[0] == name:
                     del self.hero_info[k]
+                    break
+            
+            for k, v in self.boss_hero_info.items():
+                if v[0] == name:
+                    del self.boss_hero_info[k]
                     break
 
     def modifyButtonPressed(self):
@@ -287,6 +314,16 @@ class Ui(QMainWindow):
                 if v[0] == name:
                     self.hero_info[k][2] = self.spell_order
                     self.current_order.setText(self.spell_order)
+                    break
+
+    def modifyBossButtonPressed(self):
+        str_list = self.boss_slm.stringList()
+        if 0 <= self.boss_hero_index < len(str_list):
+            name = str_list[self.boss_hero_index]
+            for k, v in self.boss_hero_info.items():
+                if v[0] == name:
+                    self.boss_hero_info[k][2] = self.spell_order
+                    self.boss_current_order.setText(self.spell_order)
                     break
 
     def addButtonPressed(self):
@@ -303,8 +340,10 @@ class Ui(QMainWindow):
             index = len(str_list) - 1
             if self.ui_lang == 'chs':
                 self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
+                self.boss_hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
             elif self.ui_lang == 'eng':
                 self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
+                self.boss_hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
             self.slm.setStringList(str_list)
             self.boss_slm.setStringList(boss_str_list)
 

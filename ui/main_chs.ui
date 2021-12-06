@@ -827,7 +827,7 @@
         </item>
         <item>
          <layout class="QGridLayout" name="gridLayout_6">
-          <!-- <item row="3" column="1">
+          <item row="3" column="1">
            <widget class="QPushButton" name="boss_goup">
             <property name="font">
              <font>
@@ -839,7 +839,7 @@
              <string>上移</string>
             </property>
            </widget>
-          </item> -->
+          </item>
           <item row="0" column="0" colspan="2">
            <widget class="QLabel" name="label_11">
             <property name="minimumSize">
@@ -862,7 +862,7 @@
             </property>
            </widget>
           </item>
-          <!-- <item row="4" column="1">
+          <item row="4" column="1">
            <widget class="QPushButton" name="boss_godown">
             <property name="font">
              <font>
@@ -887,7 +887,7 @@
              <string>修改</string>
             </property>
            </widget>
-          </item> -->
+          </item>
           <item row="2" column="0" rowspan="5">
            <widget class="QListView" name="boss_heros">
             <property name="minimumSize">

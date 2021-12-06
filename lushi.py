@@ -248,7 +248,9 @@ class Agent:
         logger.info("Start battle, scanning battlefield")
         # rect, screen = find_lushi_window(self.title)
         # check if battle boss
-        battle_stratege = self.battle_stratege # normal, max_dmg, kill_big, kill_min
+        battle_stratege = self.basic.battle_stratege # normal, max_dmg, kill_big, kill_min
+        if battle_boss:
+            battle_stratege = self.basic.boss_battle_stratege # normal, max_dmg, kill_big, kill_min
 
         del self.log_util
         self.log_util = LogUtil(self.basic.hs_log)
@@ -275,17 +277,20 @@ class Agent:
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege) # [0,1,1]
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
+        standby_heros = self.my_hero
+        if battle_boss :
+            standby_heros = self.boss_heros
         for hero_i, h in enumerate(game.my_hero):
             if h.lettuce_has_manually_selected_ability:
                 continue
 
             pyautogui.click(h.pos)
             card_id = h.card_id[:-3]
-            if card_id not in self.heros:
+            if card_id not in standby_heros:
                 skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
             else:
                 skill_loc = None
-                skill_seq = self.heros[card_id][2]
+                skill_seq = standby_heros[card_id][2]
                 for skill_id in skill_seq:
                     skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
                     if skill_cooldown_round == 0:
@@ -317,12 +322,15 @@ class Agent:
         risk_num = 2 # 颜色克制的敌人回避数量阈值，大于该数值则需要调整上场英雄
         if risk_num < enemy_blue_count or risk_num < enemy_green_count or risk_num < enemy_red_count:
             normal = False
-
-        hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in self.heros]
+        
+        standby_heros = self.heros
+        if battle_boss :
+            standby_heros = self.boss_heros
+        hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in standby_heros]
         if len(hero_in_battle) < 3:
             current_seq = {h.card_id[:-3]: i for i, h in enumerate(game.setaside_hero)}
             heros_sorted = {k: v[3] for k, v in sorted(
-                self.heros.items(), key=lambda item: item[1][3])}
+                standby_heros.items(), key=lambda item: item[1][3])}
             card_id_seq = list(heros_sorted.keys())
             card_id_seq = [x for x in card_id_seq if x in current_seq]
 
@@ -332,25 +340,25 @@ class Agent:
                     cards_in_hand = len(card_id_seq)
                     card_id = -1
                     i = 0
-                    if normal:
+                    if battle_boss or normal:
                         card_id = card_id_seq.pop(0)
                     elif enemy_blue_count > risk_num:
                         for k in card_id_seq:
-                            if int(self.heros[k][4]) != 3:
+                            if int(standby_heros[k][4]) != 3:
                                 card_id = k
                                 del card_id_seq[i]
                                 break
                             i +=1
                     elif enemy_green_count > risk_num:
                         for k in card_id_seq:
-                            if int(self.heros[k][4]) != 1:
+                            if int(standby_heros[k][4]) != 1:
                                 card_id = k
                                 del card_id_seq[i]
                                 break
                             i +=1
                     elif enemy_red_count > risk_num:
                         for k in card_id_seq:
-                            if int(self.heros[k][4]) != 2:
+                            if int(standby_heros[k][4]) != 2:
                                 card_id = k
                                 del card_id_seq[i]
                                 break
