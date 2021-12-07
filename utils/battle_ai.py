@@ -55,8 +55,9 @@ class BattleAi:
             for e_hero in enemy_hero:
                 if e_hero.get_max_health() > max_health:
                     boss_id  = i
+                    max_health = e_hero.get_max_health()
                 i += 1
-            return [boss_id, boss_id, boss_id]
+            return [boss_id, boss_id, boss_id, boss_id, boss_id, boss_id]
         elif "kill_min" == stratege_intervene : # 先干最小的
             suite_id = -1
             min_health = 10000
@@ -64,8 +65,9 @@ class BattleAi:
             for e_hero in enemy_hero:
                 if e_hero.get_max_health() < min_health:
                     suite_id  = i
+                    min_health = e_hero.get_max_health()
                 i += 1
-            return [suite_id, suite_id, suite_id]
+            return [suite_id, suite_id, suite_id, suite_id, suite_id, suite_id]
         else : # normal, max_dmg
             optimal_strategy = ((-1 << 25), [1, 1, 1])
             for idx in list(itertools.product(range(len(enemy_hero)), repeat=len(my_hero))):
