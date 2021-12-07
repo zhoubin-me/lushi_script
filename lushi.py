@@ -297,6 +297,7 @@ class Agent:
                         skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
                         break
             pyautogui.click(skill_loc)
+            print(f"debug {strategy},  id {hero_i}")
             enemy_id = strategy[hero_i]
             pyautogui.click(game.enemy_hero[enemy_id].pos)
             pyautogui.click(tuple_add(rect, self.locs.empty))
@@ -651,11 +652,11 @@ class Agent:
                 loc = self.locs.boss_battlefield
                 subImage = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3]) 
                 lines = get_dark_brown_lines(subImage)
-                screenshot(self.title, state) # TODO commit before 
                 battle_boss = False
                 if 2 < len(lines):
                     battle_boss = True
                     logger.info(f'[{state}] battle boss')
+                    screenshot(self.title, state) # TODO commit before 
                 self.select_members(battle_boss)
 
             if state == 'not_ready_dots':
