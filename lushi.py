@@ -53,6 +53,7 @@ class Agent:
         self.lettuce_role_limit = 0
         self.battle_stratege = "normal"
         self.boss_battle_stratege = "normal"
+        self.stop_at_boss = False # TODO edit it by config 
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -515,7 +516,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
                     time.sleep(0.5)
                     pyautogui.click(tuple_add(rect, self.locs.boss_page_right))
-                    pyautogui.click(tuple_add(rect, loc))
+                    pyautogui.click(tuple_add(rect, self.locs.boss_4_13))
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
                 elif the_boss_id > 8:
                     the_id = the_boss_id - 9
@@ -647,7 +648,13 @@ class Agent:
 
             if state in ['goto', 'show', 'teleport', 'start_game']:
                 logger.info(f'find {state}, try to click')
-                pyautogui.click(tuple_add(rect, self.locs.start_game))
+                # 检查是否进入boss关卡
+                success, loc, rect = self.check_in_screen("final_boss")
+                if screen and self.stop_at_boss:
+                    print(f"[{state}]  stop at boss")
+                    time.sleep(60)
+                else:
+                    pyautogui.click(tuple_add(rect, self.locs.start_game))
 
             if state == 'member_not_ready':
                 logger.info(f'find {state}, try to click')

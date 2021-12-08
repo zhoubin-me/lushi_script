@@ -11,6 +11,8 @@ location:
   boss: [ 405, 696, 916, 350, 667 ] # [first_x, mid_x, last_x, upper_y, lower_y]
   boss_page_left: [ 244, 480 ]
   boss_page_right : [1098, 480]
+  # 4-13 boos portal location
+  boss_4_13: [404, 376]
 
   # treasures locations
   treasures: [ 707, 960, 1200, 376 ] # [first_x, mid_x, last_x, y]
@@ -111,3 +113,4 @@ location:
   map_back: [1325, 885]
   # 打boss时，对战场地检测区域, leftt_x, top_y, left_x, bottom_y
   boss_battlefield: [402, 0, 644, 172]
+

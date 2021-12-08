@@ -13,6 +13,8 @@ location:
   boss: [ 170, 400, 630, 300, 560 ] # [first_x, mid_x, last_x, upper_y, lower_y]
   boss_page_left : [41, 412]
   boss_page_right : [765, 412]
+  # 4-13 boos portal location
+  boss_4_13: [404, 376]
 
   # treasures locations
   treasures: [ 430, 650, 870, 390 ] # [first_x, mid_x, last_x, y]
