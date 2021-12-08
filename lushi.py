@@ -410,10 +410,13 @@ class Agent:
                 one_treasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
                 success, X, Y, conf = find_icon_location(one_treasure, self.treasure_blacklist[key],
                                                          self.basic.confidence)
-                if success:
+                if success and idx not in not_advice_idx:
                     not_advice_idx.append(idx)
-        # 去重
-        not_advice_idx = list(set(not_advice_idx))
+                    if 1 < len(not_advice_idx):
+                        break
+            if 1 < len(not_advice_idx):
+                break
+
         logger.info(f'find treasure blacklist: {not_advice_idx}')
         if 2 < len(not_advice_idx) or 1 > len(not_advice_idx):
             return [0, 1, 2]
@@ -656,7 +659,7 @@ class Agent:
                 if 2 < len(lines):
                     battle_boss = True
                     logger.info(f'[{state}] battle boss')
-                    screenshot(self.title, state) # TODO commit before 
+                    # screenshot(self.title, state) # TODO commit before 
                 self.select_members(battle_boss)
 
             if state == 'not_ready_dots':
