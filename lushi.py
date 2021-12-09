@@ -288,7 +288,11 @@ class Agent:
             pyautogui.click(h.pos)
             card_id = h.card_id[:-3]
             if card_id not in standby_heros:
-                skill_loc = tuple_add(rect, (self.locs.skills[0], self.locs.skills[-1]))
+                other_skill_id = 0 # 非预期角色的技能干预
+                if True == battle_boss : 
+                    if card_id == "LETL_848H6" or card_id == "LETL_84":
+                        other_skill_id = 2
+                skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
                 skill_seq = standby_heros[card_id][2]
@@ -325,11 +329,12 @@ class Agent:
         if risk_num < enemy_blue_count or risk_num < enemy_green_count or risk_num < enemy_red_count:
             normal = False
         
+        hero_on_battlefie_limit = 4 # if battle boss
         standby_heros = self.heros
         if battle_boss :
             standby_heros = self.boss_heros
         hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in standby_heros]
-        if len(hero_in_battle) < 3:
+        if len(hero_in_battle) < hero_on_battlefie_limit:
             current_seq = {h.card_id[:-3]: i for i, h in enumerate(game.setaside_hero)}
             heros_sorted = {k: v[3] for k, v in sorted(
                 standby_heros.items(), key=lambda item: item[1][3])}
@@ -390,7 +395,7 @@ class Agent:
                     elif cards_in_hand == 1:
                         loc = (mid_x, y)
                     else:
-                        raise ValueError("Not possible")
+                        raise ValueError("Not possible") # no heros fight for you
 
                     pyautogui.click(tuple_add(rect, loc))
                     pyautogui.moveTo(tuple_add(rect, self.locs.dragto))
@@ -400,6 +405,7 @@ class Agent:
                     for k, v in current_seq.items():
                         if v > current_pos:
                             current_seq[k] = v - 1
+        # else
 
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[0], 最多返回：[0,1,2]
     def pick_treasure(self, screen):
@@ -650,7 +656,7 @@ class Agent:
                 logger.info(f'find {state}, try to click')
                 # 检查是否进入boss关卡
                 success, loc, rect = self.check_in_screen("final_boss")
-                if screen and self.stop_at_boss:
+                if success and self.stop_at_boss:
                     print(f"[{state}]  stop at boss")
                     time.sleep(60)
                 else:
