@@ -57,7 +57,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -495,7 +495,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                   'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done']
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2']
         '''
         if success:
             if state != text:
@@ -662,7 +662,7 @@ class Agent:
                 else:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
-            if state == 'member_not_ready':
+            if state in ['member_not_ready', 'member_not_ready2']:
                 logger.info(f'find {state}, try to click')
                 _, screen = find_lushi_window(self.title, to_gray=False, raw=True)
                 loc = self.locs.boss_battlefield
@@ -802,7 +802,7 @@ class Agent:
             if time.time() - tic > self.basic.longest_waiting:
                 if self.basic.screenshot_error:
                     screenshot(self.title, 'restart')
-                if state == 'not_ready_dots' or state == 'member_not_ready':
+                if state == 'not_ready_dots' or state == 'member_not_ready' or state == 'member_not_ready2':
                     pyautogui.rightClick(tuple_add(rect, self.locs.empty))
                     pyautogui.click(tuple_add(rect, self.locs.options))
                     pyautogui.click(tuple_add(rect, self.locs.surrender))
