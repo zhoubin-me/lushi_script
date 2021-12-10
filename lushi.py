@@ -98,6 +98,7 @@ class Agent:
             self.boss_heros = self.heros
         cfg['hs_log'] = os.path.join(os.path.dirname(cfg['hs_path']), 'Logs', 'Power.log')
         self.basic = SimpleNamespace(**cfg)
+        self.stop_at_boss = self.basic.stop_at_boss
         pyautogui.PAUSE = self.basic.delay
 
     def check_in_screen(self, name, prefix='icons'):
@@ -654,11 +655,17 @@ class Agent:
 
             if state in ['goto', 'show', 'teleport', 'start_game']:
                 logger.info(f'find {state}, try to click')
-                # 检查是否进入boss关卡
-                success, loc, rect = self.check_in_screen("final_boss")
-                if success and self.stop_at_boss:
-                    print(f"[{state}]  stop at boss")
-                    time.sleep(60)
+                if self.stop_at_boss:
+                    # 检查是否进入boss关卡
+                    success, loc, rect = self.check_in_screen("final_boss")
+                    if success :
+                        _, screen = find_lushi_raw_window(self.title)
+                        the_map_loc = self.locs.no_boss_map_location # 只选取部分
+                        screen = get_sub_np_array(screen, the_map_loc[0], the_map_loc[1], the_map_loc[2], the_map_loc[3])
+                        circles = get_burning_green_circles(screen, 55, 110)
+                        if 0 < len(circles) :
+                            print(f"[{state}]  stop at boss")
+                            time.sleep(30)
                 else:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 

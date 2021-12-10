@@ -543,6 +543,24 @@
           </property>
          </widget>
         </item>
+        <item row="3" column="6">
+         <widget class="QCheckBox" name="stop_at_boss">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
+          <property name="font">
+           <font>
+            <family>Microsoft YaHei UI</family>
+           </font>
+          </property>
+          <property name="text">
+           <string>打boss前停下</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </item>
       <item row="1" column="0">

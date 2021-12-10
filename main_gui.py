@@ -143,6 +143,7 @@ class Ui(QMainWindow):
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
         self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
+        self.stop_at_boss = self.findChild(QCheckBox, 'stop_at_boss')
         self.screenshot_reward = self.findChild(QCheckBox, 'screenshot_reward')
         self.screenshot_error = self.findChild(QCheckBox, 'screenshot_error')
         self.screenshot_visitor = self.findChild(QCheckBox, 'screenshot_visitor')
@@ -369,6 +370,8 @@ class Ui(QMainWindow):
                 self.auto_restart.setChecked(v)
             if k == 'auto_tasks':
                 self.auto_tasks.setChecked(v)
+            if k == 'stop_at_boss':
+                self.stop_at_boss.setChecked(v)
             if k == 'screenshot_reward':
                 self.screenshot_reward.setChecked(v)
             if k == 'screenshot_error':
@@ -419,6 +422,7 @@ class Ui(QMainWindow):
         self.config['early_stop'] = self.early_stop.isChecked()
         self.config['screenshot_reward'] = self.screenshot_reward.isChecked()
         self.config['auto_tasks'] = self.auto_tasks.isChecked()
+        self.config['stop_at_boss'] = self.stop_at_boss.isChecked()
         self.config['screenshot_error'] = self.screenshot_error.isChecked()
         self.config['screenshot_visitor'] = self.screenshot_visitor.isChecked()
         self.config['screenshot_treasure'] = self.screenshot_treasure.isChecked()
@@ -482,6 +486,7 @@ class Ui(QMainWindow):
                 Auto Restart: {self.config['auto_restart']}\n
                 Early Stop: {self.config['early_stop']}\n
                 Auto Task: {self.config['auto_tasks']}\n
+                Stop At Boss: {self.config['stop_at_boss']}\n
                 Error Screenshot: {self.config['screenshot_error']}\n
                 Reward Screenshot: {self.config['screenshot_reward']}\n
                 Visitor Screenshot: {self.config['screenshot_visitor']}\n
@@ -556,6 +561,7 @@ class Ui(QMainWindow):
         self.load_path.setText(_translate("MainWindow", "..."))
         self.label.setText(_translate("MainWindow", "关卡选择序号"))
         self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
+        # self.stop_at_boss.setText(_translate("MainWindow", "打BOSS前停下"))
         self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
         self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
