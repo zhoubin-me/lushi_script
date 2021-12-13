@@ -110,7 +110,7 @@ location:
   # map locations, leftt_x, top_y, left_x, bottom_y
   map_location: [260, 100, 996, 780]
   # map locations, expected boss , leftt_x, top_y, left_x, bottom_y
-  no_boss_map_location: [58, 328, 690, 670]
+  no_boss_map_location: [260, 328, 996, 780]
   # 地图界面，返回按钮坐标，x，y
   map_back: [1325, 885]
   # 打boss时，对战场地检测区域, leftt_x, top_y, left_x, bottom_y
