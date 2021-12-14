@@ -123,7 +123,7 @@ class Agent:
         try:
             icon = getattr(self, prefix)[name]
         except:
-            return False, None, None
+            return False, None, None, None
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
         loc = X, Y
         return success, loc, rect, screen
