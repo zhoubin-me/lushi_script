@@ -26,7 +26,7 @@ class TestLushi(unittest.TestCase):
     def get_save_image(self, idx=0, to_gray=True):
         # 罗卡拉 英雄, 英雄列表， 宝藏列表， 香蕉英雄列表
         imageNames = ["reward_2021-11-15_05-23.png", "reward_2021-11-15_04-14.png", "reward_2021-11-15_20-28.png",
-                      "reward_2021-11-15_10-20.png"]
+                      "reward_2021-11-15_10-20.png", "treasure[0,1,2]_17-19.59,312.png", "treasure[0,1]_18-35.41,966.png"]
         imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", imageNames[idx])
         src = cv2.imread(imgPath)
         if to_gray:
@@ -76,7 +76,9 @@ class TestLushi(unittest.TestCase):
     def test_pick_treasure(self):
         config = self.get_config()
         agent = lushi.Agent(config)
-        image = self.get_save_image(2)
+        # image = self.get_save_image(2)
+        # image = self.get_save_image(4)
+        image = self.get_save_image(5)
         re = agent.pick_treasure(image)
         print(re)
         self.assertEqual(True, True)

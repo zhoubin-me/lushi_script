@@ -119,6 +119,9 @@ class HeroEntity(BaseEntity):
 
     def get_health(self):
         return self.max_health - self.damage
+    
+    def get_max_health(self):
+        return self.max_health
 
     def basic_attack(self, target, dmg):
         total_dmg = dmg * BaseEntity.damage_advantage[self.lettuce_role][target.lettuce_role]
@@ -164,6 +167,10 @@ class HeroEntity(BaseEntity):
     def compare_card_id(self, card_id):
         return self.card_id.startswith(card_id)
 
+    # 获取英雄角色  # INVALID = 0 施法者CASTER = 1 斗士FIGHTER = 2 TANK = 3 NEUTRAL = 4
+    def get_lettuce_role(self):
+        return self.lettuce_role
+
     def __str__(self):
         return {'card_id': self.card_id, 'atk': self.atk, 'health': self.get_health(),
-                'zone_pos': self.zone_position}.__str__()
+                'zone_pos': self.zone_position, 'lettuce_role': self.lettuce_role}.__str__()

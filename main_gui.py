@@ -17,7 +17,7 @@ from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.ui import ExtendedComboBox
-from utils.util import HEROS
+from utils.util import HEROS, BOSS_ID_MAP, get_hero_color_by_id 
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -60,7 +60,7 @@ class Ui(QMainWindow):
         else:
             self.ui_lang = 'eng'
 
-        self.boss_id = self.findChild(QSpinBox, 'boss_level')
+        self.boss_id = self.findChild(QComboBox, 'boss_level')
         self.team_id = self.findChild(QSpinBox, 'team_id')
         # self.reward_count = self.findChild(QSpinBox, 'boss_reward')
         self.reward_count_dropdown = self.findChild(QComboBox, 'reward')
@@ -78,6 +78,10 @@ class Ui(QMainWindow):
         self.lang_dropdown.addItem('EN-1024x768')
         self.lang_dropdown.addItem('ZH-1600x900')
         self.current_order = self.findChild(QLabel, 'current_order')
+        self.boss_current_order = self.findChild(QLabel, 'boss_current_order')
+        self.battle_stratege_dropdown = self.findChild(QComboBox, 'battle_stratege')
+        self.boss_battle_stratege_dropdown = self.findChild(QComboBox, 'boss_battle_stratege')
+        self.lettuce_role_limit_dropdown = self.findChild(QComboBox, 'lettuce_role_limit')
 
         self.save = self.findChild(QPushButton, 'save')  # Find the button
         self.save.clicked.connect(self.saveButtonPressed)  # Click event
@@ -105,6 +109,13 @@ class Ui(QMainWindow):
         self.hero_list.clicked.connect(self.on_hero_clicked)
         self.hero_index = -1
 
+        self.boss_hero_list = self.findChild(QListView, 'boss_heros')
+        self.boss_slm = QStringListModel([])
+        self.boss_hero_list.setModel(self.boss_slm)
+        self.boss_hero_list.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.boss_hero_list.clicked.connect(self.on_boss_hero_clicked)
+        self.boss_hero_index = -1
+
         self.add = self.findChild(QPushButton, 'add')
         self.add.clicked.connect(self.addButtonPressed)  # Click event
         self.delete = self.findChild(QPushButton, 'del_1')
@@ -116,6 +127,13 @@ class Ui(QMainWindow):
         self.modify = self.findChild(QPushButton, 'modify')
         self.modify.clicked.connect(self.modifyButtonPressed)  # Click event
 
+        self.boss_go_up = self.findChild(QPushButton, 'boss_goup')
+        self.boss_go_up.clicked.connect(self.upBossButtonPressed)  # Click event
+        self.boss_go_down = self.findChild(QPushButton, 'boss_godown')
+        self.boss_go_down.clicked.connect(self.downBossButtonPressed)  # Click event
+        self.boss_modify = self.findChild(QPushButton, 'boss_modify')
+        self.boss_modify.clicked.connect(self.modifyBossButtonPressed)  # Click event
+
         self.radio_buttons = []
         for radio_text in ['321', '312', '213', '231', '123', '132']:
             radio = self.findChild(QRadioButton, f'r{radio_text}')
@@ -125,6 +143,7 @@ class Ui(QMainWindow):
         self.auto_restart = self.findChild(QCheckBox, 'auto_restart')
         self.early_stop = self.findChild(QCheckBox, 'early_stop')
         self.auto_tasks = self.findChild(QCheckBox, 'auto_tasks')
+        self.stop_at_boss = self.findChild(QCheckBox, 'stop_at_boss')
         self.screenshot_reward = self.findChild(QCheckBox, 'screenshot_reward')
         self.screenshot_error = self.findChild(QCheckBox, 'screenshot_error')
         self.screenshot_visitor = self.findChild(QCheckBox, 'screenshot_visitor')
@@ -211,6 +230,17 @@ class Ui(QMainWindow):
                     self.current_order.setText(self.hero_info[k][2])
                     break
 
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
+    def on_boss_hero_clicked(self, index):
+        self.boss_hero_index = index.row()
+        str_list = self.boss_slm.stringList()
+        if 0 <= self.boss_hero_index < len(str_list):
+            name = str_list[self.boss_hero_index]
+            for k, v in self.boss_hero_info.items():
+                if v[0] == name:
+                    self.boss_current_order.setText(self.boss_hero_info[k][2])
+                    break
+
     def on_load_path_click_hs(self):
         self.hs_path_str = QtWidgets.QFileDialog.getOpenFileName(self, 'Find Path of Hearthstone.exe')[0]
         if len(self.hs_path_str) > 0:
@@ -233,6 +263,13 @@ class Ui(QMainWindow):
                 self.hero_index]
             self.slm.setStringList(str_list)
 
+    def upBossButtonPressed(self):
+        str_list = self.boss_slm.stringList()
+        if 1 <= self.boss_hero_index < len(str_list):
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index - 1] = str_list[self.boss_hero_index - 1], str_list[
+                self.boss_hero_index]
+            self.boss_slm.setStringList(str_list)
+
     def downButtonPressed(self):
         str_list = self.slm.stringList()
         if 0 <= self.hero_index < len(str_list) - 1:
@@ -240,14 +277,34 @@ class Ui(QMainWindow):
                 self.hero_index]
             self.slm.setStringList(str_list)
 
+    def downBossButtonPressed(self):
+        str_list = self.boss_slm.stringList()
+        if 0 <= self.boss_hero_index < len(str_list) - 1:
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index + 1] = str_list[self.boss_hero_index + 1], str_list[
+                self.boss_hero_index]
+            self.boss_slm.setStringList(str_list)
+
     def delButtonPressed(self):
         str_list = self.slm.stringList()
+        b_hero_str_list = self.boss_slm.stringList()
         if 0 <= self.hero_index < len(str_list):
             name = str_list.pop(self.hero_index)
+            i = 0
+            for v in b_hero_str_list:
+                if v == name:
+                   b_hero_str_list.pop(i)
+                   break
+                i += 1 
             self.slm.setStringList(str_list)
+            self.boss_slm.setStringList(b_hero_str_list)
             for k, v in self.hero_info.items():
                 if v[0] == name:
                     del self.hero_info[k]
+                    break
+            
+            for k, v in self.boss_hero_info.items():
+                if v[0] == name:
+                    del self.boss_hero_info[k]
                     break
 
     def modifyButtonPressed(self):
@@ -260,21 +317,36 @@ class Ui(QMainWindow):
                     self.current_order.setText(self.spell_order)
                     break
 
+    def modifyBossButtonPressed(self):
+        str_list = self.boss_slm.stringList()
+        if 0 <= self.boss_hero_index < len(str_list):
+            name = str_list[self.boss_hero_index]
+            for k, v in self.boss_hero_info.items():
+                if v[0] == name:
+                    self.boss_hero_info[k][2] = self.spell_order
+                    self.boss_current_order.setText(self.spell_order)
+                    break
+
     def addButtonPressed(self):
         str_list = self.slm.stringList()
+        boss_str_list = self.boss_slm.stringList()
         if self.hero_dropdown.currentText() not in str_list and len(str_list) < 6:
             str_list.append(self.hero_dropdown.currentText())
+            boss_str_list.append(self.hero_dropdown.currentText())
             if self.ui_lang == 'eng':
-                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
+                kv = [(k, v[0], v[1], v[4]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
             else:
-                kv = [(k, v[0], v[1]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
-            idx, name_chs, name_eng = kv[0]
+                kv = [(k, v[0], v[1], v[4]) for k, v in HEROS.items() if v[0] == self.hero_dropdown.currentText()]
+            idx, name_chs, name_eng, lettuce_role = kv[0]
             index = len(str_list) - 1
             if self.ui_lang == 'chs':
-                self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index]
+                self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
+                self.boss_hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
             elif self.ui_lang == 'eng':
-                self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index]
+                self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
+                self.boss_hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
             self.slm.setStringList(str_list)
+            self.boss_slm.setStringList(boss_str_list)
 
     def load_config(self, path):
         try:
@@ -285,7 +357,7 @@ class Ui(QMainWindow):
 
         for k, v in self.config.items():
             if k == 'boss_id':
-                self.boss_id.setValue(v + 1)
+                self.boss_id.setCurrentText(f"{v}")
             if k == 'team_id':
                 self.team_id.setValue(v + 1)
             if k == 'reward_count_dropdown':
@@ -298,6 +370,8 @@ class Ui(QMainWindow):
                 self.auto_restart.setChecked(v)
             if k == 'auto_tasks':
                 self.auto_tasks.setChecked(v)
+            if k == 'stop_at_boss':
+                self.stop_at_boss.setChecked(v)
             if k == 'screenshot_reward':
                 self.screenshot_reward.setChecked(v)
             if k == 'screenshot_error':
@@ -310,6 +384,12 @@ class Ui(QMainWindow):
                 self.early_stop.setChecked(v)
             if k == 'lang':
                 self.lang.setCurrentText(v)
+            if k == 'battle_stratege':
+                self.battle_stratege_dropdown.setCurrentText(f"{v}")
+            if k == 'boss_battle_stratege':
+                self.boss_battle_stratege_dropdown.setCurrentText(f"{v}")
+            if k == 'lettuce_role_limit':
+                self.lettuce_role_limit_dropdown.setCurrentText(f"{v}")
             if k == 'ui_lang':
                 self.ui_lang = v
                 if v == 'chs':
@@ -317,15 +397,23 @@ class Ui(QMainWindow):
                 elif v == 'eng':
                     self.tiggerEnglish()
             if k == 'hero':
-                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][-1])}
+                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][3])}
                 self.hero_info = {}
                 for k, v in hero_ordered.items():
-                    self.hero_info[k] = [v[0], v[1], v[2], v[3]]
+                    self.hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.slm.setStringList(str_list)
+            if k == 'boss_hero':
+                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][3])}
+                self.boss_hero_info = {}
+                for k, v in hero_ordered.items():
+                    self.boss_hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
+                str_list = [v[0] for k, v in hero_ordered.items()]
+                self.boss_slm.setStringList(str_list)
+
 
     def save_config(self):
-        self.config['boss_id'] = self.boss_id.value() - 1
+        self.config['boss_id'] = self.boss_id.currentText()
         self.config['team_id'] = self.team_id.value() - 1
         # self.config['reward_count'] = self.reward_count.value()
         self.config['bn_path'] = self.bn_path.text()
@@ -334,10 +422,14 @@ class Ui(QMainWindow):
         self.config['early_stop'] = self.early_stop.isChecked()
         self.config['screenshot_reward'] = self.screenshot_reward.isChecked()
         self.config['auto_tasks'] = self.auto_tasks.isChecked()
+        self.config['stop_at_boss'] = self.stop_at_boss.isChecked()
         self.config['screenshot_error'] = self.screenshot_error.isChecked()
         self.config['screenshot_visitor'] = self.screenshot_visitor.isChecked()
         self.config['screenshot_treasure'] = self.screenshot_treasure.isChecked()
         self.config['lang'] = self.lang.currentText()
+        self.config['battle_stratege'] = self.battle_stratege_dropdown.currentText()
+        self.config['boss_battle_stratege'] = self.boss_battle_stratege_dropdown.currentText()
+        self.config['lettuce_role_limit'] = self.lettuce_role_limit_dropdown.currentText()
         self.config['reward_count_dropdown'] = self.reward_count_dropdown.currentText()
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
@@ -347,8 +439,25 @@ class Ui(QMainWindow):
         hero_order_list = self.slm.stringList()
         for k, v in self.hero_info.items():
             hero_index = hero_order_list.index(v[0])
-            new_hero_info[k] = [v[0], v[1], v[2], hero_index]
+            color = 0
+            for hk, hv in HEROS.items():
+                if k == hk:
+                    color = hv[4]
+                    break
+            new_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
         self.config['hero'] = new_hero_info
+
+        new_boss_hero_info = {}
+        boss_hero_order_list = self.boss_slm.stringList()
+        for k, v in self.boss_hero_info.items():
+            hero_index = boss_hero_order_list.index(v[0])
+            color = 0
+            for hk, hv in HEROS.items():
+                if k == hk:
+                    color = hv[4]
+                    break
+            new_boss_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
+        self.config['boss_hero'] = new_boss_hero_info
 
     def saveButtonPressed(self):
         self.save_config()
@@ -369,7 +478,7 @@ class Ui(QMainWindow):
             self.save_config()
             cfm_text = f'''
                 Current Setting:\n
-                Boss ID: {self.config['boss_id'] + 1}\n
+                Boss ID: {self.config['boss_id']}\n
                 Team ID: {self.config['team_id'] + 1}\n
                 Boss Reward: {self.config['reward_count_dropdown']}\n
                 BattleNet Path: {self.config['bn_path']}\n
@@ -377,6 +486,7 @@ class Ui(QMainWindow):
                 Auto Restart: {self.config['auto_restart']}\n
                 Early Stop: {self.config['early_stop']}\n
                 Auto Task: {self.config['auto_tasks']}\n
+                Stop At Boss: {self.config['stop_at_boss']}\n
                 Error Screenshot: {self.config['screenshot_error']}\n
                 Reward Screenshot: {self.config['screenshot_reward']}\n
                 Visitor Screenshot: {self.config['screenshot_visitor']}\n
@@ -451,6 +561,7 @@ class Ui(QMainWindow):
         self.load_path.setText(_translate("MainWindow", "..."))
         self.label.setText(_translate("MainWindow", "关卡选择序号"))
         self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
+        # self.stop_at_boss.setText(_translate("MainWindow", "打BOSS前停下"))
         self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
         self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
         self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))

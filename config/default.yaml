@@ -11,16 +11,38 @@ hero:
   - Ragnaros
   - 2, 3, 1
   - 0
+  - 3
   LETL_030H:
   - "\u8FE6\u987F\u7537\u7235"
   - Baron Geddon
   - 2, 3, 1
+  - 1
   - 1
   SWL_01H:
   - "\u5B89\u4E1C\u5C3C\u8FBE\u65AF"
   - Antonidas
   - 2, 1, 3
   - 2
+  - 1
+boss_hero:
+  LETL_028H:
+  - "\u62C9\u683C\u7EB3\u7F57\u65AF"
+  - Ragnaros
+  - 3, 1, 2
+  - 1
+  - 3
+  LETL_030H:
+  - "\u8FE6\u987F\u7537\u7235"
+  - Baron Geddon
+  - 1, 3, 2
+  - 2
+  - 1
+  SWL_01H:
+  - "\u5B89\u4E1C\u5C3C\u8FBE\u65AF"
+  - Antonidas
+  - 3, 1, 2
+  - 0
+  - 1
 hs_path: C:/Program Files (x86)/Hearthstone/Hearthstone.exe
 lang: ZH-1600x900
 longest_waiting: 80
@@ -31,3 +53,9 @@ screenshot_treasure: false
 screenshot_visitor: false
 team_id: 1
 ui_lang: chs
+battle_stratege: normal # 普通关卡战斗策略， normal 就是之前的版本。 max_dmg: 是不考虑自身生存，尽可能输出最大。 kill_min: 先集火低低生命值的敌人； kill_big: 先集火生命值最大的人。
+boss_battle_stratege: kill_big # 打boss 时的攻击策略
+lettuce_role_limit: 2 # 同色敌人规避阈值， 当敌方同色数大于该值时，会调整上场的英雄的顺序，来规避颜色暴击
+stop_at_boss: true # 在攻击boss关卡前停下，等待人工介入boss战斗
+map_decision: visitor_first # 地区抉择策略： visitor_first - 直指神秘人； fast_pass - 快速通关，优先选战斗非战斗关卡（局部最优）
+

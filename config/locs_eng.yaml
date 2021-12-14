@@ -13,6 +13,8 @@ location:
   boss: [ 170, 400, 630, 300, 560 ] # [first_x, mid_x, last_x, upper_y, lower_y]
   boss_page_left : [41, 412]
   boss_page_right : [765, 412]
+  # 4-13 boos portal location
+  boss_4_13: [404, 376]
 
   # treasures locations
   treasures: [ 430, 650, 870, 390 ] # [first_x, mid_x, last_x, y]
@@ -110,5 +112,9 @@ location:
   first_boss: [ 373, 370 ]
   # map locations, leftt_x, top_y, left_x, bottom_y
   map_location: [58, 100, 690, 670]
+  # map locations, expected boss , leftt_x, top_y, left_x, bottom_y
+  no_boss_map_location: [58, 290, 690, 670]
   # map back button x,y
   map_back: [960, 758]
+  # check if battle boss
+  boss_battlefield: [402, 40, 644, 163]

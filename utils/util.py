@@ -32,7 +32,7 @@ def read_hero_data():
                 # print(row)
                 num_id, name_eng, race, name_chs, sn_id, damage1, target1, speed1, type1, others1, \
                 damage2, target2, speed2, type2, others2, \
-                damage3, target3, speed3, type3, others3 = row
+                damage3, target3, speed3, type3, others3, lettuce_role = row
 
                 spells = {
                     0: {'damage': int(damage1) if len(damage1) else 0, 'range': target1, 'speed': speed1, 'type': type1,
@@ -43,12 +43,38 @@ def read_hero_data():
                         'others': others3},
                 }
 
-                heros[sn_id[:-3]] = [name_chs, name_eng[1:-1], race[1:-1], spells]
+                heros[sn_id[:-3]] = [name_chs, name_eng[1:-1], race[1:-1], spells, lettuce_role]
             count += 1
     return heros
 
 
 HEROS = read_hero_data()
+
+def get_boss_id_map():
+    the_map = {
+        "1": 0,
+        "2": 1,
+        "3": 2,
+        "4": 3,
+        "5": 4,
+        "6": 5,
+        
+        "1-7": 6,
+        "1-8": 7,
+        "1-9": 8,
+
+        "7": 9,
+        "8": 10,
+        "9": 11,
+        "10": 12,
+        "11": 13,
+        "12": 14,
+
+        "13": 15,
+    }
+    return the_map
+
+BOSS_ID_MAP = get_boss_id_map()
 
 if not platform.system() == 'Darwin':
     import win32gui
@@ -310,6 +336,12 @@ def analyse_battle_field(region, screen, digits):
 def tuple_add(x, y):
     return x[0] + y[0], x[1] + y[1]
 
+# get hero's lettuce role by id
+def get_hero_color_by_id (hero_id) :
+    for hk, hv in HEROS.items():
+        if hero_id == hk:
+            return int(hv[4])
+    return 0
 
 if __name__ == "__main__":
     screenshot_folder = r'resource\screenshot'
