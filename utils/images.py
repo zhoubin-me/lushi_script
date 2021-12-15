@@ -149,17 +149,20 @@ def get_burning_blue_lines(img, minRad = 10, maxRad = 100):
 def get_dark_brown_lines(img, minRad = 10, maxRad = 110):
     hsv = cv2.cvtColor(img, cv2.COLOR_BGR2HSV)
 
-    lower_color = np.array([4, 10, 10]) # 0 - 10, x - x, 10 - 180
+    lower_color = np.array([4, 80, 10]) # 0 - 10, x - x, 10 - 180
     upper_color = np.array([10, 255, 100])
     mask = cv2.inRange(hsv, lower_color, upper_color)
     res = cv2.bitwise_and(img, img, mask=mask)
+    # cv2.imwrite("test_boss_check_1.png", res) 
 
-    lower_color = np.array([150, 10, 10])
+    lower_color = np.array([150, 80, 10])
     upper_color = np.array([180, 255, 100])
     mask2 = cv2.inRange(hsv, lower_color, upper_color)
     res2 = cv2.bitwise_and(img, img, mask=mask2)
+    # cv2.imwrite("test_boss_check_2.png", res2)
 
     dst = cv2.addWeighted(res, 1, res2, 1, 0)   # 图片组合
+    # cv2.imwrite("test_boss_check_3.png", dst)
 
     gay_img = cv2.cvtColor(dst, cv2.COLOR_BGRA2GRAY)
 
@@ -182,6 +185,6 @@ def get_dark_brown_lines(img, minRad = 10, maxRad = 110):
     #     x2 = int(x0 - 1000*(-b))
     #     y2 = int(y0 - 1000*(a))
     #     cv2.line(img,(x1,y1),(x2,y2),(0,0,255),2)
-    # cv2.imwrite("gar_img111.png", img)
+    # cv2.imwrite("test_boss_check_6.png", img)
 
     return lines
