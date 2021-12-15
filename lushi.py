@@ -123,7 +123,7 @@ class Agent:
         try:
             icon = getattr(self, prefix)[name]
         except:
-            return False, None, None
+            return False, None, None, None
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
         loc = X, Y
         return success, loc, rect, screen
@@ -578,7 +578,7 @@ class Agent:
                 # if self.basic.boss_id != 0:
                 time.sleep(1)
                 # 通关策略
-                if self.basic.ma_decision == "vistor_first" :
+                if self.map_decision == "visitor_first" :
                     surprise_loc = self.scan_surprise_loc(rect)
                     self.surprise_relative_loc = surprise_loc
                 else :
@@ -620,7 +620,7 @@ class Agent:
                             pyautogui.scroll(60)
                 
                 if circles is not None and 0 < len(circles):
-                    if self.map_decision == "vistor_first" :
+                    if self.map_decision == "visitor_first" :
                         loc = self.surprise_relative_loc
                         min_loc = None
                         if None != loc and 0 < len(loc) :
