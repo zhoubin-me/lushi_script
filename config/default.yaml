@@ -56,6 +56,6 @@ ui_lang: chs
 battle_stratege: normal # 普通关卡战斗策略， normal 就是之前的版本。 max_dmg: 是不考虑自身生存，尽可能输出最大。 kill_min: 先集火低低生命值的敌人； kill_big: 先集火生命值最大的人。
 boss_battle_stratege: kill_big # 打boss 时的攻击策略
 lettuce_role_limit: 2 # 同色敌人规避阈值， 当敌方同色数大于该值时，会调整上场的英雄的顺序，来规避颜色暴击
-stop_at_boss: true # 在攻击boss关卡前停下，等待人工介入boss战斗
+stop_at_boss: false # 在攻击boss关卡前停下，等待人工介入boss战斗
 map_decision: visitor_first # 地区抉择策略： visitor_first - 直指神秘人； fast_pass - 快速通关，优先选战斗非战斗关卡（局部最优）
 
