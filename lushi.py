@@ -583,6 +583,7 @@ class Agent:
                 # if self.basic.boss_id != 0:
                 time.sleep(1)
                 # 通关策略
+                surprise_loc = None
                 if self.map_decision == "visitor_first" :
                     surprise_loc = self.scan_surprise_loc(rect)
                     self.surprise_relative_loc = surprise_loc
