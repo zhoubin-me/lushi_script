@@ -6,6 +6,8 @@ location:
   skills: [ 653, 801, 963, 450 ] # [first_x, mid_x, last_x, y]
   # enemy battle field locations
   enemies: [ 680, 810, 940, 285 ] # [first_x, mid_x, last_x, y]
+  # skill choice skill loc map, left skill x, middle x, right x, and y
+  choice_skills: [593, 806, 1030, 540]
 
   # boss list locations
   boss: [ 405, 696, 916, 350, 667 ] # [first_x, mid_x, last_x, upper_y, lower_y]

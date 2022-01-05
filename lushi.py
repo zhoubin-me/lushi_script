@@ -54,6 +54,7 @@ class Agent:
         self.battle_stratege = "normal"
         self.boss_battle_stratege = "normal"
         self.stop_at_boss = False
+        self.choice_skill_index = 2 # 抉择技能选择第三个，也能覆盖2选一抉择
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -292,11 +293,14 @@ class Agent:
 
             pyautogui.click(h.pos)
             card_id = h.card_id[:-3]
+            att_skill_id = 0
             if card_id not in standby_heros:
                 other_skill_id = 0 # 非预期角色的技能干预
                 if True == battle_boss : 
-                    if card_id == "LETL_848H6" or card_id == "LETL_84":
-                        other_skill_id = 2
+                    if card_id == "LETL_848H6" or card_id == "LETL_84": # npc 瓦莉拉
+                        att_skill_id = other_skill_id = 2
+                if card_id.startswith("LETL_024P2_"): # 尤多拉 炮台
+                    att_skill_id = other_skill_id = 2
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
@@ -305,25 +309,26 @@ class Agent:
                     skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
                     if skill_cooldown_round == 0:
                         skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+                        att_skill_id = skill_id
                         break
             pyautogui.click(skill_loc)
-            print(f"debug {strategy},  id {hero_i}")
+            pyautogui.click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index], self.locs.choice_skills[-1])))
             enemy_id = strategy[hero_i]
+            print(f"debug hero_id {hero_i} card_id {card_id} attack enemy {enemy_id} by skill {att_skill_id} use strategy {strategy}")
             pyautogui.click(game.enemy_hero[enemy_id].pos)
             pyautogui.click(tuple_add(rect, self.locs.empty))
 
     # risk_num  颜色克制的敌人回避数量阈值，大于该数值则需要调整上场英雄
     def select_members(self, risk_num = 2, battle_boss = False):
-        logger.info(f"Start select members, battle_boss ? {battle_boss}")
+        logger.info(f"Start select members, battle_boss ? {battle_boss} start battle enemy")
         game = self.log_util.parse_game()
         rect, screen = find_lushi_window(self.title, to_gray=False)
         del screen
-        print("start battle enemy: ")
         enemy_blue_count = 0
         enemy_green_count = 0
         enemy_red_count = 0
         for hero in game.enemy_hero:
-            print(hero)
+            logger.info(f"enemy is car_id {hero.card_id}, hp {hero.max_health}, atk {hero.atk}, color {hero.lettuce_role}, entity_id {hero.entity_id}")
             if hero.get_lettuce_role() == 1:
                 enemy_blue_count += 1
             elif hero.get_lettuce_role() == 2:
@@ -578,6 +583,7 @@ class Agent:
                 # if self.basic.boss_id != 0:
                 time.sleep(1)
                 # 通关策略
+                surprise_loc = None
                 if self.map_decision == "visitor_first" :
                     surprise_loc = self.scan_surprise_loc(rect)
                     self.surprise_relative_loc = surprise_loc
