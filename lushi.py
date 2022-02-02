@@ -54,7 +54,7 @@ class Agent:
         self.battle_stratege = "normal"
         self.boss_battle_stratege = "normal"
         self.stop_at_boss = False
-        self.choice_skill_index = 2 # 抉择技能选择第三个，也能覆盖2选一抉择
+        self.choice_skill_index = 0 # 抉择技能选择第1个，也能覆盖2选一抉择
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
