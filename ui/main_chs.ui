@@ -6,20 +6,26 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>762</width>
-    <height>707</height>
+    <width>621</width>
+    <height>581</height>
    </rect>
   </property>
   <property name="sizePolicy">
-   <sizepolicy hsizetype="Preferred" vsizetype="Expanding">
+   <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
     <horstretch>0</horstretch>
     <verstretch>0</verstretch>
    </sizepolicy>
   </property>
   <property name="minimumSize">
    <size>
-    <width>580</width>
-    <height>456</height>
+    <width>621</width>
+    <height>581</height>
+   </size>
+  </property>
+  <property name="maximumSize">
+   <size>
+    <width>9999</width>
+    <height>9999</height>
    </size>
   </property>
   <property name="windowTitle">
@@ -32,1275 +38,1222 @@
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
-   <layout class="QGridLayout" name="gridLayout_4">
-    <item row="0" column="0">
-     <layout class="QGridLayout" name="gridLayout_3">
-      <property name="leftMargin">
-       <number>15</number>
-      </property>
-      <property name="topMargin">
-       <number>5</number>
-      </property>
-      <property name="rightMargin">
-       <number>15</number>
-      </property>
-      <property name="bottomMargin">
-       <number>5</number>
-      </property>
-      <item row="0" column="0">
-       <layout class="QGridLayout" name="gridLayout_2">
-        <item row="1" column="6">
-         <widget class="QToolButton" name="load_path2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+   <widget class="QWidget" name="layoutWidget">
+    <property name="geometry">
+     <rect>
+      <x>10</x>
+      <y>10</y>
+      <width>594</width>
+      <height>516</height>
+     </rect>
+    </property>
+    <layout class="QGridLayout" name="gridLayout_14">
+     <item row="0" column="0">
+      <layout class="QGridLayout" name="gridLayout_12">
+       <item row="0" column="0">
+        <widget class="QLabel" name="label">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>关卡选择序号</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QComboBox" name="boss_level">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <item>
           <property name="text">
-           <string>...</string>
+           <string>1</string>
           </property>
-         </widget>
-        </item>
-        <item row="4" column="1">
-         <widget class="QComboBox" name="lang">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="0">
-         <widget class="QLabel" name="label_2">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>队伍选择序号</string>
+           <string>2</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="0">
-         <widget class="QLabel" name="label_8">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>语言与分辨率</string>
+           <string>3</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="5">
-         <widget class="QCheckBox" name="auto_tasks">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>自动提交任务</string>
+           <string>4</string>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="1">
-         <widget class="QComboBox" name="reward">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>关卡选择序号</string>
+           <string>5</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="6">
-         <widget class="QCheckBox" name="screenshot_treasure">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>宝藏截图</string>
+           <string>6</string>
           </property>
-         </widget>
-        </item>
-        <item row="1" column="4" colspan="2">
-         <widget class="DropLineEdit" name="hs_path">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="boss_level">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <item>
-           <property name="text">
-            <string>1</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>2</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>3</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>4</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>5</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>6</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1-7</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1-8</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>1-9</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>7</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>8</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>9</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>10</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>11</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>12</string>
-           </property>
-          </item>
-          <item>
-           <property name="text">
-            <string>13</string>
-           </property>
-          </item>
-         </widget>
-        </item>
-        <item row="1" column="3">
-         <widget class="QLabel" name="label_5">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>炉石路径</string>
+           <string>1-7</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6">
-         <widget class="QToolButton" name="load_path">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>...</string>
+           <string>1-8</string>
           </property>
-         </widget>
-        </item>
-        <item row="4" column="5">
-         <widget class="QCheckBox" name="screenshot_visitor">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>神秘人截图</string>
+           <string>1-9</string>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label_4">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="minimumSize">
-           <size>
-            <width>90</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>战网路径</string>
+           <string>7</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="4">
-         <widget class="QCheckBox" name="early_stop">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>拿完惊喜提前结束</string>
+           <string>8</string>
           </property>
-         </widget>
-        </item>
-        <item row="0" column="4" colspan="2">
-         <widget class="DropLineEdit" name="bn_path">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="3">
-         <widget class="QCheckBox" name="screenshot_error">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>脚本出错截图</string>
+           <string>9</string>
           </property>
-          <property name="checked">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="1">
-         <widget class="QSpinBox" name="team_id">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI Light</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="minimum">
-           <number>1</number>
-          </property>
-          <property name="maximum">
-           <number>9</number>
-          </property>
-         </widget>
-        </item>
-        <item row="4" column="4">
-         <widget class="QCheckBox" name="screenshot_reward">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>BOSS奖励截图</string>
+           <string>10</string>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="3">
-         <widget class="QCheckBox" name="auto_restart">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>脚本宕机自动重启</string>
+           <string>11</string>
           </property>
-         </widget>
-        </item>
-        <item row="3" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>关卡奖励数量</string>
+           <string>12</string>
           </property>
-          <property name="alignment">
-           <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="3" column="6">
-         <widget class="QCheckBox" name="stop_at_boss">
-          <property name="sizePolicy">
-           <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-            <horstretch>0</horstretch>
-            <verstretch>0</verstretch>
-           </sizepolicy>
-          </property>
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-           </font>
-          </property>
+         </item>
+         <item>
           <property name="text">
-           <string>打boss前停下</string>
+           <string>13</string>
           </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-      <item row="1" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_3">
-        <property name="leftMargin">
-         <number>0</number>
-        </property>
-        <property name="topMargin">
-         <number>0</number>
-        </property>
-        <property name="rightMargin">
-         <number>0</number>
-        </property>
-        <property name="bottomMargin">
-         <number>0</number>
-        </property>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_8">
-          <property name="leftMargin">
-           <number>0</number>
-          </property>
-          <property name="topMargin">
-           <number>0</number>
-          </property>
-          <property name="rightMargin">
-           <number>0</number>
-          </property>
-          <property name="bottomMargin">
-           <number>0</number>
-          </property>
-          <item row="4" column="0">
-           <widget class="QLabel" name="label_14">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+         </item>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QLabel" name="label_4">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>90</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>战网路径</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="3">
+        <widget class="DropLineEdit" name="bn_path">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="4">
+        <widget class="QToolButton" name="load_path">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="0">
+        <widget class="QLabel" name="label_2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>队伍选择序号</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="1">
+        <widget class="QSpinBox" name="team_id">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="minimum">
+          <number>1</number>
+         </property>
+         <property name="maximum">
+          <number>9</number>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="2">
+        <widget class="QLabel" name="label_5">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="minimumSize">
+          <size>
+           <width>90</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>炉石路径</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="3">
+        <widget class="DropLineEdit" name="hs_path">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="1" column="4">
+        <widget class="QToolButton" name="load_path2">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>...</string>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="0">
+        <widget class="QLabel" name="label_3">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>关卡奖励数量</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="1">
+        <widget class="QComboBox" name="reward">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+       <item row="2" column="2" rowspan="2" colspan="3">
+        <layout class="QGridLayout" name="gridLayout_11">
+         <item row="0" column="0">
+          <widget class="QCheckBox" name="auto_restart">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>脚本宕机自动重启</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QCheckBox" name="early_stop">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>拿完惊喜提前结束</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="2">
+          <widget class="QCheckBox" name="auto_tasks">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>自动提交任务</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="3">
+          <widget class="QCheckBox" name="stop_at_boss">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>打boss前停下</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QCheckBox" name="screenshot_error">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>脚本出错截图</string>
+           </property>
+           <property name="checked">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QCheckBox" name="screenshot_reward">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>BOSS奖励截图</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="2">
+          <widget class="QCheckBox" name="screenshot_visitor">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>神秘人截图</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QCheckBox" name="screenshot_treasure">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+            </font>
+           </property>
+           <property name="text">
+            <string>宝藏截图</string>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="3" column="0">
+        <widget class="QLabel" name="label_8">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>语言与分辨率</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+         </property>
+        </widget>
+       </item>
+       <item row="3" column="1">
+        <widget class="QComboBox" name="lang">
+         <property name="sizePolicy">
+          <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+           <horstretch>0</horstretch>
+           <verstretch>0</verstretch>
+          </sizepolicy>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+     <item row="1" column="0">
+      <layout class="QGridLayout" name="gridLayout_10">
+       <item row="0" column="2">
+        <layout class="QGridLayout" name="gridLayout_8">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_15">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>战斗策略</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0">
+          <widget class="QLabel" name="label_10">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>战斗策略</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QComboBox" name="battle_stratege">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <item>
             <property name="text">
-             <string/>
+             <string>normal</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="1" column="0">
-           <widget class="QLabel" name="label_10">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+           </item>
+           <item>
             <property name="text">
-             <string>战斗策略</string>
+             <string>max_dmg</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_13">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+           </item>
+           <item>
             <property name="text">
-             <string>BOSS关卡战斗策略</string>
+             <string>kill_big</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_15">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+           </item>
+           <item>
             <property name="text">
-             <string>战斗策略</string>
+             <string>kill_min</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="0">
-           <widget class="QLabel" name="label_12">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="2" column="0">
+          <widget class="QLabel" name="label_13">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>BOSS关卡战斗策略</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="boss_battle_stratege">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <item>
             <property name="text">
-             <string>同色敌人规避阈值</string>
+             <string>normal</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="1">
-           <widget class="QComboBox" name="lettuce_role_limit">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <item>
-             <property name="text">
-              <string>0</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>1</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>2</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>3</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>4</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>5</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="2" column="1">
-           <widget class="QComboBox" name="boss_battle_stratege">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <item>
-             <property name="text">
-              <string>normal</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>max_dmg</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>kill_big</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>kill_min</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="1" column="1">
-           <widget class="QComboBox" name="battle_stratege">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <item>
-             <property name="text">
-              <string>normal</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>max_dmg</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>kill_big</string>
-             </property>
-            </item>
-            <item>
-             <property name="text">
-              <string>kill_min</string>
-             </property>
-            </item>
-           </widget>
-          </item>
-          <item row="6" column="0">
-           <widget class="QLabel" name="label_16">
-            <property name="sizePolicy">
-             <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
-              <horstretch>0</horstretch>
-              <verstretch>0</verstretch>
-             </sizepolicy>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
+           </item>
+           <item>
             <property name="text">
-             <string/>
+             <string>max_dmg</string>
             </property>
-            <property name="alignment">
-             <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </item>
+           <item>
+            <property name="text">
+             <string>kill_big</string>
             </property>
-           </widget>
+           </item>
+           <item>
+            <property name="text">
+             <string>kill_min</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+         <item row="3" column="0">
+          <widget class="QLabel" name="label_12">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>同色敌人规避阈值</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QComboBox" name="lettuce_role_limit">
+           <property name="sizePolicy">
+            <sizepolicy hsizetype="Expanding" vsizetype="Expanding">
+             <horstretch>0</horstretch>
+             <verstretch>0</verstretch>
+            </sizepolicy>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <item>
+            <property name="text">
+             <string>0</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>1</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>2</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>3</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>4</string>
+            </property>
+           </item>
+           <item>
+            <property name="text">
+             <string>5</string>
+            </property>
+           </item>
+          </widget>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1">
+        <widget class="QGroupBox" name="skill_order">
+         <property name="minimumSize">
+          <size>
+           <width>0</width>
+           <height>0</height>
+          </size>
+         </property>
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="title">
+          <string>技能释放顺序</string>
+         </property>
+         <property name="alignment">
+          <set>Qt::AlignCenter</set>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_4">
+          <item row="0" column="0">
+           <layout class="QGridLayout" name="gridLayout_3">
+            <item row="0" column="1">
+             <widget class="QRadioButton" name="r231">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>2, 3, 1</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="1">
+             <widget class="QRadioButton" name="r123">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>1, 2, 3</string>
+              </property>
+              <property name="checked">
+               <bool>true</bool>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="1">
+             <widget class="QRadioButton" name="r132">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>1, 3, 2</string>
+              </property>
+             </widget>
+            </item>
+            <item row="1" column="0">
+             <widget class="QRadioButton" name="r312">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>3, 1, 2</string>
+              </property>
+             </widget>
+            </item>
+            <item row="0" column="0">
+             <widget class="QRadioButton" name="r321">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>3, 2, 1</string>
+              </property>
+             </widget>
+            </item>
+            <item row="2" column="0">
+             <widget class="QRadioButton" name="r213">
+              <property name="font">
+               <font>
+                <family>Microsoft YaHei UI</family>
+                <pointsize>9</pointsize>
+               </font>
+              </property>
+              <property name="text">
+               <string>2, 1, 3</string>
+              </property>
+             </widget>
+            </item>
+           </layout>
           </item>
          </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout_6">
-          <item row="3" column="1">
-           <widget class="QPushButton" name="boss_goup">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>上移</string>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="2">
-           <widget class="QLabel" name="label_11">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>BOSS关卡英雄出场顺序</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="1">
-           <widget class="QPushButton" name="boss_godown">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>下移</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="1">
-           <widget class="QPushButton" name="boss_modify">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>修改</string>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" rowspan="5">
-           <widget class="QListView" name="boss_heros">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>120</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="0">
-           <widget class="QLabel" name="label_17">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>25</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>当前英雄技能顺序:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="10" column="1">
-           <widget class="QLabel" name="boss_current_order">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="3" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout">
-        <item>
-         <layout class="QVBoxLayout" name="verticalLayout_2">
-          <item>
-           <widget class="QLabel" name="label_7">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>下拉选择添加英雄</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="ExtendedComboBox" name="hero_list">
-            <property name="enabled">
-             <bool>true</bool>
-            </property>
-            <property name="maximumSize">
-             <size>
-              <width>5000</width>
-              <height>30</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="editable">
-             <bool>true</bool>
-            </property>
-           </widget>
-          </item>
-          <item>
-           <widget class="QGroupBox" name="skill_order">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>180</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="title">
-             <string>技能释放顺序</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-            <layout class="QVBoxLayout" name="verticalLayout">
-             <item>
-              <widget class="QRadioButton" name="r321">
-               <property name="font">
-                <font>
-                 <family>Microsoft YaHei UI</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>3, 2, 1</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="r312">
-               <property name="font">
-                <font>
-                 <family>Microsoft YaHei UI</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>3, 1, 2</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="r213">
-               <property name="font">
-                <font>
-                 <family>Microsoft YaHei UI</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>2, 1, 3</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="r231">
-               <property name="font">
-                <font>
-                 <family>Microsoft YaHei UI</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>2, 3, 1</string>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="r123">
-               <property name="font">
-                <font>
-                 <family>Microsoft YaHei UI</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>1, 2, 3</string>
-               </property>
-               <property name="checked">
-                <bool>true</bool>
-               </property>
-              </widget>
-             </item>
-             <item>
-              <widget class="QRadioButton" name="r132">
-               <property name="font">
-                <font>
-                 <family>Microsoft YaHei UI</family>
-                 <pointsize>9</pointsize>
-                </font>
-               </property>
-               <property name="text">
-                <string>1, 3, 2</string>
-               </property>
-              </widget>
-             </item>
-            </layout>
-           </widget>
-          </item>
-         </layout>
-        </item>
-        <item>
-         <layout class="QGridLayout" name="gridLayout">
-          <item row="2" column="2">
-           <widget class="QPushButton" name="add">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>添加</string>
-            </property>
-           </widget>
-          </item>
-          <item row="4" column="2">
-           <widget class="QPushButton" name="goup">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>上移</string>
-            </property>
-           </widget>
-          </item>
-          <item row="3" column="2">
-           <widget class="QPushButton" name="empty">
-            <property name="text">
-             <string>...</string>
-            </property>
-           </widget>
-          </item>
-          <item row="6" column="2">
-           <widget class="QPushButton" name="del_1">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>删除</string>
-            </property>
-           </widget>
-          </item>
-          <item row="5" column="2">
-           <widget class="QPushButton" name="godown">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>下移</string>
-            </property>
-           </widget>
-          </item>
-          <item row="7" column="2">
-           <widget class="QPushButton" name="modify">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>修改</string>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="2">
-           <widget class="QLabel" name="current_order">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string/>
-            </property>
-           </widget>
-          </item>
-          <item row="8" column="0" colspan="2">
-           <widget class="QLabel" name="label_9">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>当前英雄技能顺序:</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-          <item row="2" column="0" rowspan="6" colspan="2">
-           <widget class="QListView" name="heros">
-            <property name="minimumSize">
-             <size>
-              <width>0</width>
-              <height>180</height>
-             </size>
-            </property>
-            <property name="font">
-             <font>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-           </widget>
-          </item>
-          <item row="0" column="0" colspan="3">
-           <widget class="QLabel" name="label_6">
-            <property name="font">
-             <font>
-              <family>Microsoft YaHei UI</family>
-              <pointsize>9</pointsize>
-             </font>
-            </property>
-            <property name="text">
-             <string>英雄出场顺序</string>
-            </property>
-            <property name="alignment">
-             <set>Qt::AlignCenter</set>
-            </property>
-           </widget>
-          </item>
-         </layout>
-        </item>
-       </layout>
-      </item>
-      <item row="4" column="0">
-       <layout class="QHBoxLayout" name="horizontalLayout_2">
-        <item>
-         <widget class="QPushButton" name="load">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>加载配置</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="save">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>保存配置</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="run">
-          <property name="font">
-           <font>
-            <family>Microsoft YaHei UI</family>
-            <pointsize>9</pointsize>
-           </font>
-          </property>
-          <property name="text">
-           <string>运行脚本</string>
-          </property>
-         </widget>
-        </item>
-       </layout>
-      </item>
-     </layout>
-    </item>
-   </layout>
+        </widget>
+       </item>
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_9">
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_7">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>下拉选择添加英雄</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="ExtendedComboBox" name="hero_list">
+           <property name="enabled">
+            <bool>true</bool>
+           </property>
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>5000</width>
+             <height>30</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="editable">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="2" column="0">
+      <layout class="QGridLayout" name="gridLayout_7">
+       <item row="0" column="0">
+        <layout class="QGridLayout" name="gridLayout_6">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_6">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>英雄出场顺序</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" rowspan="5">
+          <widget class="QListView" name="heros">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>120</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="add">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>添加</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="goup">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>上移</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QPushButton" name="godown">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>下移</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="1">
+          <widget class="QPushButton" name="del_1">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>删除</string>
+           </property>
+          </widget>
+         </item>
+         <item row="5" column="1">
+          <widget class="QPushButton" name="modify">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>修改</string>
+           </property>
+          </widget>
+         </item>
+         <item row="6" column="0" colspan="2">
+          <layout class="QGridLayout" name="gridLayout_2">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_9">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei UI</family>
+               <pointsize>9</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>当前英雄技能顺序:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="current_order">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei UI</family>
+               <pointsize>9</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+       <item row="0" column="1">
+        <layout class="QGridLayout" name="gridLayout_5">
+         <item row="0" column="0" colspan="2">
+          <widget class="QLabel" name="label_11">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>25</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>BOSS关卡英雄出场顺序</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="0" rowspan="3">
+          <widget class="QListView" name="boss_heros">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>120</height>
+            </size>
+           </property>
+           <property name="font">
+            <font>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="1">
+          <widget class="QPushButton" name="boss_goup">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>上移</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QPushButton" name="boss_godown">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>下移</string>
+           </property>
+          </widget>
+         </item>
+         <item row="3" column="1">
+          <widget class="QPushButton" name="boss_modify">
+           <property name="font">
+            <font>
+             <family>Microsoft YaHei UI</family>
+             <pointsize>9</pointsize>
+            </font>
+           </property>
+           <property name="text">
+            <string>修改</string>
+           </property>
+          </widget>
+         </item>
+         <item row="4" column="0" colspan="2">
+          <layout class="QGridLayout" name="gridLayout">
+           <item row="0" column="0">
+            <widget class="QLabel" name="label_17">
+             <property name="minimumSize">
+              <size>
+               <width>0</width>
+               <height>25</height>
+              </size>
+             </property>
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei UI</family>
+               <pointsize>9</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string>当前英雄技能顺序:</string>
+             </property>
+             <property name="alignment">
+              <set>Qt::AlignCenter</set>
+             </property>
+            </widget>
+           </item>
+           <item row="0" column="1">
+            <widget class="QLabel" name="boss_current_order">
+             <property name="font">
+              <font>
+               <family>Microsoft YaHei UI</family>
+               <pointsize>9</pointsize>
+              </font>
+             </property>
+             <property name="text">
+              <string/>
+             </property>
+            </widget>
+           </item>
+          </layout>
+         </item>
+        </layout>
+       </item>
+      </layout>
+     </item>
+     <item row="3" column="0">
+      <layout class="QGridLayout" name="gridLayout_13">
+       <item row="0" column="0">
+        <widget class="QPushButton" name="load">
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>加载配置</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="1">
+        <widget class="QPushButton" name="save">
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>保存配置</string>
+         </property>
+        </widget>
+       </item>
+       <item row="0" column="2">
+        <widget class="QPushButton" name="run">
+         <property name="font">
+          <font>
+           <family>Microsoft YaHei UI</family>
+           <pointsize>9</pointsize>
+          </font>
+         </property>
+         <property name="text">
+          <string>运行脚本</string>
+         </property>
+        </widget>
+       </item>
+      </layout>
+     </item>
+    </layout>
+   </widget>
   </widget>
   <widget class="QMenuBar" name="menubar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>762</width>
-     <height>26</height>
+     <width>621</width>
+     <height>22</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuLanguage">
