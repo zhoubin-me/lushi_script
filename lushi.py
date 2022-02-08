@@ -844,7 +844,8 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
                 if self.basic.screenshot_error:
-                    screenshot(self.title, 'restart')
+                    screenshot(self.title, 'restart_block')
+                    restart_game(self.lang, self.basic.bn_path)
                 if state == 'not_ready_dots' or state == 'member_not_ready' or state == 'member_not_ready2':
                     pyautogui.rightClick(tuple_add(rect, self.locs.empty))
                     pyautogui.click(tuple_add(rect, self.locs.options))
@@ -854,6 +855,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
                 else:
+                    screenshot(self.title, 'restart_unkown')
                     restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
