@@ -54,7 +54,7 @@ class Agent:
         self.battle_stratege = "normal"
         self.boss_battle_stratege = "normal"
         self.stop_at_boss = False
-        self.choice_skill_index = 0 # 抉择技能选择第1个，也能覆盖2选一抉择
+        self.choice_skill_index = 2 # 抉择技能选择第1个，也能覆盖2选一抉择
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -301,6 +301,8 @@ class Agent:
                         att_skill_id = other_skill_id = 2
                 if card_id.startswith("LETL_024P2_"): # 尤多拉 炮台
                     att_skill_id = other_skill_id = 2
+                if card_id.startswith("LT22_002E3_"): # 巴琳达的火元素
+                    att_skill_id = other_skill_id = 1
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
@@ -733,7 +735,9 @@ class Agent:
                 self.start_battle(rect, battle_boss)
 
             if state == 'battle_ready':
-                logger.info(f'find {state}, try to click')
+                wait_time = 1 # 休眠1s
+                logger.info(f'find {state}, try to click，and sleep {wait_time} second')
+                time.sleep(wait_time)
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
@@ -844,7 +848,8 @@ class Agent:
             pyautogui.click(tuple_add(rect, self.locs.empty))
             if time.time() - tic > self.basic.longest_waiting:
                 if self.basic.screenshot_error:
-                    screenshot(self.title, 'restart')
+                    screenshot(self.title, 'restart_block')
+                    restart_game(self.lang, self.basic.bn_path)
                 if state == 'not_ready_dots' or state == 'member_not_ready' or state == 'member_not_ready2':
                     pyautogui.rightClick(tuple_add(rect, self.locs.empty))
                     pyautogui.click(tuple_add(rect, self.locs.options))
@@ -854,6 +859,7 @@ class Agent:
                     pyautogui.click(tuple_add(rect, self.locs.give_up))
                     pyautogui.click(tuple_add(rect, self.locs.give_up_cfm))
                 else:
+                    screenshot(self.title, 'restart_unkown')
                     restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:

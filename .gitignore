@@ -132,3 +132,8 @@ dmypy.json
 
 # Pyre type checker
 .pyre/
+
+# static file
+resource/imgs_eng_1024x768/heros_whitelist/*
+resource/imgs_eng_1024x768/heros_blacklist/*
+config/*
