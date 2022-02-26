@@ -54,7 +54,8 @@ class Agent:
         self.battle_stratege = "normal"
         self.boss_battle_stratege = "normal"
         self.stop_at_boss = False
-        self.choice_skill_index = 2 # 抉择技能选择第1个，也能覆盖2选一抉择
+        self.choice_skill_index = 0 # 抉择技能选择第1个
+        self.battle_time_wait = 1
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
@@ -104,6 +105,12 @@ class Agent:
         self.map_decision = self.basic.map_decision
         if self.map_decision is None or self.map_decision == '' :
             self.map_decision = 'visitor_first'
+        self.battle_time_wait = self.basic.battle_time_wait # 战斗休眠时间
+        if self.battle_time_wait is None or self.battle_time_wait == '' :
+            self.battle_time_wait = 1
+        self.choice_skill_index = self.basic.choice_skill_index # 技能抉择
+        if self.choice_skill_index is None or self.choice_skill_index == '' :
+            self.choice_skill_index = 0
         pyautogui.PAUSE = self.basic.delay
 
     def check_in_screen(self, name, prefix='icons'):
@@ -735,9 +742,8 @@ class Agent:
                 self.start_battle(rect, battle_boss)
 
             if state == 'battle_ready':
-                wait_time = 1 # 休眠1s
-                logger.info(f'find {state}, try to click，and sleep {wait_time} second')
-                time.sleep(wait_time)
+                logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
+                time.sleep(self.battle_time_wait)
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace']:
@@ -863,7 +869,7 @@ class Agent:
                     restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
             else:
-                logger.info(f"Last state {state}, time taken: {time.time() - tic}")
+                logger.info("Last state %s, time taken: %.2f", state, time.time() - tic)
 
             for state_text in self.states:
                 success, tic, state, rect = self.state_handler(state, tic, state_text)

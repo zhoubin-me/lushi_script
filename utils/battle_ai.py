@@ -40,7 +40,7 @@ class BattleAi:
         enemy_max_health = max(enemy_health) if len(enemy_health) > 0 else 0
         enemy_health = sum(enemy_health) if len(enemy_health) > 0 else 0
         if skip_our_health == True :
-            score = - (enemy_max_health + enemy_health) * enemy_cnt
+            score = - (enemy_max_health + enemy_health) * len(enemy_list) # 这里不考虑干死
             return score
         else :
             score =  my_cnt * (my_min_health + my_sum_health) - (enemy_max_health + enemy_health) * enemy_cnt

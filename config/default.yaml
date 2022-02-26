@@ -58,4 +58,6 @@ boss_battle_stratege: kill_big # 打boss 时的攻击策略
 lettuce_role_limit: 2 # 同色敌人规避阈值， 当敌方同色数大于该值时，会调整上场的英雄的顺序，来规避颜色暴击
 stop_at_boss: false # 在攻击boss关卡前停下，等待人工介入boss战斗
 map_decision: visitor_first # 地区抉择策略： visitor_first - 直指神秘人； fast_pass - 快速通关，优先选战斗非战斗关卡（局部最优）
+battle_time_wait: 1 # 战斗时休眠 x 秒
+choice_skill_index: 0 # 抉择技能选择第1个，2选1可填[0,2], 三选1可填[0,1,2]
 
