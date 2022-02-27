@@ -47,6 +47,60 @@ class BattleAi:
             return score
 
     @staticmethod
+    def analyze_max_dmg(my_list, enemy_list):
+        """
+        打出暴击，尽量打同一个。集火速度慢的，慢速基本是大招。
+        同色队列，先打优先级队列里的。最后打低优先级的。
+        """
+        last_enemy_list = [""]
+        first_enemy_list = [
+            "LETLT_117_01"  # 冰冻猛犸象
+        ]
+        attatch_sequnce = []
+        lettuce_enemy_map = {3: [], 1: [], 2: [], "all": []}
+
+        i = -1
+        for v in enemy_list:
+            i += 1
+            if v.card_id in first_enemy_list :
+                lettuce_enemy_map[v.lettuce_role].insert(0, i)
+                lettuce_enemy_map["all"].insert(0, i)
+                continue
+            elif v.card_id in last_enemy_list :
+                continue
+            
+            lettuce_enemy_map[v.lettuce_role].append(i)
+            lettuce_enemy_map["all"].append(i)
+        
+        # 最后的加进来
+        i = 0
+        for v in enemy_list:
+            if v.card_id in last_enemy_list :
+                lettuce_enemy_map[v.lettuce_role].append(i)
+                lettuce_enemy_map["all"].append(i)
+            
+            i += 1
+
+        for v in my_list:
+            if 1 == v.lettuce_role:
+                if 0 < len(lettuce_enemy_map[3]):
+                    attatch_sequnce.append(lettuce_enemy_map[3][0])
+                else :
+                    attatch_sequnce.append(lettuce_enemy_map["all"][0])
+            elif 2 == v.lettuce_role:
+                if  0 < len(lettuce_enemy_map[1]):
+                    attatch_sequnce.append(lettuce_enemy_map[1][0])
+                else:
+                    attatch_sequnce.append(lettuce_enemy_map["all"][0])
+            elif 3 == v.lettuce_role:
+                if 0 < len(lettuce_enemy_map[2]):
+                    attatch_sequnce.append(lettuce_enemy_map[2][0])
+                else:
+                    attatch_sequnce.append(lettuce_enemy_map["all"][0])
+
+        return attatch_sequnce
+
+    @staticmethod
     def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity], stratege_intervene = "normal"):
         if "kill_big" == stratege_intervene : # 先干最大的
             boss_id = -1
@@ -68,6 +122,10 @@ class BattleAi:
                     min_health = e_hero.get_max_health()
                 i += 1
             return [suite_id, suite_id, suite_id, suite_id, suite_id, suite_id]
+        elif "max_dmg" == stratege_intervene:
+            re = BattleAi.analyze_max_dmg(my_hero, enemy_hero)
+            print(f"battle strateg max_dmg: {re}")
+            return re
         else : # normal, max_dmg
             optimal_strategy = ((-1 << 25), [1, 1, 1])
             for idx in list(itertools.product(range(len(enemy_hero)), repeat=len(my_hero))):
