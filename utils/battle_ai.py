@@ -52,12 +52,15 @@ class BattleAi:
         打出暴击，尽量打同一个。集火速度慢的，慢速基本是大招。
         同色队列，先打优先级队列里的。最后打低优先级的。
         """
-        last_enemy_list = [""]
+        last_enemy_list = [
+            "LETLT_108_01" # 冰血要塞
+            ]
         first_enemy_list = [
             "LETLT_117_01"  # 冰冻猛犸象
+            "LETLT_100_01"  # 双倍攻击剑圣
         ]
         attatch_sequnce = []
-        lettuce_enemy_map = {3: [], 1: [], 2: [], "all": []}
+        lettuce_enemy_map = {3: [], 1: [], 2: [], 4: [], 0: [], "all": []}
 
         i = -1
         for v in enemy_list:
@@ -80,6 +83,8 @@ class BattleAi:
                 lettuce_enemy_map["all"].append(i)
             
             i += 1
+        # 去重复
+        lettuce_enemy_map["all"] = list(dict.fromkeys(lettuce_enemy_map["all"]))
 
         for v in my_list:
             if 1 == v.lettuce_role:
@@ -97,6 +102,8 @@ class BattleAi:
                     attatch_sequnce.append(lettuce_enemy_map[2][0])
                 else:
                     attatch_sequnce.append(lettuce_enemy_map["all"][0])
+            else:
+                attatch_sequnce.append(lettuce_enemy_map["all"][0])
 
         return attatch_sequnce
 
