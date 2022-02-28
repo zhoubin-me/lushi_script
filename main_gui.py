@@ -17,7 +17,7 @@ from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.ui import ExtendedComboBox
-from utils.util import HEROS, BOSS_ID_MAP, get_hero_color_by_id 
+from utils.util import HEROS, BOSS_ID_MAP, get_hero_color_by_id
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -82,6 +82,8 @@ class Ui(QMainWindow):
         self.battle_stratege_dropdown = self.findChild(QComboBox, 'battle_stratege')
         self.boss_battle_stratege_dropdown = self.findChild(QComboBox, 'boss_battle_stratege')
         self.lettuce_role_limit_dropdown = self.findChild(QComboBox, 'lettuce_role_limit')
+        self.fix_x = self.findChild(QSpinBox, 'fix_x')
+        self.fix_y = self.findChild(QSpinBox, 'fix_y')
 
         self.save = self.findChild(QPushButton, 'save')  # Find the button
         self.save.clicked.connect(self.saveButtonPressed)  # Click event
@@ -184,6 +186,15 @@ class Ui(QMainWindow):
         if len(str_list) > 0:
             self.slm.setStringList(str_list)
 
+        boss_hero_ordered = {k_: v_ for k_, v_ in sorted(self.boss_hero_info.items(), key=lambda item: item[1][-1])}
+        str_list = []
+        for k, v in boss_hero_ordered.items():
+            if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) > 0:
+                self.boss_hero_info[k] = [v[1], v[0], v[2], v[3]]
+                str_list.append(v[1])
+        if len(str_list) > 0:
+            self.boss_slm.setStringList(str_list)
+
         self.hero_dropdown.clear()
         heroes_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
         for k, v in heroes_sorted.items():
@@ -209,7 +220,6 @@ class Ui(QMainWindow):
         self.hero_dropdown.clear()
         heroes_sorted = {k: v[0] for k, v in sorted(
             HEROS.items(), key=lambda item: pinyin.get(item[1][0], format="strip", delimiter=""))}
-
 
         for k, v in heroes_sorted.items():
             self.hero_dropdown.addItem(v)
@@ -267,8 +277,9 @@ class Ui(QMainWindow):
     def upBossButtonPressed(self):
         str_list = self.boss_slm.stringList()
         if 1 <= self.boss_hero_index < len(str_list):
-            str_list[self.boss_hero_index], str_list[self.boss_hero_index - 1] = str_list[self.boss_hero_index - 1], str_list[
-                self.boss_hero_index]
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index - 1] = str_list[self.boss_hero_index - 1], \
+                                                                                 str_list[
+                                                                                     self.boss_hero_index]
             self.boss_slm.setStringList(str_list)
 
     def downButtonPressed(self):
@@ -281,8 +292,9 @@ class Ui(QMainWindow):
     def downBossButtonPressed(self):
         str_list = self.boss_slm.stringList()
         if 0 <= self.boss_hero_index < len(str_list) - 1:
-            str_list[self.boss_hero_index], str_list[self.boss_hero_index + 1] = str_list[self.boss_hero_index + 1], str_list[
-                self.boss_hero_index]
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index + 1] = str_list[self.boss_hero_index + 1], \
+                                                                                 str_list[
+                                                                                     self.boss_hero_index]
             self.boss_slm.setStringList(str_list)
 
     def delButtonPressed(self):
@@ -293,16 +305,16 @@ class Ui(QMainWindow):
             i = 0
             for v in b_hero_str_list:
                 if v == name:
-                   b_hero_str_list.pop(i)
-                   break
-                i += 1 
+                    b_hero_str_list.pop(i)
+                    break
+                i += 1
             self.slm.setStringList(str_list)
             self.boss_slm.setStringList(b_hero_str_list)
             for k, v in self.hero_info.items():
                 if v[0] == name:
                     del self.hero_info[k]
                     break
-            
+
             for k, v in self.boss_hero_info.items():
                 if v[0] == name:
                     del self.boss_hero_info[k]
@@ -411,7 +423,10 @@ class Ui(QMainWindow):
                     self.boss_hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.boss_slm.setStringList(str_list)
-
+            if k == 'fix_x':
+                self.fix_x.setValue(v)
+            if k == 'fix_y':
+                self.fix_y.setValue(v)
 
     def save_config(self):
         self.config['boss_id'] = self.boss_id.currentText()
@@ -436,6 +451,9 @@ class Ui(QMainWindow):
         self.config['confidence'] = 0.8
         self.config['longest_waiting'] = 80
         self.config['ui_lang'] = self.ui_lang
+        self.config['fix_x'] = self.fix_x.value()
+        self.config['fix_y'] = self.fix_y.value()
+
         new_hero_info = {}
         hero_order_list = self.slm.stringList()
         for k, v in self.hero_info.items():
@@ -570,6 +588,16 @@ class Ui(QMainWindow):
         self.screenshot_visitor.setText(_translate("MainWindow", "神秘人截图"))
         self.screenshot_treasure.setText(_translate("MainWindow", "宝藏截图"))
         self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
+        self.fix_rect.setTitle(_translate("MainWindow", "偏移修复"))
+        self.label_14.setText(_translate("MainWindow", "x"))
+        self.label_16.setText(_translate("MainWindow", "y"))
+        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
+        self.r231.setText(_translate("MainWindow", "2, 3, 1"))
+        self.r123.setText(_translate("MainWindow", "1, 2, 3"))
+        self.r132.setText(_translate("MainWindow", "1, 3, 2"))
+        self.r312.setText(_translate("MainWindow", "3, 1, 2"))
+        self.r321.setText(_translate("MainWindow", "3, 2, 1"))
+        self.r213.setText(_translate("MainWindow", "2, 1, 3"))
         self.label_15.setText(_translate("MainWindow", "战斗策略"))
         self.label_10.setText(_translate("MainWindow", "战斗策略"))
         self.battle_stratege.setItemText(0, _translate("MainWindow", "normal"))
@@ -588,13 +616,6 @@ class Ui(QMainWindow):
         self.lettuce_role_limit.setItemText(3, _translate("MainWindow", "3"))
         self.lettuce_role_limit.setItemText(4, _translate("MainWindow", "4"))
         self.lettuce_role_limit.setItemText(5, _translate("MainWindow", "5"))
-        self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
-        self.r231.setText(_translate("MainWindow", "2, 3, 1"))
-        self.r123.setText(_translate("MainWindow", "1, 2, 3"))
-        self.r132.setText(_translate("MainWindow", "1, 3, 2"))
-        self.r312.setText(_translate("MainWindow", "3, 1, 2"))
-        self.r321.setText(_translate("MainWindow", "3, 2, 1"))
-        self.r213.setText(_translate("MainWindow", "2, 1, 3"))
         self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
         self.label_6.setText(_translate("MainWindow", "英雄出场顺序"))
         self.add.setText(_translate("MainWindow", "添加"))
