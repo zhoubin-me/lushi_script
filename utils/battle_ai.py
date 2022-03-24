@@ -114,7 +114,6 @@ class BattleAi:
     @staticmethod
     def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity], stratege_intervene = "normal"):
         # 先判断，有没有可攻击的，隐身，免疫
-        
         if "kill_big" == stratege_intervene : # 先干最大的
             boss_id = -1
             max_health = 0
