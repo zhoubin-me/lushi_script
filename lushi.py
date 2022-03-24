@@ -289,6 +289,7 @@ class Agent:
             game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege) # [0,1,1]
+        # 检查策略是否为空，为空说明不可选择，直接跳过
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
         standby_heros = self.heros
@@ -310,16 +311,26 @@ class Agent:
                     att_skill_id = other_skill_id = 2
                 if card_id.startswith("LT22_002E3_"): # 巴琳达的火元素
                     att_skill_id = other_skill_id = 1
+                if card_id.startswith("LETL_823H3"): # 小鬼魔仆
+                    att_skill_id = other_skill_id = 1
+                if card_id.startswith("LETL_861H3"): # 0/500 石槌战旗
+                    att_skill_id = other_skill_id = 1
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
                 skill_seq = standby_heros[card_id][2]
+                # 需要考虑低等级佣兵，不够3个技能
                 for skill_id in skill_seq:
-                    skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
-                    if skill_cooldown_round == 0:
-                        skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
-                        att_skill_id = skill_id
-                        break
+                    print(f"type {type(h.spell)}")
+                    if skill_id < len(h.spell):
+ 
+                        skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
+                        if skill_cooldown_round == 0:
+                            skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+                            att_skill_id = skill_id
+                            break
+                    else:
+                        continue
             pyautogui.click(skill_loc)
             pyautogui.click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index], self.locs.choice_skills[-1])))
             enemy_id = strategy[hero_i]

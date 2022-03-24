@@ -54,10 +54,14 @@ class BattleAi:
         """
         last_enemy_list = [
             "LETLT_108_01" # 冰血要塞
+            "LETLT_077_01" # 技能重定向精灵龙
+            # 隐身的
+            # 免疫的
             ]
         first_enemy_list = [
             "LETLT_117_01"  # 冰冻猛犸象
             "LETLT_100_01"  # 双倍攻击剑圣
+            "LETLT_110_01"  # 雷矛防御者
         ]
         attatch_sequnce = []
         lettuce_enemy_map = {3: [], 1: [], 2: [], 4: [], 0: [], "all": []}
@@ -109,6 +113,8 @@ class BattleAi:
 
     @staticmethod
     def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity], stratege_intervene = "normal"):
+        # 先判断，有没有可攻击的，隐身，免疫
+        
         if "kill_big" == stratege_intervene : # 先干最大的
             boss_id = -1
             max_health = 0
