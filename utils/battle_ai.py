@@ -68,6 +68,8 @@ class BattleAi:
 
         i = -1
         for v in enemy_list:
+            if v.immune > 0 or v.stealth > 0 : # 免疫、隐身
+                continue
             i += 1
             if v.card_id in first_enemy_list :
                 lettuce_enemy_map[v.lettuce_role].insert(0, i)
@@ -82,6 +84,8 @@ class BattleAi:
         # 最后的加进来
         i = 0
         for v in enemy_list:
+            if v.immune > 0 or v.stealth > 0 : # 免疫、隐身
+                continue
             if v.card_id in last_enemy_list :
                 lettuce_enemy_map[v.lettuce_role].append(i)
                 lettuce_enemy_map["all"].append(i)
@@ -114,25 +118,37 @@ class BattleAi:
     @staticmethod
     def battle(my_hero: List[HeroEntity], enemy_hero: List[HeroEntity], stratege_intervene = "normal"):
         # 先判断，有没有可攻击的，隐身，免疫
+        attackable = 0
+        for e_hero in enemy_hero:
+            if e_hero.immune > 0 or e_hero.stealth > 0 : # 免疫、隐身
+                continue
+            else:
+                attackable += 1
+        if 1 > attackable : # 没得打空过
+            return []
         if "kill_big" == stratege_intervene : # 先干最大的
             boss_id = -1
             max_health = 0
-            i = 0
+            i = -1
             for e_hero in enemy_hero:
+                i += 1
+                if e_hero.immune > 0 or e_hero.stealth > 0 : # 免疫、隐身
+                    continue
                 if e_hero.get_max_health() > max_health:
                     boss_id  = i
                     max_health = e_hero.get_max_health()
-                i += 1
             return [boss_id, boss_id, boss_id, boss_id, boss_id, boss_id]
         elif "kill_min" == stratege_intervene : # 先干最小的
             suite_id = -1
             min_health = 10000
-            i = 0
+            i = -1
             for e_hero in enemy_hero:
+                i += 1
+                if e_hero.immune > 0 or e_hero.stealth > 0 : # 免疫、隐身
+                    continue
                 if e_hero.get_max_health() < min_health:
                     suite_id  = i
                     min_health = e_hero.get_max_health()
-                i += 1
             return [suite_id, suite_id, suite_id, suite_id, suite_id, suite_id]
         elif "max_dmg" == stratege_intervene:
             re = BattleAi.analyze_max_dmg(my_hero, enemy_hero)

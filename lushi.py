@@ -289,7 +289,10 @@ class Agent:
             game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
         strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege) # [0,1,1]
-        # 检查策略是否为空，为空说明不可选择，直接跳过
+        if 1 > len(strategy): 
+            # 检查策略是否为空，为空说明不可选择，直接跳过
+            pyautogui.click(tuple_add(rect, self.locs.start_battle))
+
         pyautogui.click(tuple_add(rect, self.locs.empty))
 
         standby_heros = self.heros
@@ -722,6 +725,8 @@ class Agent:
                         if 1 > len(circles) :
                             print(f"[{state}]  stop at boss")
                             time.sleep(30)
+                    else:
+                        pyautogui.click(tuple_add(rect, self.locs.start_game))
                 else:
                     pyautogui.click(tuple_add(rect, self.locs.start_game))
 
