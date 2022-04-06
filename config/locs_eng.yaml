@@ -21,7 +21,7 @@ location:
   # treasures locations
   treasures: [ 430, 650, 870, 390 ] # [first_x, mid_x, last_x, y]
   # treasure collection button
-  treasures_collect: [ 650, 650 ] # [x, y]
+  treasures_collect: [ 630, 690 ] # [x, y]
 
   # visitors locations
   visitors: [ 290, 510, 720, 345 ] # [first_x, mid_x, last_x, y]
@@ -88,9 +88,9 @@ location:
   coordinate_error: 90
   # hero's treasure location, [left_x, top_y, right_x, bottom_y]
   treasures_location:
-    0: [305, 200, 540, 540]
-    1: [520, 200, 750, 540]
-    2: [740, 200, 970, 540]
+    0: [290, 230, 490, 580]
+    1: [530, 230, 730, 580]
+    2: [770, 230, 960, 580]
   
   # visitor location, [left_x, top_y, right_x, bottom_y]
   visitors_location:
