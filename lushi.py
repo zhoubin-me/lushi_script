@@ -237,7 +237,7 @@ class Agent:
             logger.info('Start submit task...')
             # select Camp Fire
             pyautogui.click(tuple_add(rect, self.locs.campfire))
-            pyautogui.click(tuple_add(rect, self.locs.start_game))
+            # pyautogui.click(tuple_add(rect, self.locs.start_game)) # 新版本不需要点这一下了
             # check if a task finish
             time.sleep(1)
             _, img = find_lushi_window(self.title, to_gray=False, raw=True)
@@ -318,6 +318,8 @@ class Agent:
                     att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_861H3"): # 0/500 石槌战旗
                     att_skill_id = other_skill_id = 1
+                if card_id.startswith("LETL_866H2"): # 0/150 净化碎片
+                    att_skill_id = other_skill_id = 2
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
@@ -755,15 +757,20 @@ class Agent:
                     battle_boss = True
                     logger.info(f'[{state}] battle boss')
 
+                logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
+                time.sleep(self.battle_time_wait)
+
                 self.start_battle(rect, battle_boss)
 
             if state == 'battle_ready':
-                logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
-                time.sleep(self.battle_time_wait)
+                # logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
+                # time.sleep(self.battle_time_wait)
                 pyautogui.click(tuple_add(rect, self.locs.start_battle))
 
             if state in ['treasure_list', 'treasure_replace', 'treasure_list2']:
                 logger.info(f'find {state}, try to click')
+                if self.debug or self.basic.screenshot_treasure:
+                    screenshot(self.title, 'treasure[xx]')
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_treasure(screen)
 
@@ -773,8 +780,8 @@ class Agent:
 
                 pyautogui.click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
-                if self.debug or self.basic.screenshot_treasure:
-                    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
+                # if self.debug or self.basic.screenshot_treasure: # TODO remove
+                    # screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
                 pyautogui.click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
