@@ -250,7 +250,7 @@ class Agent:
         if self.basic.auto_tasks:
             logger.info('Start submit task...')
             # select Camp Fire
-            pyautogui.click(tuple_add(rect, self.locs.campfire))
+            self.new_click(tuple_add(rect, self.locs.campfire))
             # pyautogui.click(tuple_add(rect, self.locs.start_game)) # 新版本不需要点这一下了
             # check if a task finish
             time.sleep(1)
