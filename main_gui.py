@@ -17,7 +17,7 @@ from PyQt5.QtCore import QStringListModel
 from PyQt5.QtWidgets import *
 
 from utils.ui import ExtendedComboBox
-from utils.util import HEROS, BOSS_ID_MAP, get_hero_color_by_id 
+from utils.util import HEROS, BOSS_ID_MAP, get_hero_color_by_id
 
 if hasattr(QtCore.Qt, 'AA_EnableHighDpiScaling'):
     PyQt5.QtWidgets.QApplication.setAttribute(QtCore.Qt.AA_EnableHighDpiScaling, True)
@@ -82,6 +82,8 @@ class Ui(QMainWindow):
         self.battle_stratege_dropdown = self.findChild(QComboBox, 'battle_stratege')
         self.boss_battle_stratege_dropdown = self.findChild(QComboBox, 'boss_battle_stratege')
         self.lettuce_role_limit_dropdown = self.findChild(QComboBox, 'lettuce_role_limit')
+        self.fix_x = self.findChild(QSpinBox, 'fix_x')
+        self.fix_y = self.findChild(QSpinBox, 'fix_y')
 
         self.save = self.findChild(QPushButton, 'save')  # Find the button
         self.save.clicked.connect(self.saveButtonPressed)  # Click event
@@ -184,6 +186,15 @@ class Ui(QMainWindow):
         if len(str_list) > 0:
             self.slm.setStringList(str_list)
 
+        boss_hero_ordered = {k_: v_ for k_, v_ in sorted(self.boss_hero_info.items(), key=lambda item: item[1][-1])}
+        str_list = []
+        for k, v in boss_hero_ordered.items():
+            if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) > 0:
+                self.boss_hero_info[k] = [v[1], v[0], v[2], v[3]]
+                str_list.append(v[1])
+        if len(str_list) > 0:
+            self.boss_slm.setStringList(str_list)
+
         self.hero_dropdown.clear()
         heroes_sorted = {k: v[1] for k, v in sorted(HEROS.items(), key=lambda item: item[1][1])}
         for k, v in heroes_sorted.items():
@@ -266,8 +277,9 @@ class Ui(QMainWindow):
     def upBossButtonPressed(self):
         str_list = self.boss_slm.stringList()
         if 1 <= self.boss_hero_index < len(str_list):
-            str_list[self.boss_hero_index], str_list[self.boss_hero_index - 1] = str_list[self.boss_hero_index - 1], str_list[
-                self.boss_hero_index]
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index - 1] = str_list[self.boss_hero_index - 1], \
+                                                                                 str_list[
+                                                                                     self.boss_hero_index]
             self.boss_slm.setStringList(str_list)
 
     def downButtonPressed(self):
@@ -280,8 +292,9 @@ class Ui(QMainWindow):
     def downBossButtonPressed(self):
         str_list = self.boss_slm.stringList()
         if 0 <= self.boss_hero_index < len(str_list) - 1:
-            str_list[self.boss_hero_index], str_list[self.boss_hero_index + 1] = str_list[self.boss_hero_index + 1], str_list[
-                self.boss_hero_index]
+            str_list[self.boss_hero_index], str_list[self.boss_hero_index + 1] = str_list[self.boss_hero_index + 1], \
+                                                                                 str_list[
+                                                                                     self.boss_hero_index]
             self.boss_slm.setStringList(str_list)
 
     def delButtonPressed(self):
@@ -292,16 +305,16 @@ class Ui(QMainWindow):
             i = 0
             for v in b_hero_str_list:
                 if v == name:
-                   b_hero_str_list.pop(i)
-                   break
-                i += 1 
+                    b_hero_str_list.pop(i)
+                    break
+                i += 1
             self.slm.setStringList(str_list)
             self.boss_slm.setStringList(b_hero_str_list)
             for k, v in self.hero_info.items():
                 if v[0] == name:
                     del self.hero_info[k]
                     break
-            
+
             for k, v in self.boss_hero_info.items():
                 if v[0] == name:
                     del self.boss_hero_info[k]
@@ -410,7 +423,10 @@ class Ui(QMainWindow):
                     self.boss_hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.boss_slm.setStringList(str_list)
-
+            if k == 'fix_x':
+                self.fix_x.setValue(v)
+            if k == 'fix_y':
+                self.fix_y.setValue(v)
 
     def save_config(self):
         self.config['boss_id'] = self.boss_id.currentText()
@@ -435,6 +451,9 @@ class Ui(QMainWindow):
         self.config['confidence'] = 0.8
         self.config['longest_waiting'] = 80
         self.config['ui_lang'] = self.ui_lang
+        self.config['fix_x'] = self.fix_x.value()
+        self.config['fix_y'] = self.fix_y.value()
+
         new_hero_info = {}
         hero_order_list = self.slm.stringList()
         for k, v in self.hero_info.items():
@@ -536,40 +555,83 @@ class Ui(QMainWindow):
 
     def retranslateUi(self):  # generate from python -m PyQt5.uic.pyuic main_chs.ui -o main_chs_ui.py
         _translate = QtCore.QCoreApplication.translate
-        # MainWindow.setWindowTitle(_translate("MainWindow", "Hearthstone script (Ctrl+Q to stop)"))
-        self.load.setText(_translate("MainWindow", "加载配置"))
-        self.save.setText(_translate("MainWindow", "保存配置"))
-        self.run.setText(_translate("MainWindow", "运行脚本"))
-        self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
+        # MainWindow.setWindowTitle(_translate("MainWindow", "Q群：832946624(Ctrl+Q to stop)"))
+        self.label.setText(_translate("MainWindow", "关卡选择序号"))
+        self.boss_level.setItemText(0, _translate("MainWindow", "1"))
+        self.boss_level.setItemText(1, _translate("MainWindow", "2"))
+        self.boss_level.setItemText(2, _translate("MainWindow", "3"))
+        self.boss_level.setItemText(3, _translate("MainWindow", "4"))
+        self.boss_level.setItemText(4, _translate("MainWindow", "5"))
+        self.boss_level.setItemText(5, _translate("MainWindow", "6"))
+        self.boss_level.setItemText(6, _translate("MainWindow", "1-7"))
+        self.boss_level.setItemText(7, _translate("MainWindow", "1-8"))
+        self.boss_level.setItemText(8, _translate("MainWindow", "1-9"))
+        self.boss_level.setItemText(9, _translate("MainWindow", "7"))
+        self.boss_level.setItemText(10, _translate("MainWindow", "8"))
+        self.boss_level.setItemText(11, _translate("MainWindow", "9"))
+        self.boss_level.setItemText(12, _translate("MainWindow", "10"))
+        self.boss_level.setItemText(13, _translate("MainWindow", "11"))
+        self.boss_level.setItemText(14, _translate("MainWindow", "12"))
+        self.boss_level.setItemText(15, _translate("MainWindow", "13"))
+        self.label_4.setText(_translate("MainWindow", "战网路径"))
+        self.load_path.setText(_translate("MainWindow", "..."))
+        self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
+        self.label_5.setText(_translate("MainWindow", "炉石路径"))
+        self.load_path2.setText(_translate("MainWindow", "..."))
+        self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
+        self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
+        self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
+        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
+        self.stop_at_boss.setText(_translate("MainWindow", "打boss前停下"))
+        self.screenshot_error.setText(_translate("MainWindow", "脚本出错截图"))
+        self.screenshot_reward.setText(_translate("MainWindow", "BOSS奖励截图"))
+        self.screenshot_visitor.setText(_translate("MainWindow", "神秘人截图"))
+        self.screenshot_treasure.setText(_translate("MainWindow", "宝藏截图"))
+        self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
+        self.fix_rect.setTitle(_translate("MainWindow", "偏移修复"))
+        self.label_14.setText(_translate("MainWindow", "x"))
+        self.label_16.setText(_translate("MainWindow", "y"))
         self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
-        self.r321.setText(_translate("MainWindow", "3, 2, 1"))
-        self.r312.setText(_translate("MainWindow", "3, 1, 2"))
-        self.r213.setText(_translate("MainWindow", "2, 1, 3"))
         self.r231.setText(_translate("MainWindow", "2, 3, 1"))
         self.r123.setText(_translate("MainWindow", "1, 2, 3"))
         self.r132.setText(_translate("MainWindow", "1, 3, 2"))
+        self.r312.setText(_translate("MainWindow", "3, 1, 2"))
+        self.r321.setText(_translate("MainWindow", "3, 2, 1"))
+        self.r213.setText(_translate("MainWindow", "2, 1, 3"))
+        self.label_15.setText(_translate("MainWindow", "战斗策略"))
+        self.label_10.setText(_translate("MainWindow", "战斗策略"))
+        self.battle_stratege.setItemText(0, _translate("MainWindow", "normal"))
+        self.battle_stratege.setItemText(1, _translate("MainWindow", "max_dmg"))
+        self.battle_stratege.setItemText(2, _translate("MainWindow", "kill_big"))
+        self.battle_stratege.setItemText(3, _translate("MainWindow", "kill_min"))
+        self.label_13.setText(_translate("MainWindow", "BOSS关卡战斗策略"))
+        self.boss_battle_stratege.setItemText(0, _translate("MainWindow", "normal"))
+        self.boss_battle_stratege.setItemText(1, _translate("MainWindow", "max_dmg"))
+        self.boss_battle_stratege.setItemText(2, _translate("MainWindow", "kill_big"))
+        self.boss_battle_stratege.setItemText(3, _translate("MainWindow", "kill_min"))
+        self.label_12.setText(_translate("MainWindow", "同色敌人规避阈值"))
+        self.lettuce_role_limit.setItemText(0, _translate("MainWindow", "0"))
+        self.lettuce_role_limit.setItemText(1, _translate("MainWindow", "1"))
+        self.lettuce_role_limit.setItemText(2, _translate("MainWindow", "2"))
+        self.lettuce_role_limit.setItemText(3, _translate("MainWindow", "3"))
+        self.lettuce_role_limit.setItemText(4, _translate("MainWindow", "4"))
+        self.lettuce_role_limit.setItemText(5, _translate("MainWindow", "5"))
+        self.label_7.setText(_translate("MainWindow", "下拉选择添加英雄"))
+        self.label_6.setText(_translate("MainWindow", "英雄出场顺序"))
         self.add.setText(_translate("MainWindow", "添加"))
         self.goup.setText(_translate("MainWindow", "上移"))
-        self.label_6.setText(_translate("MainWindow", "英雄出场顺序"))
-        self.empty.setText(_translate("MainWindow", "..."))
-        self.del_1.setText(_translate("MainWindow", "删除"))
         self.godown.setText(_translate("MainWindow", "下移"))
+        self.del_1.setText(_translate("MainWindow", "删除"))
         self.modify.setText(_translate("MainWindow", "修改"))
         self.label_9.setText(_translate("MainWindow", "当前英雄技能顺序:"))
-        self.early_stop.setText(_translate("MainWindow", "拿完惊喜提前结束"))
-        self.label_5.setText(_translate("MainWindow", "炉石路径"))
-        self.load_path.setText(_translate("MainWindow", "..."))
-        self.label.setText(_translate("MainWindow", "关卡选择序号"))
-        self.auto_tasks.setText(_translate("MainWindow", "自动提交任务"))
-        # self.stop_at_boss.setText(_translate("MainWindow", "打BOSS前停下"))
-        self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
-        self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
-        self.auto_restart.setText(_translate("MainWindow", "脚本宕机自动重启"))
-        self.screenshot_reward.setText(_translate("MainWindow", "BOSS奖励截图"))
-        self.label_4.setText(_translate("MainWindow", "战网路径"))
-        self.screenshot_error.setText(_translate("MainWindow", "脚本出错截图"))
-        self.label_3.setText(_translate("MainWindow", "关卡奖励数量"))
-        self.load_path2.setText(_translate("MainWindow", "..."))
+        self.label_11.setText(_translate("MainWindow", "BOSS关卡英雄出场顺序"))
+        self.boss_goup.setText(_translate("MainWindow", "上移"))
+        self.boss_godown.setText(_translate("MainWindow", "下移"))
+        self.boss_modify.setText(_translate("MainWindow", "修改"))
+        self.label_17.setText(_translate("MainWindow", "当前英雄技能顺序:"))
+        self.load.setText(_translate("MainWindow", "加载配置"))
+        self.save.setText(_translate("MainWindow", "保存配置"))
+        self.run.setText(_translate("MainWindow", "运行脚本"))
         self.menuLanguage.setTitle(_translate("MainWindow", "Language"))
         self.actionEnglish.setText(_translate("MainWindow", "English"))
         self.actionChinese.setText(_translate("MainWindow", "Chinese"))
