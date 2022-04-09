@@ -26,7 +26,8 @@ class TestLushi(unittest.TestCase):
     def get_save_image(self, idx=0, to_gray=True):
         # 罗卡拉 英雄, 英雄列表， 宝藏列表， 香蕉英雄列表
         imageNames = ["reward_2021-11-15_05-23.png", "reward_2021-11-15_04-14.png", "reward_2021-11-15_20-28.png",
-                      "reward_2021-11-15_10-20.png", "treasure[0,1,2]_17-19.59,312.png", "treasure[0,1]_18-35.41,966.png"]
+                      "reward_2021-11-15_10-20.png", "treasure[0,1,2]_17-19.59,312.png", "treasure[0,1]_18-35.41,966.png",
+                      "treasure[xx]_09-54.35,566.png", "visitor_list_10-20.33,562.png"]
         imgPath = os.path.join(".", "resource", "imgs_eng_1024x768", "img", imageNames[idx])
         src = cv2.imread(imgPath)
         if to_gray:
@@ -51,12 +52,20 @@ class TestLushi(unittest.TestCase):
         config['screenshot_reward'] = True
         config['lang'] = 'EN-1024x768'
         config['treasure_blacklist'] = {}
-        config['lang'] = 'EN-1024x768'
+        # config['lang'] = 'EN-1024x768'
         config['reward_count_dropdown'] = 3
         config['hero'] = {}
         config['hs_path'] = 'C:/Program Files (x86)/Hearthstone/Hearthstone.exe'
         config['delay'] = 0.5
         config['confidence'] = 0.8
+        config['stop_at_boss'] = 0
+        config['fix_x'] = 0 
+        config['fix_y'] = 0
+        config['lettuce_role_limit'] = 4
+        config['map_decision'] = 0
+        config['battle_time_wait'] = 1
+        config['choice_skill_index'] = 2
+        
         return config
 
     def test_treasure(self):
@@ -80,6 +89,17 @@ class TestLushi(unittest.TestCase):
         # image = self.get_save_image(4)
         image = self.get_save_image(5)
         re = agent.pick_treasure(image)
+        print(re)
+        self.assertEqual(True, True)
+
+    def test_choose_one_from_three(self):
+        config = self.get_config()
+        agent = lushi.Agent(config)
+        image = self.get_save_image(6)
+        re = agent.choose_one_from_three(image, "treasure")
+        print(re)
+        image = self.get_save_image(7)
+        re = agent.choose_one_from_three(image, "heros")
         print(re)
         self.assertEqual(True, True)
 
