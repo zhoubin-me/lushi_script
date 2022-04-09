@@ -588,9 +588,9 @@ class Ui(QMainWindow):
         self.screenshot_visitor.setText(_translate("MainWindow", "神秘人截图"))
         self.screenshot_treasure.setText(_translate("MainWindow", "宝藏截图"))
         self.label_8.setText(_translate("MainWindow", "语言与分辨率"))
-        self.fix_rect.setTitle(_translate("MainWindow", "偏移修复"))
-        self.label_14.setText(_translate("MainWindow", "x"))
-        self.label_16.setText(_translate("MainWindow", "y"))
+        # self.fix_rect.setTitle(_translate("MainWindow", "偏移修复"))  # TODO 兼容
+        self.label_fix_x.setText(_translate("MainWindow", "坐标偏移_X"))
+        self.label_fix_y.setText(_translate("MainWindow", "坐标偏移_Y"))
         self.skill_order.setTitle(_translate("MainWindow", "技能释放顺序"))
         self.r231.setText(_translate("MainWindow", "2, 3, 1"))
         self.r123.setText(_translate("MainWindow", "1, 2, 3"))
