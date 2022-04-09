@@ -481,7 +481,7 @@ class Agent:
 
         for key in white_img_names:
             success, loc, conf = self.find_in_image(screen, key, prefix= img_prefix + '_whitelist')
-            if success:
+            if success and 0.9 < conf: # TODO config 这里要单独拎出来
                 is_in_whitelist = True
                 dist = 1024
                 the_index = 0
@@ -501,7 +501,7 @@ class Agent:
 
         for key in black_img_names:
             success, loc, conf = self.find_in_image(screen, key, prefix= img_prefix + '_blacklist')
-            if success:
+            if success and 0.85 < conf : # TODO config
                 is_in_blacklist = True
                 dist = 1024
                 the_index = 0
@@ -860,7 +860,8 @@ class Agent:
                 if self.debug or self.basic.screenshot_treasure:
                     screenshot(self.title, 'treasure[xx]')
                 _, screen = find_lushi_window(self.title)
-                advice = self.pick_treasure(screen)
+                # advice = self.pick_treasure(screen)
+                advice = self.choose_one_from_three(screen, "treasure")
 
                 t_id = random.choice(advice)
                 treasure_loc = (self.locs.treasures[t_id], self.locs.treasures[-1])
@@ -888,7 +889,8 @@ class Agent:
             if state == 'visitor_list':
                 logger.info(f'find {state}, try to click')
                 _, screen = find_lushi_window(self.title)
-                advice = self.pick_visitor(screen)
+                # advice = self.pick_visitor(screen)
+                advice = self.choose_one_from_three(screen, "heros")
                 t_id = random.choice(advice)
                 visitor_loc = (self.locs.visitors[t_id], self.locs.visitors[-1])
                 logger.info(f"click visitor : {t_id} at locs {visitor_loc}")
