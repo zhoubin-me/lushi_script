@@ -40,10 +40,9 @@ class Agent:
         else:
             raise ValueError(f"Language {cfg['lang']} is not supported yet")
 
-        self.fix_x = 0
-        self.fix_y = 0
         self.debug = False  # TODO check before commit, 什么时候把这个也做到按钮里
         self.icons = {}
+        self.treasure_whitelist = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
         self.heros_blacklist = {}
@@ -62,7 +61,7 @@ class Agent:
         self.battle_time_wait = 1
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                       'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                       'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
                        'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2']
 
         self.load_config(cfg)
@@ -89,7 +88,7 @@ class Agent:
             loc_cfg = yaml.safe_load(f)
 
         self.locs = SimpleNamespace(**loc_cfg['location'])
-        for sub in ['icons', 'treasure_blacklist', 'heros_whitelist', 'heros_blacklist']:
+        for sub in ['icons', 'treasure_blacklist', 'treasure_whitelist', 'heros_whitelist', 'heros_blacklist']:
             self.read_sub_imgs(sub)
 
         hero_info = cfg['hero']
@@ -253,7 +252,7 @@ class Agent:
             logger.info('Start submit task...')
             # select Camp Fire
             self.new_click(tuple_add(rect, self.locs.campfire))
-            self.new_click(tuple_add(rect, self.locs.start_game))
+            # pyautogui.click(tuple_add(rect, self.locs.start_game)) # 新版本不需要点这一下了
             # check if a task finish
             time.sleep(1)
             _, img = find_lushi_window(self.title, to_gray=False, raw=True)
@@ -304,7 +303,11 @@ class Agent:
                 x_offset -= (mid_x - first_x) // 2
             game.enemy_hero[i].set_pos(mid_x + x_offset + rect[0], y + rect[1])
 
-        strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege)  # [0,1,1]
+        strategy = BattleAi.battle(game.my_hero, game.enemy_hero, battle_stratege) # [0,1,1]
+        if 1 > len(strategy):
+            # 检查策略是否为空，为空说明不可选择，直接跳过
+            self.new_click(tuple_add(rect, self.locs.start_battle))
+
         self.new_click(tuple_add(rect, self.locs.empty))
 
         standby_heros = self.heros
@@ -326,19 +329,30 @@ class Agent:
                     att_skill_id = other_skill_id = 2
                 if card_id.startswith("LT22_002E3_"):  # 巴琳达的火元素
                     att_skill_id = other_skill_id = 1
+                if card_id.startswith("LETL_823H3"): # 小鬼魔仆
+                    att_skill_id = other_skill_id = 1
+                if card_id.startswith("LETL_861H3"): # 0/500 石槌战旗
+                    att_skill_id = other_skill_id = 1
+                if card_id.startswith("LETL_866H2"): # 0/150 净化碎片
+                    att_skill_id = other_skill_id = 2
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
                 skill_seq = standby_heros[card_id][2]
+                # 需要考虑低等级佣兵，不够3个技能
                 for skill_id in skill_seq:
-                    skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
-                    if skill_cooldown_round == 0:
-                        skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
-                        att_skill_id = skill_id
-                        break
+                    print(f"type {type(h.spell)}")
+                    if skill_id < len(h.spell):
+
+                        skill_cooldown_round = h.spell[skill_id].lettuce_current_cooldown
+                        if skill_cooldown_round == 0:
+                            skill_loc = tuple_add(rect, (self.locs.skills[skill_id], self.locs.skills[-1]))
+                            att_skill_id = skill_id
+                            break
+                    else:
+                        continue
             self.new_click(skill_loc)
-            self.new_click(
-                tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index], self.locs.choice_skills[-1])))
+            self.new_click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index], self.locs.choice_skills[-1])))
             enemy_id = strategy[hero_i]
             print(
                 f"debug hero_id {hero_i} card_id {card_id} attack enemy {enemy_id} by skill {att_skill_id} use strategy {strategy}")
@@ -445,6 +459,76 @@ class Agent:
                             current_seq[k] = v - 1
         # else
 
+    # 神秘人、技能宝藏，三选一通用方法, pick_type:  treasure/heros
+    def choose_one_from_three(self, screen, pick_type = "treasure"):
+        is_in_whitelist = False
+        is_in_blacklist = False
+        idx_white_list = []
+        idx_black_list = []
+
+        locations = []
+        img_prefix = pick_type
+        white_img_names = []
+        black_img_names = []
+        if "heros" == pick_type :
+            locations = self.locs.visitors_location.items()
+            white_img_names = self.heros_whitelist.keys()
+            black_img_names = self.heros_blacklist.keys()
+        else:
+            locations = self.locs.treasures_location.items()
+            white_img_names = self.treasure_whitelist.keys()
+            black_img_names = self.treasure_blacklist.keys()
+
+        for key in white_img_names:
+            success, loc, conf = self.find_in_image(screen, key, prefix= img_prefix + '_whitelist')
+            if success:
+                is_in_whitelist = True
+                dist = 1024
+                the_index = 0
+                for idx, v_loc in locations:
+                    new_dist = abs(loc[0] - v_loc[2])
+                    if new_dist < dist:  # right_x - right_x
+                        the_index = idx
+                        dist = new_dist
+
+                idx_white_list.append(the_index)
+
+        # 去重
+        idx_white_list = list(set(idx_white_list))
+        if is_in_whitelist and 0 < len(idx_white_list):
+            logger.info(f'find visitor white list {idx_white_list}')
+            return idx_white_list
+
+        for key in black_img_names:
+            success, loc, conf = self.find_in_image(screen, key, prefix= img_prefix + '_blacklist')
+            if success:
+                is_in_blacklist = True
+                dist = 1024
+                the_index = 0
+                for idx, v_loc in locations:
+                    new_dist = abs(loc[0] - v_loc[2])
+                    if new_dist < dist:  # right_x - right_x
+                        the_index = idx
+                        dist = new_dist
+
+                idx_black_list.append(the_index)
+
+        # 去重
+        idx_black_list = list(set(idx_black_list))
+
+        if is_in_blacklist:
+            logger.info(f'find visitor black list {idx_black_list}')
+            if 2 < len(idx_black_list) or 1 > len(idx_black_list):
+                return [0, 1, 2]
+            else:
+                advice_idx = []
+                for idx in range(3):
+                    if idx not in idx_black_list:
+                        advice_idx.append(idx)
+                return advice_idx
+
+        return [0, 1, 2]  # 兜底返回
+
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[0], 最多返回：[0,1,2]
     def pick_treasure(self, screen):
         advice_idx = []
@@ -532,7 +616,7 @@ class Agent:
         '''
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                  'treasure_list', 'treasure_replace', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                  'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
                   'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2']
         '''
         if success:
@@ -761,15 +845,20 @@ class Agent:
                     battle_boss = True
                     logger.info(f'[{state}] battle boss')
 
+                logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
+                time.sleep(self.battle_time_wait)
+
                 self.start_battle(rect, battle_boss)
 
             if state == 'battle_ready':
-                logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
-                time.sleep(self.battle_time_wait)
+                # logger.info(f'find {state}, try to click，and sleep {self.battle_time_wait} second')
+                # time.sleep(self.battle_time_wait)
                 self.new_click(tuple_add(rect, self.locs.start_battle))
 
-            if state in ['treasure_list', 'treasure_replace']:
+            if state in ['treasure_list', 'treasure_replace', 'treasure_list2']:
                 logger.info(f'find {state}, try to click')
+                if self.debug or self.basic.screenshot_treasure:
+                    screenshot(self.title, 'treasure[xx]')
                 _, screen = find_lushi_window(self.title)
                 advice = self.pick_treasure(screen)
 
@@ -779,8 +868,8 @@ class Agent:
 
                 self.new_click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
-                if self.debug or self.basic.screenshot_treasure:
-                    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
+                # if self.debug or self.basic.screenshot_treasure:
+                #    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
                 self.new_click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 

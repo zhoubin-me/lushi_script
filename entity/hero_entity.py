@@ -64,6 +64,8 @@ class HeroEntity(BaseEntity):
         # 经验 55000满级
         self.lettuce_mercenary_experience = 0
         self.skill_seq = None
+        # 隐身 stealth
+        self.stealth = 0
         self.parse_entity()
 
     def parse_entity(self):
@@ -84,6 +86,7 @@ class HeroEntity(BaseEntity):
         self.taunt = self.get_tag(GameTag.TAUNT)
         self.frozen = self.get_tag(GameTag.FROZEN)
         self.immune = self.get_tag(GameTag.IMMUNE)
+        self.stealth = self.get_tag(GameTag.STEALTH)
 
         self.spellpower[SpellSchool.ARCANE] = self.get_tag(GameTag.SPELLPOWER_ARCANE)
         self.spellpower[SpellSchool.FIRE] = self.get_tag(GameTag.SPELLPOWER_FIRE)
