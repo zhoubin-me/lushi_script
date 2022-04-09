@@ -459,6 +459,76 @@ class Agent:
                             current_seq[k] = v - 1
         # else
 
+    # 神秘人、技能宝藏，三选一通用方法, pick_type:  treasure/heros
+    def choose_one_from_three(self, screen, pick_type = "treasure"):
+        is_in_whitelist = False
+        is_in_blacklist = False
+        idx_white_list = []
+        idx_black_list = []
+
+        locations = []
+        img_prefix = pick_type
+        white_img_names = []
+        black_img_names = []
+        if "heros" == pick_type :
+            locations = self.locs.visitors_location.items()
+            white_img_names = self.heros_whitelist.keys()
+            black_img_names = self.heros_blacklist.keys()
+        else:
+            locations = self.locs.treasures_location.items()
+            white_img_names = self.treasure_whitelist.keys()
+            black_img_names = self.treasure_blacklist.keys()
+
+        for key in white_img_names:
+            success, loc, conf = self.find_in_image(screen, key, prefix= img_prefix + '_whitelist')
+            if success:
+                is_in_whitelist = True
+                dist = 1024
+                the_index = 0
+                for idx, v_loc in locations:
+                    new_dist = abs(loc[0] - v_loc[2])
+                    if new_dist < dist:  # right_x - right_x
+                        the_index = idx
+                        dist = new_dist
+
+                idx_white_list.append(the_index)
+
+        # 去重
+        idx_white_list = list(set(idx_white_list))
+        if is_in_whitelist and 0 < len(idx_white_list):
+            logger.info(f'find visitor white list {idx_white_list}')
+            return idx_white_list
+
+        for key in black_img_names:
+            success, loc, conf = self.find_in_image(screen, key, prefix= img_prefix + '_blacklist')
+            if success:
+                is_in_blacklist = True
+                dist = 1024
+                the_index = 0
+                for idx, v_loc in locations:
+                    new_dist = abs(loc[0] - v_loc[2])
+                    if new_dist < dist:  # right_x - right_x
+                        the_index = idx
+                        dist = new_dist
+
+                idx_black_list.append(the_index)
+
+        # 去重
+        idx_black_list = list(set(idx_black_list))
+
+        if is_in_blacklist:
+            logger.info(f'find visitor black list {idx_black_list}')
+            if 2 < len(idx_black_list) or 1 > len(idx_black_list):
+                return [0, 1, 2]
+            else:
+                advice_idx = []
+                for idx in range(3):
+                    if idx not in idx_black_list:
+                        advice_idx.append(idx)
+                return advice_idx
+
+        return [0, 1, 2]  # 兜底返回
+
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[0], 最多返回：[0,1,2]
     def pick_treasure(self, screen):
         advice_idx = []
