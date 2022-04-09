@@ -63,6 +63,7 @@ class BattleAi:
             "LETLT_100_01"  # 双倍攻击剑圣
             "LETLT_110_01"  # 雷矛防御者
             "LETLT_130_01"  # 军情七处刺客 （暴击）
+            "LETL_846H2"   # 防御者幼龙 （反冲)
         ]
         attatch_sequnce = []
         lettuce_enemy_map = {3: [], 1: [], 2: [], 4: [], 0: [], "all": []}
