@@ -42,6 +42,7 @@ class Agent:
 
         self.debug = False  # TODO check before commit, 什么时候把这个也做到按钮里
         self.icons = {}
+        self.treasure_whitelist = {}
         self.treasure_blacklist = {}
         self.heros_whitelist = {}
         self.heros_blacklist = {}
@@ -87,7 +88,7 @@ class Agent:
             loc_cfg = yaml.safe_load(f)
 
         self.locs = SimpleNamespace(**loc_cfg['location'])
-        for sub in ['icons', 'treasure_blacklist', 'heros_whitelist', 'heros_blacklist']:
+        for sub in ['icons', 'treasure_blacklist', 'treasure_whitelist', 'heros_whitelist', 'heros_blacklist']:
             self.read_sub_imgs(sub)
 
         hero_info = cfg['hero']
