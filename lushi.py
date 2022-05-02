@@ -869,8 +869,8 @@ class Agent:
 
                 self.new_click(tuple_add(rect, treasure_loc))
                 # hero treasure screenshot before confirm
-                # if self.debug or self.basic.screenshot_treasure:
-                #    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
+                if self.debug or self.basic.screenshot_treasure:
+                    screenshot(self.title, f'treasure[{",".join(str(i) for i in advice)}]')
                 self.new_click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
