@@ -70,9 +70,10 @@ class BattleAi:
 
         i = -1
         for v in enemy_list:
+            i += 1
             if v.immune > 0 or v.stealth > 0 : # 免疫、隐身
                 continue
-            i += 1
+            # i += 1
             if v.card_id in first_enemy_list :
                 lettuce_enemy_map[v.lettuce_role].insert(0, i)
                 lettuce_enemy_map["all"].insert(0, i)
