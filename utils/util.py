@@ -71,6 +71,8 @@ def get_boss_id_map():
         "12": 14,
 
         "13": 15,
+        
+        "7-1": 2,
     }
     return the_map
 

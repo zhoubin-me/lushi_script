@@ -573,6 +573,7 @@ class Ui(QMainWindow):
         self.boss_level.setItemText(13, _translate("MainWindow", "11"))
         self.boss_level.setItemText(14, _translate("MainWindow", "12"))
         self.boss_level.setItemText(15, _translate("MainWindow", "13"))
+        self.boss_level.setItemText(15, _translate("MainWindow", "7-1"))
         self.label_4.setText(_translate("MainWindow", "战网路径"))
         self.load_path.setText(_translate("MainWindow", "..."))
         self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
