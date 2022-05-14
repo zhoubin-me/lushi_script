@@ -995,7 +995,13 @@ class Agent:
         state = ""
 
         while True:
-            self.new_click(tuple_add(rect, self.locs.empty))
+            if (rect is not None) and (self.locs.empty is not None):
+                self.new_click(tuple_add(rect, self.locs.empty))
+            else :
+                # 不知为啥，最近开始报这个错误
+                screenshot(self.title, 'restart_ract_noe')
+                if self.basic.auto_restart:
+                    restart_game(self.lang, self.basic.bn_path)
             if time.time() - tic > self.basic.longest_waiting:
                 if self.basic.screenshot_error:
                     screenshot(self.title, 'restart_block')
