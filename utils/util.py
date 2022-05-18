@@ -71,7 +71,7 @@ def get_boss_id_map():
         "12": 14,
 
         "13": 15,
-        
+
         "7-1": 2,
     }
     return the_map
@@ -200,6 +200,17 @@ def find_icon_location(lushi, icon, confidence):
     else:
         return False, None, None, maxVal
 
+def find_enemy_location(lushi, enemy_blacklist, confidence):
+    result = cv2.matchTemplate(lushi, enemy_blacklist, cv2.TM_CCOEFF_NORMED)
+    (minVal, maxVal, minLoc, maxLoc) = cv2.minMaxLoc(result)
+    del result
+    if maxVal > confidence:
+        (startX, startY) = maxLoc
+        endX = startX + enemy_blacklist.shape[1]
+        endY = startY + enemy_blacklist.shape[0]
+        return True, (startX + endX) // 2, (startY + endY) // 2, maxVal
+    else:
+        return False, None, None, maxVal
 
 def find_relative_loc(title='炉石传说'):
     pos = pyautogui.position()
