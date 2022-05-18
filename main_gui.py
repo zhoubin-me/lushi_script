@@ -77,13 +77,23 @@ class Ui(QMainWindow):
         self.lang_dropdown = self.findChild(QComboBox, 'lang')
         self.lang_dropdown.addItem('EN-1024x768')
         self.lang_dropdown.addItem('ZH-1600x900')
+        self.map_decision_dropdown = self.findChild(QComboBox, 'map_decision')
+        self.map_decision_dropdown.addItem('visitor_first')
+        self.map_decision_dropdown.addItem('fast_pass')
         self.current_order = self.findChild(QLabel, 'current_order')
+        self.planb_current_order = self.findChild(QLabel, 'planb_current_order')
         self.boss_current_order = self.findChild(QLabel, 'boss_current_order')
         self.battle_stratege_dropdown = self.findChild(QComboBox, 'battle_stratege')
         self.boss_battle_stratege_dropdown = self.findChild(QComboBox, 'boss_battle_stratege')
         self.lettuce_role_limit_dropdown = self.findChild(QComboBox, 'lettuce_role_limit')
         self.fix_x = self.findChild(QSpinBox, 'fix_x')
         self.fix_y = self.findChild(QSpinBox, 'fix_y')
+        self.choice_skill_index = self.findChild(QSpinBox, 'choice_skill_index')
+        self.choice_skill_index2 = self.findChild(QSpinBox, 'choice_skill_index2')
+        self.battle_time_wait = self.findChild(QDoubleSpinBox, 'battle_time_wait')
+        self.longest_waiting = self.findChild(QDoubleSpinBox, 'longest_waiting')
+
+
 
         self.save = self.findChild(QPushButton, 'save')  # Find the button
         self.save.clicked.connect(self.saveButtonPressed)  # Click event
@@ -111,6 +121,13 @@ class Ui(QMainWindow):
         self.hero_list.clicked.connect(self.on_hero_clicked)
         self.hero_index = -1
 
+        self.planb_hero_list = self.findChild(QListView, 'planb_heros')
+        self.planb_slm = QStringListModel([])
+        self.planb_hero_list.setModel(self.planb_slm)
+        self.planb_hero_list.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.planb_hero_list.clicked.connect(self.on_planb_hero_clicked)
+        self.planb_hero_index = -1
+
         self.boss_hero_list = self.findChild(QListView, 'boss_heros')
         self.boss_slm = QStringListModel([])
         self.boss_hero_list.setModel(self.boss_slm)
@@ -124,10 +141,21 @@ class Ui(QMainWindow):
         self.delete.clicked.connect(self.delButtonPressed)  # Click event
         self.go_up = self.findChild(QPushButton, 'goup')
         self.go_up.clicked.connect(self.upButtonPressed)  # Click event
-        self.delete = self.findChild(QPushButton, 'godown')
-        self.delete.clicked.connect(self.downButtonPressed)  # Click event
+        self.go_down = self.findChild(QPushButton, 'godown')
+        self.go_down.clicked.connect(self.downButtonPressed)  # Click event
         self.modify = self.findChild(QPushButton, 'modify')
         self.modify.clicked.connect(self.modifyButtonPressed)  # Click event
+
+        self.planb_add = self.findChild(QPushButton, 'planb_add')
+        # self.planb_add.clicked.connect(self.addButtonPressed)  # Click event
+        self.planb_delete = self.findChild(QPushButton, 'planb_del')
+        self.planb_delete.clicked.connect(self.delplanbButtonPressed)  # Click event
+        self.planb_go_up = self.findChild(QPushButton, 'planb_goup')
+        self.planb_go_up.clicked.connect(self.upplanbButtonPressed)  # Click event
+        self.planb_go_down = self.findChild(QPushButton, 'planb_godown')
+        self.planb_go_down.clicked.connect(self.downplanbButtonPressed)  # Click event
+        self.planb_modify = self.findChild(QPushButton, 'planb_modify')
+        self.planb_modify.clicked.connect(self.modifyplanbButtonPressed)  # Click event
 
         self.boss_go_up = self.findChild(QPushButton, 'boss_goup')
         self.boss_go_up.clicked.connect(self.upBossButtonPressed)  # Click event
@@ -186,6 +214,15 @@ class Ui(QMainWindow):
         if len(str_list) > 0:
             self.slm.setStringList(str_list)
 
+        planb_hero_ordered = {k_: v_ for k_, v_ in sorted(self.planb_hero_info.items(), key=lambda item: item[1][-1])}
+        str_list = []
+        for k, v in planb_hero_ordered.items():
+            if len(re.findall(r'[\u4e00-\u9fff]+', v[0])) > 0:
+                self.planb_hero_info[k] = [v[1], v[0], v[2], v[3]]
+                str_list.append(v[1])
+        if len(str_list) > 0:
+            self.planb_slm.setStringList(str_list)
+
         boss_hero_ordered = {k_: v_ for k_, v_ in sorted(self.boss_hero_info.items(), key=lambda item: item[1][-1])}
         str_list = []
         for k, v in boss_hero_ordered.items():
@@ -242,6 +279,17 @@ class Ui(QMainWindow):
                     break
 
     @QtCore.pyqtSlot(QtCore.QModelIndex)
+    def on_planb_hero_clicked(self, index):
+        self.planb_hero_index = index.row()
+        str_list = self.planb_slm.stringList()
+        if 0 <= self.planb_hero_index < len(str_list):
+            name = str_list[self.planb_hero_index]
+            for k, v in self.planb_hero_info.items():
+                if v[0] == name:
+                    self.planb_current_order.setText(self.planb_hero_info[k][2])
+                    break
+
+    @QtCore.pyqtSlot(QtCore.QModelIndex)
     def on_boss_hero_clicked(self, index):
         self.boss_hero_index = index.row()
         str_list = self.boss_slm.stringList()
@@ -274,6 +322,14 @@ class Ui(QMainWindow):
                 self.hero_index]
             self.slm.setStringList(str_list)
 
+    def upplanbButtonPressed(self):
+        str_list = self.planb_slm.stringList()
+        if 1 <= self.planb_hero_index < len(str_list):
+            str_list[self.planb_hero_index], str_list[self.planb_hero_index - 1] = str_list[self.planb_hero_index - 1], \
+                                                                                 str_list[
+                                                                                     self.planb_hero_index]
+            self.planb_slm.setStringList(str_list)
+
     def upBossButtonPressed(self):
         str_list = self.boss_slm.stringList()
         if 1 <= self.boss_hero_index < len(str_list):
@@ -288,6 +344,14 @@ class Ui(QMainWindow):
             str_list[self.hero_index], str_list[self.hero_index + 1] = str_list[self.hero_index + 1], str_list[
                 self.hero_index]
             self.slm.setStringList(str_list)
+
+    def downplanbButtonPressed(self):
+        str_list = self.planb_slm.stringList()
+        if 0 <= self.planb_hero_index < len(str_list) - 1:
+            str_list[self.planb_hero_index], str_list[self.planb_hero_index + 1] = str_list[self.planb_hero_index + 1], \
+                                                                                 str_list[
+                                                                                     self.planb_hero_index]
+            self.planb_slm.setStringList(str_list)
 
     def downBossButtonPressed(self):
         str_list = self.boss_slm.stringList()
@@ -320,6 +384,16 @@ class Ui(QMainWindow):
                     del self.boss_hero_info[k]
                     break
 
+    def delplanbButtonPressed(self):
+        str_list = self.planb_slm.stringList()
+        if 0 <= self.planb_hero_index < len(str_list):
+            name = str_list.pop(self.planb_hero_index)
+            self.planb_slm.setStringList(str_list)
+            for k, v in self.planb_hero_info.items():
+                    if v[0] == name:
+                        del self.planb_hero_info[k]
+                        break
+
     def modifyButtonPressed(self):
         str_list = self.slm.stringList()
         if 0 <= self.hero_index < len(str_list):
@@ -328,6 +402,16 @@ class Ui(QMainWindow):
                 if v[0] == name:
                     self.hero_info[k][2] = self.spell_order
                     self.current_order.setText(self.spell_order)
+                    break
+
+    def modifyplanbButtonPressed(self):
+        str_list = self.planb_slm.stringList()
+        if 0 <= self.planb_hero_index < len(str_list):
+            name = str_list[self.planb_hero_index]
+            for k, v in self.planb_hero_info.items():
+                if v[0] == name:
+                    self.planb_hero_info[k][2] = self.spell_order
+                    self.planb_current_order.setText(self.spell_order)
                     break
 
     def modifyBossButtonPressed(self):
@@ -343,9 +427,11 @@ class Ui(QMainWindow):
     def addButtonPressed(self):
         str_list = self.slm.stringList()
         boss_str_list = self.boss_slm.stringList()
+        planb_str_list = self.planb_slm.stringList()
         if self.hero_dropdown.currentText() not in str_list and len(str_list) < 6:
             str_list.append(self.hero_dropdown.currentText())
             boss_str_list.append(self.hero_dropdown.currentText())
+            planb_str_list.append(self.hero_dropdown.currentText())
             if self.ui_lang == 'eng':
                 kv = [(k, v[0], v[1], v[4]) for k, v in HEROS.items() if v[1] == self.hero_dropdown.currentText()]
             else:
@@ -355,11 +441,14 @@ class Ui(QMainWindow):
             if self.ui_lang == 'chs':
                 self.hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
                 self.boss_hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
+                self.planb_hero_info[idx] = [name_chs, name_eng, self.spell_order, index, lettuce_role]
             elif self.ui_lang == 'eng':
                 self.hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
                 self.boss_hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
+                self.planb_hero_info[idx] = [name_eng, name_chs, self.spell_order, index, lettuce_role]
             self.slm.setStringList(str_list)
             self.boss_slm.setStringList(boss_str_list)
+            self.planb_slm.setStringList(planb_str_list)
 
     def load_config(self, path):
         try:
@@ -416,6 +505,13 @@ class Ui(QMainWindow):
                     self.hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
                 str_list = [v[0] for k, v in hero_ordered.items()]
                 self.slm.setStringList(str_list)
+            if k == 'planb_hero':
+                hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][3])}
+                self.planb_hero_info = {}
+                for k, v in hero_ordered.items():
+                    self.planb_hero_info[k] = [v[0], v[1], v[2], v[3], get_hero_color_by_id(k)]
+                str_list = [v[0] for k, v in hero_ordered.items()]
+                self.planb_slm.setStringList(str_list)
             if k == 'boss_hero':
                 hero_ordered = {k_: v_ for k_, v_ in sorted(v.items(), key=lambda item: item[1][3])}
                 self.boss_hero_info = {}
@@ -427,6 +523,17 @@ class Ui(QMainWindow):
                 self.fix_x.setValue(v)
             if k == 'fix_y':
                 self.fix_y.setValue(v)
+            if k == 'choice_skill_index2':
+                self.choice_skill_index2.setValue(v)
+            if k == 'choice_skill_index':
+                self.choice_skill_index.setValue(v)
+            if k == 'map_decision':
+                self.map_decision_dropdown.setCurrentText(f"{v}")
+            if k == 'longest_waiting':
+                self.longest_waiting.setValue(v)
+            if k == 'battle_time_wait':
+                self.battle_time_wait.setValue(v)
+
 
     def save_config(self):
         self.config['boss_id'] = self.boss_id.currentText()
@@ -449,10 +556,15 @@ class Ui(QMainWindow):
         self.config['reward_count_dropdown'] = self.reward_count_dropdown.currentText()
         self.config['delay'] = 0.5
         self.config['confidence'] = 0.8
-        self.config['longest_waiting'] = 80
+        self.config['longest_waiting'] = self.longest_waiting.value()
+        self.config['battle_time_wait'] = self.battle_time_wait.value()
         self.config['ui_lang'] = self.ui_lang
         self.config['fix_x'] = self.fix_x.value()
         self.config['fix_y'] = self.fix_y.value()
+        self.config['choice_skill_index2'] = self.choice_skill_index2.value()
+        self.config['choice_skill_index'] = self.choice_skill_index.value()
+        self.config['map_decision'] = self.map_decision_dropdown.currentText()
+
 
         new_hero_info = {}
         hero_order_list = self.slm.stringList()
@@ -465,6 +577,18 @@ class Ui(QMainWindow):
                     break
             new_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
         self.config['hero'] = new_hero_info
+
+        new_planb_hero_info = {}
+        planb_hero_order_list = self.planb_slm.stringList()
+        for k, v in self.planb_hero_info.items():
+            hero_index = planb_hero_order_list.index(v[0])
+            color = 0
+            for hk, hv in HEROS.items():
+                if k == hk:
+                    color = hv[4]
+                    break
+            new_planb_hero_info[k] = [v[0], v[1], v[2], hero_index, color]
+        self.config['planb_hero'] = new_planb_hero_info
 
         new_boss_hero_info = {}
         boss_hero_order_list = self.boss_slm.stringList()
@@ -497,23 +621,29 @@ class Ui(QMainWindow):
             self.save_config()
             cfm_text = f'''
                 Current Setting:\n
-                Boss ID: {self.config['boss_id']}\n
-                Team ID: {self.config['team_id'] + 1}\n
-                Boss Reward: {self.config['reward_count_dropdown']}\n
-                BattleNet Path: {self.config['bn_path']}\n
-                HearthStone Path: {self.config['hs_path']}\n
-                Auto Restart: {self.config['auto_restart']}\n
-                Early Stop: {self.config['early_stop']}\n
-                Auto Task: {self.config['auto_tasks']}\n
-                Stop At Boss: {self.config['stop_at_boss']}\n
-                Error Screenshot: {self.config['screenshot_error']}\n
-                Reward Screenshot: {self.config['screenshot_reward']}\n
-                Visitor Screenshot: {self.config['screenshot_visitor']}\n
-                Treasure Screenshot: {self.config['screenshot_treasure']}\n
-                Language & Resolution: {self.config['lang']}\n
-                Heroes:\n
+                Boss ID: {self.config['boss_id']}
+                Team ID: {self.config['team_id'] + 1}
+                Boss Reward: {self.config['reward_count_dropdown']}
+                BattleNet Path: {self.config['bn_path']}
+                HearthStone Path: {self.config['hs_path']}
+                Auto Restart: {self.config['auto_restart']}
+                Early Stop: {self.config['early_stop']}
+                Auto Task: {self.config['auto_tasks']}
+                Stop At Boss: {self.config['stop_at_boss']}
+                Error Screenshot: {self.config['screenshot_error']}
+                Reward Screenshot: {self.config['screenshot_reward']}
+                Visitor Screenshot: {self.config['screenshot_visitor']}
+                Treasure Screenshot: {self.config['screenshot_treasure']}
+                Language & Resolution: {self.config['lang']}
+                Choice Skills Index: {self.config['choice_skill_index']}
+                Choice Skills Index2: {self.config['choice_skill_index2']}
+                Map Decision: {self.config['map_decision']}
+                Longest Waiting: {self.config['longest_waiting']}
+                Battle Time Wait: {self.config['battle_time_wait']}
+                Heroes:
                 {hero_text}
             '''.strip().replace('    ', '')
+
 
             reply = QMessageBox.question(self, 'CONFIRM', cfm_text, QMessageBox.Yes | QMessageBox.No, QMessageBox.No)
             if reply == QMessageBox.Yes:
@@ -573,7 +703,7 @@ class Ui(QMainWindow):
         self.boss_level.setItemText(13, _translate("MainWindow", "11"))
         self.boss_level.setItemText(14, _translate("MainWindow", "12"))
         self.boss_level.setItemText(15, _translate("MainWindow", "13"))
-        self.boss_level.setItemText(15, _translate("MainWindow", "7-1"))
+        self.boss_level.setItemText(16, _translate("MainWindow", "7-1"))
         self.label_4.setText(_translate("MainWindow", "战网路径"))
         self.load_path.setText(_translate("MainWindow", "..."))
         self.label_2.setText(_translate("MainWindow", "队伍选择序号"))
@@ -599,6 +729,19 @@ class Ui(QMainWindow):
         self.r312.setText(_translate("MainWindow", "3, 1, 2"))
         self.r321.setText(_translate("MainWindow", "3, 2, 1"))
         self.r213.setText(_translate("MainWindow", "2, 1, 3"))
+        self.label_19.setText(_translate("MainWindow", "卡扎库斯、雷克萨技能"))
+        self.label_20.setText(_translate("MainWindow", "技能抉择选项【0为左边，1中间，2右边】"))
+        # self.choice_skill_index2.setItemText(0, _translate("MainWindow", "0"))
+        # self.choice_skill_index2.setItemText(1, _translate("MainWindow", "1"))
+        # self.choice_skill_index2.setItemText(2, _translate("MainWindow", "2"))
+        self.label_21.setText(_translate("MainWindow", "巴林达、尤朵拉技能"))
+        # self.choice_skill_index.setItemText(0, _translate("MainWindow", "0"))
+        # self.choice_skill_index.setItemText(2, _translate("MainWindow", "2"))
+        self.label_22.setText(_translate("MainWindow", "通关策略"))
+        self.map_decision.setItemText(0, _translate("MainWindow", "visitor_first"))
+        self.map_decision.setItemText(1, _translate("MainWindow", "fast_pass"))
+        self.label_23.setText(_translate("MainWindow", "战斗等待时间"))
+        self.label_24.setText(_translate("MainWindow", "脚本重启超时等待"))
         self.label_15.setText(_translate("MainWindow", "战斗策略"))
         self.label_10.setText(_translate("MainWindow", "战斗策略"))
         self.battle_stratege.setItemText(0, _translate("MainWindow", "normal"))
@@ -625,6 +768,13 @@ class Ui(QMainWindow):
         self.del_1.setText(_translate("MainWindow", "删除"))
         self.modify.setText(_translate("MainWindow", "修改"))
         self.label_9.setText(_translate("MainWindow", "当前英雄技能顺序:"))
+        self.label_16.setText(_translate("MainWindow", "Planb英雄出场顺序"))
+        self.planb_add.setText(_translate("MainWindow", "添加"))
+        self.planb_goup.setText(_translate("MainWindow", "上移"))
+        self.planb_godown.setText(_translate("MainWindow", "下移"))
+        self.planb_del.setText(_translate("MainWindow", "删除"))
+        self.planb_modify.setText(_translate("MainWindow", "修改"))
+        self.label_14.setText(_translate("MainWindow", "当前英雄技能顺序:"))
         self.label_11.setText(_translate("MainWindow", "BOSS关卡英雄出场顺序"))
         self.boss_goup.setText(_translate("MainWindow", "上移"))
         self.boss_godown.setText(_translate("MainWindow", "下移"))
