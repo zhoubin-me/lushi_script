@@ -62,7 +62,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2', 'campfire']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -324,17 +324,23 @@ class Agent:
                 other_skill_id = 0  # 非预期角色的技能干预
                 if True == battle_boss:
                     if card_id == "LETL_848H6" or card_id == "LETL_84":  # npc 瓦莉拉
-                        att_skill_id = other_skill_id = 2
+                        if len(h.spell) > 2 and h.spell[2].lettuce_current_cooldown:
+                            att_skill_id = other_skill_id = 2
                 if card_id.startswith("LETL_024P2_"):  # 尤多拉 炮台
-                    att_skill_id = other_skill_id = 2
+                    if len(h.spell) > 2 and h.spell[2].lettuce_current_cooldown:
+                        att_skill_id = other_skill_id = 2
                 if card_id.startswith("LT22_002E3_"):  # 巴琳达的火元素
-                    att_skill_id = other_skill_id = 1
+                    if len(h.spell) > 1 and h.spell[1].lettuce_current_cooldown:
+                        att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_823H3"): # 小鬼魔仆
-                    att_skill_id = other_skill_id = 1
+                    if len(h.spell) > 1 and h.spell[1].lettuce_current_cooldown:
+                        att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_861H3"): # 0/500 石槌战旗
-                    att_skill_id = other_skill_id = 1
+                    if len(h.spell) > 1 and h.spell[1].lettuce_current_cooldown:
+                        att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_866H2"): # 0/150 净化碎片
-                    att_skill_id = other_skill_id = 2
+                    if len(h.spell) > 2 and h.spell[2].lettuce_current_cooldown:
+                        att_skill_id = other_skill_id = 2
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
                 skill_loc = None
@@ -457,7 +463,9 @@ class Agent:
                     for k, v in current_seq.items():
                         if v > current_pos:
                             current_seq[k] = v - 1
-        # else
+                else:
+                    # 如果佣兵和策略不匹配，直接点确认。
+                    self.new_click(tuple_add(rect, self.locs.start_battle))
 
     # 神秘人、技能宝藏，三选一通用方法, pick_type:  treasure/heros
     def choose_one_from_three(self, screen, pick_type = "treasure"):
@@ -610,6 +618,25 @@ class Agent:
                 return advice_idx
 
         return [0, 1, 2]  # 兜底返回
+    
+    def submit_campfire_mission(self, rect):
+        logger.info("campfire dialog")
+        time.sleep(1)
+        _, img = find_lushi_window(self.title, to_gray=False, raw=True)
+        lines = get_burning_blue_lines(img)
+        if None is not lines and 0 < len(lines):
+            logger.info("some task finished ... ")
+            for y in self.locs.tasks_y:
+                for x in self.locs.tasks_x:
+                    # do task
+                    self.new_click(tuple_add(rect, (x, y)))
+                    self.new_click(tuple_add(rect, self.locs.tasks_abandon))
+                    self.new_click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                    self.new_click(tuple_add(rect, self.locs.tasks_abandon_cancel))
+                    self.new_click(tuple_add(rect, self.locs.campfire_exit))
+
+        # exit the campfire
+        self.new_click(tuple_add(rect, self.locs.empty))
 
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
@@ -617,7 +644,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                   'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2']
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2', 'campfire']
         '''
         if success:
             if state != text:
@@ -714,6 +741,10 @@ class Agent:
                         self.surprise_in_mid = False
                     logger.info(f'Surprise side {self.side}, surprise in middile {self.surprise_in_mid}')
 
+            if state == 'campfire':
+                logger.info(f'find {state}, try to click') 
+                self.submit_campfire_mission(rect)
+            
             if state == 'map_not_ready':
                 logger.info(f'find {state}, try to click next map')
                 _, screen = find_lushi_raw_window(self.title)
@@ -964,7 +995,13 @@ class Agent:
         state = ""
 
         while True:
-            self.new_click(tuple_add(rect, self.locs.empty))
+            if (rect is not None) and (self.locs.empty is not None):
+                self.new_click(tuple_add(rect, self.locs.empty))
+            else :
+                # 不知为啥，最近开始报这个错误
+                screenshot(self.title, 'restart_ract_noe')
+                if self.basic.auto_restart:
+                    restart_game(self.lang, self.basic.bn_path)
             if time.time() - tic > self.basic.longest_waiting:
                 if self.basic.screenshot_error:
                     screenshot(self.title, 'restart_block')
