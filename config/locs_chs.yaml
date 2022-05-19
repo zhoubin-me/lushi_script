@@ -8,6 +8,9 @@ location:
   enemies: [ 680, 810, 940, 285 ] # [first_x, mid_x, last_x, y]
   # skill choice skill loc map, left skill x, middle x, right x, and y
   choice_skills: [593, 806, 1030, 540]
+  
+  # enemy_location, [left_x, top_y, right_x, bottom_y]
+  enemy_location: [400, 240, 1200, 430]
 
   # boss list locations
   boss: [ 405, 696, 916, 350, 667 ] # [first_x, mid_x, last_x, upper_y, lower_y]
@@ -17,9 +20,9 @@ location:
   boss_4_13: [680, 420]
 
   # treasures locations
-  treasures: [ 707, 960, 1200, 376 ] # [first_x, mid_x, last_x, y]
+  treasures: [ 660, 940, 1200, 330 ] # [first_x, mid_x, last_x, y]
   # treasure collection button
-  treasures_collect: [ 968, 765 ] # [x, y]
+  treasures_collect: [ 940, 789 ] # [x, y]
 
   # visitors locations
   visitors: [ 545, 790, 1042, 420 ] # [first_x, mid_x, last_x, y]
@@ -85,9 +88,9 @@ location:
   pvp_reward: [ 804, 471 ]
 
   treasures_location:
-    0: [ 570, 280, 813, 620 ]
-    1: [ 827, 278, 1065, 620 ]
-    2: [ 1080, 276, 1319, 617 ]
+    0: [ 570, 280, 780, 620 ]
+    1: [ 820, 280, 1050, 620 ]
+    2: [ 1100, 280, 1330, 620 ]
 
   # visitor location, [left_x, top_y, right_x, bottom_y]
   visitors_location:

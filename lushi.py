@@ -15,7 +15,7 @@ from PIL import Image
 from types import SimpleNamespace
 
 from utils.log_util import LogUtil
-from utils.util import BOSS_ID_MAP, find_lushi_window, find_icon_location, restart_game, tuple_add, find_relative_loc, \
+from utils.util import BOSS_ID_MAP, find_lushi_window, find_icon_location, find_enemy_location, restart_game, tuple_add, find_relative_loc, \
     screenshot, find_lushi_raw_window, get_hero_color_by_id
 from utils.images import get_sub_np_array, get_burning_green_circles, get_burning_blue_lines, get_burning_blue_lines, \
     get_dark_brown_lines
@@ -44,10 +44,12 @@ class Agent:
         self.icons = {}
         self.treasure_whitelist = {}
         self.treasure_blacklist = {}
+        self.enemy_blacklist = {}
         self.heros_whitelist = {}
         self.heros_blacklist = {}
         self.game = None
         self.skill_seq_cache = {}
+        self.planb_skill_seq_cache = {}
         self.boss_skill_seq_cache = {}
         self.start_seq = {}
         self.side = None
@@ -57,7 +59,8 @@ class Agent:
         self.battle_stratege = "normal"
         self.boss_battle_stratege = "normal"
         self.stop_at_boss = False
-        self.choice_skill_index = 0  # 抉择技能选择第1个
+        self.choice_skill_index = {}  # 抉择技能选择第1个 【尤朵拉、巴林达适用，左0右2】
+        self.choice_skill_index2 = {} # 卡扎抉择技能选择第2个【卡扎、雷克萨适用，左中右0、1、2】
         self.battle_time_wait = 1
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
@@ -88,7 +91,7 @@ class Agent:
             loc_cfg = yaml.safe_load(f)
 
         self.locs = SimpleNamespace(**loc_cfg['location'])
-        for sub in ['icons', 'treasure_blacklist', 'treasure_whitelist', 'heros_whitelist', 'heros_blacklist']:
+        for sub in ['icons', 'treasure_blacklist', 'treasure_whitelist', 'heros_whitelist', 'heros_blacklist', 'enemy_blacklist']:
             self.read_sub_imgs(sub)
 
         hero_info = cfg['hero']
@@ -98,6 +101,16 @@ class Agent:
             self.heros[k] = [v[0], v[1], spell_order, v[3], get_hero_color_by_id(k)]
             self.skill_seq_cache[k] = v[-2]
         del cfg['hero']
+
+        self.planb_heros = {}
+        if 'planb_hero' in cfg:
+            planb_hero_info = cfg['planb_hero']
+            for k, v in planb_hero_info.items():
+                spell_order = [int(x) - 1 for x in v[2].split(',')]
+                self.planb_heros[k] = [v[0], v[1], spell_order, v[3], get_hero_color_by_id(k)]
+                self.planb_skill_seq_cache[k] = v[-2]
+            del cfg['planb_hero'] 
+
         # boss encounter hero
         self.boss_heros = {}
         if 'boss_hero' in cfg:
@@ -124,6 +137,9 @@ class Agent:
         self.choice_skill_index = self.basic.choice_skill_index  # 技能抉择
         if self.choice_skill_index is None or self.choice_skill_index == '':
             self.choice_skill_index = 0
+        self.choice_skill_index2 = self.basic.choice_skill_index2  # 技能抉择2
+        if self.choice_skill_index2 is None or self.choice_skill_index2 == '':
+            self.choice_skill_index2 = 1
         pyautogui.PAUSE = self.basic.delay
 
     def check_in_screen(self, name, prefix='icons'):
@@ -149,6 +165,16 @@ class Agent:
         loc = X, Y
         return success, loc, rect, screen
 
+    def check_and_screen2(self, name, prefix='enemy_blacklist'):
+        rect, screen = find_lushi_window(self.title)
+        try:
+            enemy_blacklist = getattr(self, prefix)[name]
+        except:
+            return False, None, None, None
+        success, X, Y, conf = find_enemy_location(screen, enemy_blacklist, self.basic.confidence)
+        loc = X, Y
+        return success, loc, rect, screen
+
     # 传入图片，匹配子图
     def find_in_image(self, screen, name, prefix='icons'):
         try:
@@ -156,6 +182,16 @@ class Agent:
         except:
             return False, None, None
         success, X, Y, conf = find_icon_location(screen, icon, self.basic.confidence)
+        del screen
+        loc = X, Y
+        return success, loc, conf
+
+    def find_enemy(self, screen, name, prefix='enemy_blacklist'):
+        try:
+            enemy_blacklist = getattr(self, prefix)[name]
+        except:
+            return False, None, None
+        success, X, Y, conf = find_enemy_location(screen, enemy_blacklist, self.basic.confidence)
         del screen
         loc = X, Y
         return success, loc, conf
@@ -358,7 +394,19 @@ class Agent:
                     else:
                         continue
             self.new_click(skill_loc)
-            self.new_click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index], self.locs.choice_skills[-1])))
+
+            for cdx in card_id:
+                if card_id.startswith("LT22_016H"):  # 卡扎技能2
+                    cdx = self.choice_skill_index2
+                    self.new_click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index2], self.locs.choice_skills[-1])))
+                if card_id.startswith("LETL_015"):  # 雷克萨
+                    cdx = self.choice_skill_index2
+                    self.new_click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index2], self.locs.choice_skills[-1])))
+                else:
+                    cdx = self.choice_skill_index # 巴林达、尤朵拉
+                    self.new_click(tuple_add(rect, (self.locs.choice_skills[self.choice_skill_index], self.locs.choice_skills[-1])))
+                    break
+
             enemy_id = strategy[hero_i]
             print(
                 f"debug hero_id {hero_i} card_id {card_id} attack enemy {enemy_id} by skill {att_skill_id} use strategy {strategy}")
@@ -366,9 +414,17 @@ class Agent:
             self.new_click(tuple_add(rect, self.locs.empty))
 
     # risk_num  颜色克制的敌人回避数量阈值，大于该数值则需要调整上场英雄
-    def select_members(self, risk_num=2, battle_boss=False):
+    def select_members(self, risk_num=2, battle_boss=False, enemy_in_balcklist=False):
         logger.info(f"Start select members, battle_boss ? {battle_boss} start battle enemy")
         game = self.log_util.parse_game()
+
+        rect, screen = find_lushi_window(self.title, to_gray=True)
+        enemy_in_blacklist = False
+        for key in self.enemy_blacklist.keys():
+            success, loc, conf = self.find_enemy(screen, key, prefix='enemy_blacklist')
+            if success:
+                enemy_in_balcklist = True
+
         rect, screen = find_lushi_window(self.title, to_gray=False)
         del screen
         enemy_blue_count = 0
@@ -389,6 +445,8 @@ class Agent:
 
         hero_on_battlefie_limit = 4  # if battle boss
         standby_heros = self.heros
+        if enemy_in_balcklist:
+            standby_heros = self.planb_heros
         if battle_boss:
             standby_heros = self.boss_heros
         hero_in_battle = [h for h in game.my_hero if h.card_id[:-3] in standby_heros]
@@ -405,7 +463,7 @@ class Agent:
                     cards_in_hand = len(card_id_seq)
                     card_id = -1
                     i = 0
-                    if battle_boss or normal:
+                    if battle_boss or normal or enemy_in_balcklist:
                         card_id = card_id_seq.pop(0)
                     elif enemy_blue_count > risk_num:
                         for k in card_id_seq:
@@ -538,87 +596,87 @@ class Agent:
         return [0, 1, 2]  # 兜底返回
 
     # 从按照黑名单剔除宝藏，返回可选项，如果没有则返回[0], 最多返回：[0,1,2]
-    def pick_treasure(self, screen):
-        advice_idx = []
-        not_advice_idx = []
-        for key in self.treasure_blacklist.keys():
-            for idx in range(3):
-                loc = self.locs.treasures_location[idx]
-                one_treasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
-                success, X, Y, conf = find_icon_location(one_treasure, self.treasure_blacklist[key],
-                                                         self.basic.confidence)
-                if success and idx not in not_advice_idx:
-                    not_advice_idx.append(idx)
-                    if 1 < len(not_advice_idx):
-                        break
-            if 1 < len(not_advice_idx):
-                break
+    # def pick_treasure(self, screen):
+    #     advice_idx = []
+    #     not_advice_idx = []
+    #     for key in self.treasure_blacklist.keys():
+    #         for idx in range(3):
+    #             loc = self.locs.treasures_location[idx]
+    #             one_treasure = get_sub_np_array(screen, loc[0], loc[1], loc[2], loc[3])
+    #             success, X, Y, conf = find_icon_location(one_treasure, self.treasure_blacklist[key],
+    #                                                      self.basic.confidence)
+    #             if success and idx not in not_advice_idx:
+    #                 not_advice_idx.append(idx)
+    #                 if 1 < len(not_advice_idx):
+    #                     break
+    #         if 1 < len(not_advice_idx):
+    #             break
 
-        logger.info(f'find treasure blacklist: {not_advice_idx}')
-        if 2 < len(not_advice_idx) or 1 > len(not_advice_idx):
-            return [0, 1, 2]
-        else:
-            for idx in range(3):
-                if idx not in not_advice_idx:
-                    advice_idx.append(idx)
-            return advice_idx
+    #     logger.info(f'find treasure blacklist: {not_advice_idx}')
+    #     if 2 < len(not_advice_idx) or 1 > len(not_advice_idx):
+    #         return [0, 1, 2]
+    #     else:
+    #         for idx in range(3):
+    #             if idx not in not_advice_idx:
+    #                 advice_idx.append(idx)
+    #         return advice_idx
 
-    # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中则不选，如果白名单没命中，黑名单全命中，则随机选
-    def pick_visitor(self, screen):
-        is_in_whitelist = False
-        is_in_blacklist = False
-        idx_white_list = []
-        idx_black_list = []
-        for key in self.heros_whitelist.keys():
-            success, loc, conf = self.find_in_image(screen, key, prefix='heros_whitelist')
-            if success:
-                is_in_whitelist = True
-                dist = 1024
-                the_index = 0
-                for idx, v_loc in self.locs.visitors_location.items():
-                    new_dist = abs(loc[0] - v_loc[2])
-                    if new_dist < dist:  # right_x - right_x
-                        the_index = idx
-                        dist = new_dist
+    # # 按照黑白名单选择神秘人选项，白名单命中，则选白名单的。黑名单命中则不选，如果白名单没命中，黑名单全命中，则随机选
+    # def pick_visitor(self, screen):
+    #     is_in_whitelist = False
+    #     is_in_blacklist = False
+    #     idx_white_list = []
+    #     idx_black_list = []
+    #     for key in self.heros_whitelist.keys():
+    #         success, loc, conf = self.find_in_image(screen, key, prefix='heros_whitelist')
+    #         if success:
+    #             is_in_whitelist = True
+    #             dist = 1024
+    #             the_index = 0
+    #             for idx, v_loc in self.locs.visitors_location.items():
+    #                 new_dist = abs(loc[0] - v_loc[2])
+    #                 if new_dist < dist:  # right_x - right_x
+    #                     the_index = idx
+    #                     dist = new_dist
 
-                idx_white_list.append(the_index)
+    #             idx_white_list.append(the_index)
 
-        # 去重
-        idx_white_list = list(set(idx_white_list))
-        if is_in_whitelist and 0 < len(idx_white_list):
-            logger.info(f'find visitor white list {idx_white_list}')
-            return idx_white_list
+    #     # 去重
+    #     idx_white_list = list(set(idx_white_list))
+    #     if is_in_whitelist and 0 < len(idx_white_list):
+    #         logger.info(f'find visitor white list {idx_white_list}')
+    #         return idx_white_list
 
-        for key in self.heros_blacklist.keys():
-            success, loc, conf = self.find_in_image(screen, key, prefix='heros_blacklist')
-            if success:
-                is_in_blacklist = True
-                dist = 1024
-                the_index = 0
-                for idx, v_loc in self.locs.visitors_location.items():
-                    new_dist = abs(loc[0] - v_loc[2])
-                    if new_dist < dist:  # right_x - right_x
-                        the_index = idx
-                        dist = new_dist
+    #     for key in self.heros_blacklist.keys():
+    #         success, loc, conf = self.find_in_image(screen, key, prefix='heros_blacklist')
+    #         if success:
+    #             is_in_blacklist = True
+    #             dist = 1024
+    #             the_index = 0
+    #             for idx, v_loc in self.locs.visitors_location.items():
+    #                 new_dist = abs(loc[0] - v_loc[2])
+    #                 if new_dist < dist:  # right_x - right_x
+    #                     the_index = idx
+    #                     dist = new_dist
 
-                idx_black_list.append(the_index)
+    #             idx_black_list.append(the_index)
 
-        # 去重
-        idx_black_list = list(set(idx_black_list))
+    #     # 去重
+    #     idx_black_list = list(set(idx_black_list))
 
-        if is_in_blacklist:
-            logger.info(f'find visitor black list {idx_black_list}')
-            if 2 < len(idx_black_list) or 1 > len(idx_black_list):
-                return [0, 1, 2]
-            else:
-                advice_idx = []
-                for idx in range(3):
-                    if idx not in idx_black_list:
-                        advice_idx.append(idx)
-                return advice_idx
+    #     if is_in_blacklist:
+    #         logger.info(f'find visitor black list {idx_black_list}')
+    #         if 2 < len(idx_black_list) or 1 > len(idx_black_list):
+    #             return [0, 1, 2]
+    #         else:
+    #             advice_idx = []
+    #             for idx in range(3):
+    #                 if idx not in idx_black_list:
+    #                     advice_idx.append(idx)
+    #             return advice_idx
 
-        return [0, 1, 2]  # 兜底返回
-    
+    #     return [0, 1, 2]  # 兜底返回
+
     def submit_campfire_mission(self, rect):
         logger.info("campfire dialog")
         time.sleep(1)
@@ -744,7 +802,7 @@ class Agent:
             if state == 'campfire':
                 logger.info(f'find {state}, try to click') 
                 self.submit_campfire_mission(rect)
-            
+
             if state == 'map_not_ready':
                 logger.info(f'find {state}, try to click next map')
                 _, screen = find_lushi_raw_window(self.title)
@@ -861,7 +919,14 @@ class Agent:
                 if 2 < len(lines):
                     battle_boss = True
                     logger.info(f'[{state}] battle boss')
-                    # screenshot(self.title, state) # TODO commit before 
+                    # screenshot(self.title, state) # TODO commit before
+
+                _, screen = find_lushi_window(self.title, to_gray=True)
+                enemy_in_blacklist = False  #planb后备阵营判断
+                for key in self.enemy_blacklist.keys():
+                    success, loc, conf = self.find_enemy(screen, key, prefix='enemy_blacklist')
+                    if success:
+                        enemy_in_balcklist = True
                 self.select_members(self.lettuce_role_limit, battle_boss)
 
             if state == 'not_ready_dots':
