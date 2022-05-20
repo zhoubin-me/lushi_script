@@ -18,3 +18,8 @@ BUG提交请去 [此页面](https://github.com/zhoubin-me/lushi_script/issues)
 
 如果你想要深入此项目，可以clone最新的main，按自己需求修改即可。
 
+## 注意
+
+```diff
++ release一般不同步更新，如果发现release版本的程序无法运行，请尝试下载主分支main代码进行替换！
+```
