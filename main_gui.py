@@ -188,6 +188,8 @@ class Ui(QMainWindow):
         self.bn_path_str = ""
         self.hs_path_str = ""
         self.hero_info = {}
+        self.boss_hero_info = {}
+        self.planb_hero_info = {}
         self.config = {}
         self.load_config('config/default.yaml')
 
