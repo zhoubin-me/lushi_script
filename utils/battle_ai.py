@@ -16,6 +16,29 @@ class BattleAi:
         self.action = []
         pass
 
+    @staticmethod
+    def get_last_enemy_list():
+        last_enemy_list = [
+            "LETLT_108_01" # 冰血要塞
+            "LETLT_077_01", # 技能重定向精灵龙
+            # 隐身的
+            # 免疫的
+            ]
+        return last_enemy_list
+    
+    @staticmethod
+    def get_first_enemy_list():
+        first_enemy_list = [
+            "LETLT_117_01",  # 冰冻猛犸象
+            "LETLT_100_01",  # 双倍攻击剑圣
+            "LETLT_110_01",  # 雷矛防御者
+            "LETLT_130_01",  # 军情七处刺客 （必定暴击）
+            "LETL_846H2",   # 防御者幼龙 （反冲)
+            "LT23_800H2",  # 老巨鳍之口 (召唤铺场)
+            "LT23T_104_01", # 鱼人群起攻之
+        ]
+        return first_enemy_list
+
     @classmethod
     def from_game(cls, game):
         ba = BattleAi()
@@ -52,19 +75,9 @@ class BattleAi:
         打出暴击，尽量打同一个。集火速度慢的，慢速基本是大招。
         同色队列，先打优先级队列里的。最后打低优先级的。
         """
-        last_enemy_list = [
-            "LETLT_108_01" # 冰血要塞
-            "LETLT_077_01" # 技能重定向精灵龙
-            # 隐身的
-            # 免疫的
-            ]
-        first_enemy_list = [
-            "LETLT_117_01"  # 冰冻猛犸象
-            "LETLT_100_01"  # 双倍攻击剑圣
-            "LETLT_110_01"  # 雷矛防御者
-            "LETLT_130_01"  # 军情七处刺客 （暴击）
-            "LETL_846H2"   # 防御者幼龙 （反冲)
-        ]
+        first_enemy_list = BattleAi.get_first_enemy_list()
+        last_enemy_list = BattleAi.get_last_enemy_list()
+
         attatch_sequnce = []
         lettuce_enemy_map = {3: [], 1: [], 2: [], 4: [], 0: [], "all": []}
 

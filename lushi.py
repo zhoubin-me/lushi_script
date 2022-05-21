@@ -659,6 +659,7 @@ class Agent:
                 logger.info(f'find {state}, try to click')
                 self.surprise_relative_loc = None  # 进地图清空
                 self.new_click(tuple_add(rect, loc))
+                time.sleep(1) # 避免误触信箱
                 self.new_click(tuple_add(rect, self.locs.travel))
 
             if state == 'boss_list':
