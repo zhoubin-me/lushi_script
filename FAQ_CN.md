@@ -34,7 +34,7 @@ A: [查看该回答](https://blog.csdn.net/qq_36834256/article/details/105870593
 
 ### 2.安装相关软件的注意事项-
 Q: 安装Python时有什么要注意的？  
-A: 使用了opencv专利算法(`SIFT`和`SURF`)，需使用 `Python 3.6.x` 版本，建议使用微软商店或者去Python官网下载安装。  
+A: 使用了opencv专利算法(`SIFT`和`SURF`)，需使用 `Python 3.7.x` 版本，建议使用微软商店或者去Python官网下载安装。  
 
 Q: 安装[Anaconda3](https://www.anaconda.com/products/individual#windows)时有什么需要注意的？  
 A: 安装时请仔细看清每一步，确保在Advanced Options界面时勾选Add Anaconda3 to the system PATH environment variable选项（该选项默认是不勾选的）以确保脚本的正常运行。  
@@ -83,7 +83,7 @@ Verbose=True
 ### 5.奇怪问题，例如莫名其妙退出
 Q: 为啥闪退?为啥不动?为啥...?
 
-A: 需要查看报错信息，如果你的版本有log文件夹，可以通过他查看历史状态，如果无该文件，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息
+A: 需要查看报错信息，如果你的版本有log文件夹，可以通过他查看历史状态，如果无该文件，可以把main_gui.bat后缀名编辑为txt然后把文件中的pythonw修改为python，再把后缀名改为bat运行查看报错信息。***另外，注意不要全屏运行炉石传说。**
 
 ### 6.platform初始化错误
 Q: 出现如下错误
