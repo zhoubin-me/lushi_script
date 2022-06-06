@@ -17,6 +17,11 @@ location:
   boss_page_right : [765, 412]
   # 4-13 boos portal location
   boss_4_13: [404, 376]
+  # 7-1,2,3,4 
+  boss_1_of_4: [244, 314]
+  boss_2_of_4: [520, 344]
+  boss_3_of_4: [309, 550]
+  boss_4_of_4: [562, 576]
 
   # treasures locations
   treasures: [ 430, 650, 870, 390 ] # [first_x, mid_x, last_x, y]
@@ -119,4 +124,4 @@ location:
   # map back button x,y
   map_back: [960, 758]
   # check if battle boss
-  boss_battlefield: [402, 40, 644, 163]
+  boss_battlefield: [402, 80, 644, 163]

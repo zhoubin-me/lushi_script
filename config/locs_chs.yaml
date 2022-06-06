@@ -14,7 +14,12 @@ location:
   boss_page_left: [ 244, 480 ]
   boss_page_right : [1098, 480]
   # 4-13 boos portal location
-  boss_4_13: [680, 420]
+  boss_4_13: [680, 420]  
+  # 7-1,2,3,4 
+  boss_1_of_4: [244, 314]
+  boss_2_of_4: [520, 344]
+  boss_3_of_4: [309, 550]
+  boss_4_of_4: [562, 576]
 
   # treasures locations
   treasures: [ 707, 960, 1200, 376 ] # [first_x, mid_x, last_x, y]
@@ -116,4 +121,4 @@ location:
   # 地图界面，返回按钮坐标，x，y
   map_back: [1325, 885]
   # 打boss时，对战场地检测区域, leftt_x, top_y, left_x, bottom_y
-  boss_battlefield: [633, 40, 956, 186]
+  boss_battlefield: [633, 90, 956, 186]

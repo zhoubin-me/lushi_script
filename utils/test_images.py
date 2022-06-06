@@ -98,10 +98,10 @@ class TestImage(unittest.TestCase):
         print(imgMap)
 
     def test_get_dark_brown_lines(self):
-        # screen = self.get_save_image( to_gray=False, imageName= "battle_boss.png")
+        screen = self.get_save_image( to_gray=False, imageName= "battle_boss.png")
         # screen = self.get_save_image( to_gray=False, imageName= "batle_en_1.png")
         # screen = self.get_save_image( to_gray=False, imageName= "restart_04-35.40,455.png")
-        screen = self.get_save_image( to_gray=False, imageName= "restart_08-06.57,156.png")  # restart_08-06.57,156.png
+        # screen = self.get_save_image( to_gray=False, imageName= "restart_08-06.57,156.png")  # restart_08-06.57,156.png
         config, locs = self.gen_config()
         print(config, locs.boss_battlefield)
         loc =  locs.boss_battlefield

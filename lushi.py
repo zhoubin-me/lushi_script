@@ -667,10 +667,22 @@ class Agent:
                 the_boss_id = 0
                 if self.basic.boss_id in BOSS_ID_MAP:
                     the_boss_id = BOSS_ID_MAP[self.basic.boss_id]
-                if the_boss_id > 14:
+                if the_boss_id > 19:
+                    # boss 8-7,8,9,10
+                    self.new_click(tuple_add(rect, self.locs.boss_page_right))
+                    time.sleep(1)
+                    the_loc = getattr(self.locs, "boss_{}_of_4".format(the_boss_id - 19))
+                    self.new_click(tuple_add(rect, the_loc))
+                    self.new_click(tuple_add(rect, self.locs.start_game))
+                elif the_boss_id > 15:
+                    # boss 7-1,2,3,4
+                    the_loc = getattr(self.locs, "boss_{}_of_4".format(the_boss_id - 15))
+                    self.new_click(tuple_add(rect, the_loc))
+                    self.new_click(tuple_add(rect, self.locs.start_game))
+                elif the_boss_id > 14:
                     # boss 13
                     self.new_click(tuple_add(rect, self.locs.boss_page_right))
-                    time.sleep(0.5)
+                    time.sleep(1)
                     self.new_click(tuple_add(rect, self.locs.boss_page_right))
                     self.new_click(tuple_add(rect, self.locs.boss_4_13))
                     self.new_click(tuple_add(rect, self.locs.start_game))
@@ -954,6 +966,11 @@ class Agent:
                 reward_count = int(reward_count) if reward_count.isdigit() else reward_count
 
                 reward_locs = eval(self.locs.rewards[reward_count])  # click all of 3， 4， 5 rewards location
+                for loc in reward_locs:
+                    pyautogui.moveTo(tuple_add(rect, loc))
+                    self.new_click()
+
+                # 现在宝藏有可能出双倍，点两次
                 for loc in reward_locs:
                     pyautogui.moveTo(tuple_add(rect, loc))
                     self.new_click()
