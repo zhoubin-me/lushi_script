@@ -324,22 +324,22 @@ class Agent:
                 other_skill_id = 0  # 非预期角色的技能干预
                 if True == battle_boss:
                     if card_id == "LETL_848H6" or card_id == "LETL_84":  # npc 瓦莉拉
-                        if len(h.spell) > 2 and h.spell[2].lettuce_current_cooldown:
+                        if len(h.spell) > 2 and 1 > h.spell[2].lettuce_current_cooldown:
                             att_skill_id = other_skill_id = 2
                 if card_id.startswith("LETL_024P2_"):  # 尤多拉 炮台
-                    if len(h.spell) > 2 and h.spell[2].lettuce_current_cooldown:
+                    if len(h.spell) > 2 and 1 > h.spell[2].lettuce_current_cooldown:
                         att_skill_id = other_skill_id = 2
                 if card_id.startswith("LT22_002E3_"):  # 巴琳达的火元素
-                    if len(h.spell) > 1 and h.spell[1].lettuce_current_cooldown:
+                    if len(h.spell) > 1 and 1 > h.spell[1].lettuce_current_cooldown:
                         att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_823H3"): # 小鬼魔仆
-                    if len(h.spell) > 1 and h.spell[1].lettuce_current_cooldown:
+                    if len(h.spell) > 1 and 1 > h.spell[1].lettuce_current_cooldown:
                         att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_861H3"): # 0/500 石槌战旗
-                    if len(h.spell) > 1 and h.spell[1].lettuce_current_cooldown:
+                    if len(h.spell) > 1 and 1 > h.spell[1].lettuce_current_cooldown:
                         att_skill_id = other_skill_id = 1
                 if card_id.startswith("LETL_866H2"): # 0/150 净化碎片
-                    if len(h.spell) > 2 and h.spell[2].lettuce_current_cooldown:
+                    if len(h.spell) > 2 and 1 > h.spell[2].lettuce_current_cooldown:
                         att_skill_id = other_skill_id = 2
                 skill_loc = tuple_add(rect, (self.locs.skills[other_skill_id], self.locs.skills[-1]))
             else:
@@ -410,6 +410,7 @@ class Agent:
                     elif enemy_blue_count > risk_num:
                         for k in card_id_seq:
                             if int(standby_heros[k][4]) != 3:
+                            # if int(standby_heros[k][4]) == 2:
                                 card_id = k
                                 del card_id_seq[i]
                                 break
@@ -417,6 +418,7 @@ class Agent:
                     elif enemy_green_count > risk_num:
                         for k in card_id_seq:
                             if int(standby_heros[k][4]) != 1:
+                            # if int(standby_heros[k][4]) == 3:
                                 card_id = k
                                 del card_id_seq[i]
                                 break
@@ -424,6 +426,7 @@ class Agent:
                     elif enemy_red_count > risk_num:
                         for k in card_id_seq:
                             if int(standby_heros[k][4]) != 2:
+                            # if int(standby_heros[k][4]) == 1:
                                 card_id = k
                                 del card_id_seq[i]
                                 break
