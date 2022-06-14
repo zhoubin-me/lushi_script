@@ -21,11 +21,13 @@ class BattleAi:
         last_enemy_list = [
             "LETLT_108_01" # 冰血要塞
             "LETLT_077_01", # 技能重定向精灵龙
+            "LT23_807H", # 珊瑚元素 (反击)
+            "LT23_816H", # 加尔鲁什·地狱咆哮
             # 隐身的
             # 免疫的
             ]
         return last_enemy_list
-    
+
     @staticmethod
     def get_first_enemy_list():
         first_enemy_list = [
@@ -39,6 +41,11 @@ class BattleAi:
             "LT23_809H", # 恩佐斯的鱼 
             "LT23T_112_01" # 暮光尊者 (腐蚀)
             "LT23T_117_01", # 无面腐蚀
+            "LT23_826H3", # 潮汐祖母
+            "LT23_815H2", # 螳螂塑像
+            "LT23_816H3", # 猜忌的化身
+            "LT23_803H", # 席弗尔斯船长
+            "LT23T_100_01", # 并鳍奇兵
         ]
         return first_enemy_list
 
