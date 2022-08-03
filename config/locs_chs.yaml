@@ -18,6 +18,11 @@ location:
   boss_page_right : [1098, 480]
   # 4-13 boos portal location
   boss_4_13: [680, 420]
+  boss_7_1: [480, 350]
+  boss_7_2: [830, 350]
+  boss_7_3: [480, 620]
+  boss_7_4: [830, 620]
+
 
   # treasures locations
   treasures: [ 660, 940, 1200, 330 ] # [first_x, mid_x, last_x, y]
@@ -53,7 +58,7 @@ location:
   final_confirm: [ 794, 779 ]
 
   # empty location to click when waiting
-  empty: [ 1488, 921 ]
+  empty: [ 1090, 880 ]
   # empty location to click when waiting during battles
   empty_battle: [ 620, 750 ]
   # mouse location during scroll
@@ -100,6 +105,8 @@ location:
 
   # campfire button
   campfire: [ 641, 669 ]
+  # campfire empty
+  campfire_empty: [ 960, 840 ]
   # exit campfire
   campfire_exit: [ 1275, 770 ]
   # task locations x
