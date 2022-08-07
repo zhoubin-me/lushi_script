@@ -62,7 +62,7 @@ class Agent:
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                        'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2', 'campfire']
+                       'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2','boss_empty_icon', 'campfire']
 
         self.load_config(cfg)
         self.log_util = LogUtil(self.basic.hs_log)
@@ -644,10 +644,10 @@ class Agent:
     def state_handler(self, state, tic, text):
         success, loc, rect = self.check_in_screen(text)
         '''
-        self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
+        self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list','team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
                   'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
-                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2', 'campfire']
+                  'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2', 'boss_empty_icon', 'campfire']
         '''
         if success:
             if state != text:
@@ -665,7 +665,7 @@ class Agent:
                 time.sleep(1) # 避免误触信箱
                 self.new_click(tuple_add(rect, self.locs.travel))
 
-            if state == 'boss_list':
+            if state == 'boss_list' or 'boss_empty_icon' == state :
                 logger.info('find boss list, try to click')
                 the_boss_id = 0
                 if self.basic.boss_id in BOSS_ID_MAP:

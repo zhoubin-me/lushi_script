@@ -1,7 +1,7 @@
 aniso8601
-hearthstone
-hearthstone-data==133122.1
-hslog==1.17.1
+hearthstone=5.63.0
+hearthstone-data==145077.1
+hslog==1.17.2
 MouseInfo
 numpy
 opencv-python
