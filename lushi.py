@@ -64,7 +64,7 @@ class Agent:
         self.battle_time_wait = 1
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                        'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                       'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                       'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'bonus_loot', 'cursed_treasure', 'visitor_list',
                        'final_reward', 'final_reward2', 'final_confirm', 'close', 'ok', 'done', 'member_not_ready2', 'campfire']
 
         self.load_config(cfg)
@@ -701,7 +701,7 @@ class Agent:
         '''
         self.states = ['box', 'mercenaries', 'team_lock', 'travel', 'boss_list', 'team_list', 'map_not_ready',
                   'goto', 'show', 'teleport', 'start_game', 'member_not_ready', 'not_ready_dots', 'battle_ready',
-                  'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'visitor_list',
+                  'treasure_list', 'treasure_replace', 'treasure_list2', 'destroy', 'blue_portal', 'boom', 'bonus_loot', 'cursed_treasure', 'visitor_list',
                   'final_reward', 'final_reward2', 'final_confirm', 'ok', 'close', 'done', 'member_not_ready2', 'campfire']
         '''
         if success:
@@ -970,7 +970,7 @@ class Agent:
                 self.new_click(tuple_add(rect, self.locs.treasures_collect))
                 del screen
 
-            if state in ['destroy', 'blue_portal', 'boom']:
+            if state in ['destroy', 'blue_portal', 'boom', 'bonus_loot', 'cursed_treasure']:
                 logger.info(f'find {state}, try to click')
                 if self.basic.early_stop:
                     time.sleep(1)
