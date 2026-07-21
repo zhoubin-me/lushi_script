@@ -1081,7 +1081,7 @@ class Agent:
                     self.new_click(tuple_add(rect, self.locs.give_up))
                     self.new_click(tuple_add(rect, self.locs.give_up_cfm))
                 else:
-                    screenshot(self.title, 'restart_unkown')
+                    screenshot(self.title, 'restart_unknown')
                     if self.basic.auto_restart:
                         restart_game(self.lang, self.basic.bn_path)
                 tic = time.time()
